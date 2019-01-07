@@ -1,7 +1,9 @@
 <template>
    <el-container class="dashboard">
       <el-header style="text-align: right; font-size: 12px">
+
          <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal">
+            
             <el-menu-item index="1">File</el-menu-item>
             <el-submenu index="2">
                <template slot="title">File</template>
@@ -76,7 +78,7 @@
             </section>
 
             </section>
-              <el-button type="primary" plain icon="el-icon-save" v-on:click="saveNote()">Save</el-button>
+              <el-button type="primary" plain icon="el-icon-circle-check-outline" v-on:click="saveNote()">Save</el-button>
                 <form @submit.prevent="saveNote()" :disabled="! content">
             </form>
          </el-main>
@@ -301,13 +303,17 @@ export default {
   .el-aside {
     color: #333;
     font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
-
+    margin-top: 1em;
   }
   
   .el-main {
     color: #333;
     font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
     padding: 5vh;
+  }
+
+  .el-input {
+    margin-bottom: 1em;
   }
 
   .live_area {
@@ -322,8 +328,9 @@ export default {
 
 #editor {
   width: 50%;
-  margin: 0;
   padding: 0;
+  margin-bottom: 1em;
+  margin-right: 1em;
 }
   
 label {
