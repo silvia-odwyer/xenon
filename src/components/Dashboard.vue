@@ -1,7 +1,7 @@
 <template>
    <el-container class="dashboard">
       <el-header style="text-align: right; font-size: 12px">
-         <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
+         <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal">
             <el-menu-item index="1">File</el-menu-item>
             <el-submenu index="2">
                <template slot="title">File</template>
@@ -27,13 +27,15 @@
       </el-header>
       <el-container>
          <el-aside width="200px">
+           
             <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
                <el-menu :default-openeds="['1', '3']">
+                  <el-button type="primary" plain icon="el-icon-edit" v-on:click="createNewNote()">New Note</el-button>
                   <el-submenu index="1">
                      <template slot="title"><i class="el-icon-message"></i>Your Notes</template>
                      <el-menu-item-group>
                         <template slot="title">Recently Added</template>
-                        <el-menu-item index="1-1" v-for="note in markdown_notes">{{note}}</el-menu-item>
+                        <el-menu-item index="1-1" v-for="note in markdown_notes" v-on:click="displayNote(note)">{{note.filename}}</el-menu-item>
                      </el-menu-item-group>
                      <el-menu-item-group title="Group 2">
                         <el-menu-item index="1-3">Option 3</el-menu-item>
@@ -47,8 +49,14 @@
             </el-aside>
          </el-aside>
          <el-main>
-           <el-input placeholder="Note Name" v-model="filename"></el-input>
-            <codemirror v-model="content" id="editor" :options="cmOptions"></codemirror>
+           <el-row>
+             <el-col :span="24">
+              <el-input placeholder="Note Name" v-model="filename"></el-input>
+            </el-col>
+            </el-row>
+            
+            <section class="live_area">
+              <codemirror v-model="content" id="editor" :options="cmOptions"></codemirror>
 
             <!-- <ul class="list-group">
                <li v-for="note in md_notes"
@@ -66,14 +74,11 @@
             <section class="preview" v-model="markdownToHTML">
             {{markdownToHTML}}
             </section>
-                <form @submit.prevent="saveNote()" :disabled="! content">
-               <div class="input-group">
-                  <span class="input-group-btn">
-                  <button class="btn btn-default" type="submit" :disabled="! content">Save</button>
-                  </span>
-               </div>
-            </form>
 
+            </section>
+              <el-button type="primary" plain icon="el-icon-save" v-on:click="saveNote()">Save</el-button>
+                <form @submit.prevent="saveNote()" :disabled="! content">
+            </form>
          </el-main>
       </el-container>
    </el-container>
@@ -96,7 +101,7 @@ export default {
   data () {
     return {
       blockstack: window.blockstack,
-      markdown_notes: ["Note 1", "Note 2", "Note 3"],
+      markdown_notes: [],
       todo: '',
       uidCount: 0,
       content: "# Sample note",
@@ -112,12 +117,13 @@ export default {
         line: true,
         lineWrapping: true
       }, 
-      activeIndex: 1,
+      activeIndex: "1",
       alertMessage: "",
       filename: "",
       noMarkdownAlert: false, 
       noFilenameAlert: false,
-      isNewFile: false 
+      isNewFile: false,
+      file : ""
     }
   },
   computed: {
@@ -183,11 +189,11 @@ export default {
           console.log("file already exists");
           console.log("this.file", this.file);
 
-          let current_file = this.codefiles.filter(file => file.hash_id == this.file.hash_id)[0];
+          let current_file = this.markdown_notes.filter(file => file.hash_id == this.file.hash_id)[0];
           console.log(current_file)
 
           // Save code
-          current_file.code = this.code;
+          current_file.content = this.content;
 
           // Save title
           this.updateTitle(current_file);
@@ -213,11 +219,44 @@ export default {
             file.filename = this.filename;
       }
     },
+    displayNote(file) {
+      this.file = file; 
+      console.log("DSPLYNOTES: ", this.markdown_notes);
+      console.log("displayCode for ", file);
+      
+      // Update code in the code editor
+      this.content = file.content;
+      console.log("current markdown content is", this.content);
+
+      // Update the file's title
+      this.filename = file.filename;
+      this.current_file_id = file.id;
+      console.log("CURRENT FILE ID: ", this.current_file_id);
+
+      // Update language mode
+      this.cmOptions.mode = file.language;
+      
+      // Scroll to the top of the page
+      window.scrollTo(0, 0);
+    },
     getDateNow() {
       let time = Date.now();
       return time;
     },
-
+    createNewNote() {
+      this.content = "";
+      this.filename = "";
+      this.isNewFile = true;
+    },
+    getDateStamp() {
+      let date = new Date();
+      let dd = date.getDate();
+      let mm = date.getMonth() + 1;
+      let yy = date.getFullYear();
+      
+      let datestamp = `${dd}/${mm}/${yy}`
+      return datestamp;
+    },
     fetchData () {
       const blockstack = this.blockstack
       blockstack.getFile(STORAGE_FILE) // decryption is enabled by default
@@ -269,9 +308,12 @@ export default {
     color: #333;
     font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
     padding: 5vh;
+  }
+
+  .live_area {
     display: flex;
-    flex-direction: row;
     flex-wrap: wrap;
+    flex-direction: row;
   }
 
 .dashboard {
