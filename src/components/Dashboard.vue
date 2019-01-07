@@ -130,8 +130,29 @@ export default {
   },
   computed: {
     markdownToHTML() {
-      console.log(this.content)
-      return("To HTML:" + this.content); 
+      // Renders markdown in HTML using regex.
+      // Some may a bit buggy; submit Issues if you see any bugs. 
+      console.log("CONTENT:", this.content)
+
+      // Look for beginning of a line that contains a hashtag, and replace the token in h1 tags. 
+      let markdown = this.content.replace(/^\>(.+)/gm, "<blockquote>$1</blockquote>");
+
+      // h5
+      markdown = markdown.replace(/[\#]{5}(.+)/g, "<h5>$1</h5>");
+
+      // h4
+      markdown = markdown.replace(/[\#]{4}(.+)/g, "<h4>$1</h4>");
+
+      // h3
+      markdown = markdown.replace(/[\#]{3}(.+)/g, "<h3>$1</h3>");
+      
+      // h2
+      markdown = markdown.replace(/[\#]{2}(.+)/g, "<h2>$1</h2>")
+
+      // h1
+      markdown = markdown.replace(/[\#]{1}(.+)/g, "<h1>$1</h1>")
+
+      return(markdown); 
     }
   },
   watch: {
