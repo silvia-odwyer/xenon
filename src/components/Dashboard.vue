@@ -2,9 +2,9 @@
    <el-container class="dashboard">
       <el-header style="text-align: right; font-size: 12px">
 
-         <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal">
+         <el-menu :default-active="activeIndex" class="el-menu" mode="horizontal">
             
-            <el-menu-item index="1">File</el-menu-item>
+            <el-menu-item index="1">xq</el-menu-item>
             <el-submenu index="2">
                <template slot="title">File</template>
                <el-menu-item index="2-1">New</el-menu-item>
@@ -17,38 +17,46 @@
                   <el-menu-item index="2-4-3">Sidebar</el-menu-item>
                </el-submenu>
             </el-submenu>
-            <el-menu-item index="3" disabled>Info</el-menu-item>
-            <span>
-              <img :src="user.avatarUrl() ? user.avatarUrl() : '/avatar-placeholder.png'" class="avatar" height="30px" width="30px">
-              <small>
-                <span class="sign-out">(<a href="#" @click.prevent="signOut">Sign Out</a>)</span>
-              </small>
-         </span>
+              <el-button type="primary" class="sign-out" icon="el-icon-edit" @click.prevent="signOut"></el-button>
+ 
          </el-menu>
          
       </el-header>
       <el-container>
-         <el-aside width="200px">
+         <el-aside width="200px" class="outer_aside"> 
            
             <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
                <el-menu :default-openeds="['1', '3']">
-                  <el-button type="primary" plain icon="el-icon-edit" v-on:click="createNewNote()">New Note</el-button>
+                  <el-button type="primary" plain icon="el-icon-edit" class="new_note" v-on:click="createNewNote(); displayFileMessage('New note created!')">New Note</el-button>
                   <el-submenu index="1">
                      <template slot="title"><i class="el-icon-message"></i>Your Notes</template>
                      <el-menu-item-group>
                         <template slot="title">Recently Added</template>
                         <el-menu-item index="1-1" v-for="note in markdown_notes" v-on:click="displayNote(note)">{{note.filename}}</el-menu-item>
                      </el-menu-item-group>
-                     <el-menu-item-group title="Group 2">
-                        <el-menu-item index="1-3">Option 3</el-menu-item>
+                    </el-submenu>
+                 <el-submenu index="2">
+                     <template slot="title"><i class="el-icon-menu"></i>Themes</template>
+                     <el-menu-item-group>
+                        <template slot="title">All Themes Available</template>
+                        <el-menu-item index="1-1" v-for="theme in themes" v-on:click="changeTheme(theme)">{{theme}}</el-menu-item>
                      </el-menu-item-group>
-                     <el-submenu index="1-4">
-                        <template slot="title">Option4</template>
-                        <el-menu-item index="1-4-1">Option 4-1</el-menu-item>
-                     </el-submenu>
+                    </el-submenu>
+                    <el-submenu index="3">
+                     <template slot="title"><i class="el-icon-setting"></i>Settings</template>
+                     <el-menu-item-group>
+                        <template slot="title">Options</template>
+                        <el-menu-item>Enable Auto-Save</el-menu-item>
+                     </el-menu-item-group>
+                    </el-submenu>
                   </el-submenu>
                </el-menu>
+              <small class="creds">
+                Powered by Vue, Blockstack, and loads of regex. 
+                Source code on <a href="https://github.com/blockstack/blockstack-todos" target="_blank">Github</a>
+              </small>
             </el-aside>
+
          </el-aside>
          <el-main>
            <el-row>
@@ -57,9 +65,12 @@
             </el-col>
             </el-row>
             
+            <el-row>
             <section class="live_area">
-              <codemirror v-model="content" id="editor" :options="cmOptions"></codemirror>
 
+                <el-col :span="12">
+                  <codemirror v-model="content" id="editor" :options="cmOptions"></codemirror>
+                </el-col>
             <!-- <ul class="list-group">
                <li v-for="note in md_notes"
                   class="list-group-item"
@@ -73,11 +84,14 @@
                      href="#">X</a>
                </li>
             </ul> -->
+            <el-col :span="12">
             <section class="preview" v-model="markdownToHTML">
             {{markdownToHTML}}
             </section>
+            </el-col>
 
             </section>
+          </el-row>
               <el-button type="primary" plain icon="el-icon-circle-check-outline" v-on:click="saveNote()">Save</el-button>
                 <form @submit.prevent="saveNote()" :disabled="! content">
             </form>
@@ -95,7 +109,10 @@ import 'codemirror/mode/markdown/markdown.js'
 import 'codemirror/addon/selection/active-line.js'
 import 'codemirror/addon/selection/mark-selection.js'
 /*eslint-disable*/
+
 var STORAGE_FILE = 'markdown_files.json'
+var themes = ["3024-day", "3024-night", "abcdef", "ambiance", "ambiance-mobile", "base16-dark", "base16-light", "bespin", "blackboard", "cobalt", "colorforth", "darcula", "duotone-dark", "duotone-light", "eclipse", "elegant", "erlang-dark",
+"gruvbox-dark", "hopscotch", "ice-coder", "idea", "isotope", "lesser-dark", "liquibyte", "lucario", "material", "mbo", "mdn-like", "midnight", "monokai", "neat", "neo", "night", "oceanic-next", "panda-syntax", "paraiso-dark", "paraiso-light", "pastel-on-dark", "railscasts", "rubyblue", "seti", "shadowfox", "solarized", "ssms", "the-matrix", "tomorrow-night-bright", "tomorrow-night-eighties", "ttcn", "twilight", "vibrant-ink", "xq-dark", "xq-light", "yeti", "zenburn"];
 
 export default {
   name: 'dashboard',
@@ -119,6 +136,7 @@ export default {
         line: true,
         lineWrapping: true
       }, 
+      themes: themes,
       activeIndex: "1",
       alertMessage: "",
       filename: "",
@@ -138,19 +156,44 @@ export default {
       let markdown = this.content.replace(/^\>(.+)/gm, "<blockquote>$1</blockquote>");
 
       // h5
-      markdown = markdown.replace(/[\#]{5}(.+)/g, "<h5>$1</h5>");
+      markdown = markdown.replace(/[\#]{5}(.+)/gm, "<h5>$1</h5>");
 
       // h4
-      markdown = markdown.replace(/[\#]{4}(.+)/g, "<h4>$1</h4>");
+      markdown = markdown.replace(/[\#]{4}(.+)/gm, "<h4>$1</h4>");
 
       // h3
-      markdown = markdown.replace(/[\#]{3}(.+)/g, "<h3>$1</h3>");
+      markdown = markdown.replace(/[\#]{3}(.+)/gm, "<h3>$1</h3>");
       
       // h2
-      markdown = markdown.replace(/[\#]{2}(.+)/g, "<h2>$1</h2>")
+      markdown = markdown.replace(/[\#]{2}(.+)/gm, "<h2>$1</h2>")
 
       // h1
-      markdown = markdown.replace(/[\#]{1}(.+)/g, "<h1>$1</h1>")
+      markdown = markdown.replace(/[\#]{1}(.+)/gm, "<h1>$1</h1>")
+
+      // h1 and h2s that consist of equals/plus signs underneath 
+      markdown = markdown.replace(/^(.+)\n\+=/gm, '<h1>$1</h1>');
+      markdown = markdown.replace(/^(.+)\n\-+/gm, '<h2>$1</h2>');
+	  
+      //ul
+      markdown = markdown.replace(/^\s*\n\*/gm, '<ul>\n*');
+      markdown = markdown.replace(/^\*(.+)/gm, '<li>$1</li>');
+      
+      //ol
+      markdown = markdown.replace(/^\s*\n\d\./gm, '<ol>\n1.');
+      markdown = markdown.replace(/^\d\.(.+)/gm, '<li>$1</li>');
+	  
+      // code 
+      markdown = markdown.replace(/[\`]{1}([^\`]+)[\`]{1}/g, '<code>$1</code>');
+
+      // bold text
+      markdown = markdown.replace(/[\*\_]{2}([^\*\_]+)[\*\_]{2}/g, '<b>$1</b>');
+      
+      // em should technically be for placing emphasis on certain words,
+      // so [TODO] add a check for single-words only.
+      markdown = markdown.replace(/[\*\_]{1}([^\*\_]+)[\*\_]{1}/g, '<i>$1</i>');
+
+      // Strikethrough
+      markdown = markdown.replace(/\~~([^\~]+)\~~/g, '<del>$1</del>');
 
       return(markdown); 
     }
@@ -228,12 +271,17 @@ export default {
           current_file.datestamp = datestamp
 
           this.alertMessage = "Saved file!"
+
         }
+        this.displayFileMessage('Saved note!')
         console.log("LANGMODE", this.cmOptions.mode)
         this.showSnackbar = true;
         console.log("ALL FILE IDS AFTR", this.all_file_ids);
       }
     },
+	displayFileMessage(message_content) {
+		this.$message(message_content);
+	},
     updateTitle(file) {
       if (this.filename == "") {
             // TODO: Add a modal popup saying that the title must not be empty.
@@ -292,6 +340,14 @@ export default {
         this.markdown_notes = markdown_notes
       })
     },
+    changeTheme(theme) {
+      console.log("Theme changed to", theme);
+      this.getTheme(theme);
+      this.cmOptions.theme = theme;
+    },
+    getTheme(theme) {
+      return import('codemirror/theme/' + theme + '.css');
+    },
     handleOpen(key, keyPath) {
         console.log(key, keyPath);
     },
@@ -326,6 +382,11 @@ export default {
     font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
     margin-top: 1em;
   }
+
+  .outer_aside {
+    display: flex;
+    flex-direction: column;
+  }
   
   .el-main {
     color: #333;
@@ -337,14 +398,13 @@ export default {
     margin-bottom: 1em;
   }
 
-  .live_area {
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
-  }
 
 .dashboard {
   height: 100vh;
+}
+
+.creds {
+  margin-top: auto;
 }
 
 #editor {
@@ -380,4 +440,32 @@ label {
     }
   }
 }
+
+.new_note {
+  margin-left: 5em;
+}
+
+// Scrollbar styles
+ /* width */
+::-webkit-scrollbar {
+  width: 8px;
+  border-radius: 0.2em;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+} 
+
+
 </style>
