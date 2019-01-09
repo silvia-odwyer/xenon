@@ -1,7 +1,9 @@
 <template>
   <div class="landing">
     <div class="content">
-      <h1>xq</h1>
+      <transition name="fade">
+        <h1 v-if="show">xq</h1>
+      </transition>
       <p>A live markdown editor and storage bin based on <a href="https://blockstack.org" target="_blank">Blockstack</a></p>
       <button class="btn btn-default" @click.prevent="signIn">Sign In With Blockstack</button>
     </div>
@@ -13,7 +15,8 @@ export default {
   name: 'landing',
   data () {
     return {
-      blockstack: window.blockstack
+      blockstack: window.blockstack,
+      show: true
     }
   },
 
@@ -48,5 +51,19 @@ h1 {
   display: inline;
   margin-right: auto;
   margin-left: auto;
+}
+
+/* Enter and leave animations can use different */
+/* durations and timing functions.              */
+.fade-enter-active {
+  transition: all .3s ease;
+}
+.fade-leave-active {
+  transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+.fade-enter, .fade-leave-to
+/* .slide-fade-leave-active below version 2.1.8 */ {
+  transform: translateX(10px);
+  opacity: 0;
 }
 </style>

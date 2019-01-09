@@ -64,13 +64,22 @@
               <el-input placeholder="Note Name" v-model="filename"></el-input>
             </el-col>
             </el-row>
-            
-            <el-row>
+
             <section class="live_area">
 
-                <el-col :span="12">
-                  <codemirror v-model="content" id="editor" :options="cmOptions"></codemirror>
-                </el-col>
+            <codemirror v-model="content" id="editor" :options="cmOptions"></codemirror>
+            
+            <section id="content" v-model="markdownToHTML">
+            {{markdownToHTML}}
+            </section>
+
+
+            </section>
+
+              <el-button type="primary" plain icon="el-icon-circle-check-outline" v-on:click="saveNote()">Save</el-button>
+                <form @submit.prevent="saveNote()" :disabled="! content">
+                </form>
+                
             <!-- <ul class="list-group">
                <li v-for="note in md_notes"
                   class="list-group-item"
@@ -84,17 +93,6 @@
                      href="#">X</a>
                </li>
             </ul> -->
-            <el-col :span="12">
-            <section class="preview" v-model="markdownToHTML">
-            {{markdownToHTML}}
-            </section>
-            </el-col>
-
-            </section>
-          </el-row>
-              <el-button type="primary" plain icon="el-icon-circle-check-outline" v-on:click="saveNote()">Save</el-button>
-                <form @submit.prevent="saveNote()" :disabled="! content">
-            </form>
          </el-main>
       </el-container>
    </el-container>
@@ -408,7 +406,6 @@ export default {
 }
 
 #editor {
-  width: 50%;
   padding: 0;
   margin-bottom: 1em;
   margin-right: 1em;
@@ -445,6 +442,7 @@ label {
   margin-left: 5em;
 }
 
+
 // Scrollbar styles
  /* width */
 ::-webkit-scrollbar {
@@ -467,5 +465,22 @@ label {
   background: #555;
 } 
 
+#live_area {
+  display: flex;
+  flex-wrap: wrap;
+}
 
+#editor, #content {
+  display: inline-block;
+  flex-grow: 1;
+  width: calc(100% * (1/2) - 10px - 1px);
+  vertical-align:top;
+}
+
+.CodeMirror {
+  font-family: sans-serif;
+  height: 100vh;
+  color: black;
+  direction: ltr;
+}
 </style>
