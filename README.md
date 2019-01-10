@@ -1,4 +1,4 @@
-# xq-editor
+# xq
 
 A markdown editor built for the decentralized web.
 
