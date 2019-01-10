@@ -224,7 +224,7 @@ var themes = ["3024-day", "3024-night", "abcdef", "ambiance", "ambiance-mobile",
         date: this.getDateStamp() }, {
         id: this.uidCount++,
         hash_id: String(this.getDateNow()),
-        content: "Welcome!",
+        content: "# xq \nA markdown editor built for the decentralized web.\nMarkdown is parsed to HTML using regular expressions.\n### Issues or Bugs\nThis is still in alpha, so bugs or issues may arise. If so, please submit an issue. <3 Thanks! \n *Current State*: alpha",
         filename: "README",
         language: "markdown",
         completed: false,
@@ -232,7 +232,7 @@ var themes = ["3024-day", "3024-night", "abcdef", "ambiance", "ambiance-mobile",
       }],
       todo: '',
       uidCount: 0,
-      content: "# Sample note",
+      content: "# Welcome to xq!\n## Some markdown to get you started\n### H3 heading\n#### H4 Heading\nRegular line with some **bold** and *italic* text. \nImage and link support coming soon!\n> 'Insert some famous or inspirational quote here, because this is a blockquote.' \n> ~ Someone famous\n* Bullet point one\n* Bullet point two\n* Bullet point three\n~~Strikethrough text~~",
       color: "#890912",
       cmOptions: {
         tabSize: 4,
@@ -274,19 +274,17 @@ var themes = ["3024-day", "3024-night", "abcdef", "ambiance", "ambiance-mobile",
       markdown = markdown.replace(/^(.+)\n\+=/gm, '<h1>$1</h1>');
       markdown = markdown.replace(/^(.+)\n\-+/gm, '<h2>$1</h2>');
 
-      markdown = markdown.replace(/^\s*\n\*/gm, '<ul>\n*');
+      markdown = markdown.replace(/[\*\_]{2}([^\*\_]+)[\*\_]{2}/g, '<b>$1</b>');
+
       markdown = markdown.replace(/^\*(.+)/gm, '<li>$1</li>');
 
-      markdown = markdown.replace(/^\s*\n\d\./gm, '<ol>\n1.');
-      markdown = markdown.replace(/^\d\.(.+)/gm, '<li>$1</li>');
-
       markdown = markdown.replace(/[\`]{1}([^\`]+)[\`]{1}/g, '<code>$1</code>');
-
-      markdown = markdown.replace(/[\*\_]{2}([^\*\_]+)[\*\_]{2}/g, '<b>$1</b>');
 
       markdown = markdown.replace(/[\*\_]{1}([^\*\_]+)[\*\_]{1}/g, '<i>$1</i>');
 
       markdown = markdown.replace(/\~~([^\~]+)\~~/g, '<del>$1</del>');
+
+      markdown = markdown.replace(/^\s*\n/gm, "<br>");
 
       return markdown;
     }
@@ -314,11 +312,7 @@ var themes = ["3024-day", "3024-night", "abcdef", "ambiance", "ambiance-mobile",
       var _this = this;
 
       console.log(this.content);
-      if (!this.content.trim()) {
-        console.log("No markdown entered in the editor.");
-        this.noMarkdownAlert = true;
-        return;
-      } else if (this.filename == "") {
+      if (this.filename == "") {
         console.log("No title entered");
         this.alertMessage = "No title entered!";
         this.noFilenameAlert = true;
@@ -362,9 +356,7 @@ var themes = ["3024-day", "3024-night", "abcdef", "ambiance", "ambiance-mobile",
             this.alertMessage = "Saved file!";
           }
           this.displayFileMessage('Saved note!');
-          console.log("LANGMODE", this.cmOptions.mode);
           this.showSnackbar = true;
-          console.log("ALL FILE IDS AFTR", this.all_file_ids);
         }
     },
     displayFileMessage: function displayFileMessage(message_content) {
@@ -420,13 +412,14 @@ var themes = ["3024-day", "3024-night", "abcdef", "ambiance", "ambiance-mobile",
         });
         _this2.uidCount = markdown_notes.length;
         _this2.markdown_notes = markdown_notes;
-        _this2.file = _this2.markdown_notes[0];
-        _this2.content = _this2.markdown_notes[0].content;
-        _this2.filename = _this2.markdown_notes[0].filename;
 
         if (_this2.markdown_notes.length == 0) {
           _this2.markdown_notes = _this2.sample_notes;
         }
+
+        _this2.file = _this2.markdown_notes[0];
+        _this2.content = _this2.markdown_notes[0].content;
+        _this2.filename = _this2.markdown_notes[0].filename;
       });
     },
     changeTheme: function changeTheme(theme) {
@@ -1090,16 +1083,19 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     slot: "title"
   }, [_c('i', {
     staticClass: "el-icon-setting"
-  }), _vm._v("Settings")]), _vm._v(" "), _c('el-menu-item-group', [_c('template', {
+  }), _vm._v("More")]), _vm._v(" "), _c('el-menu-item-group', [_c('template', {
     attrs: {
       "slot": "title"
     },
     slot: "title"
-  }, [_vm._v("Options")]), _vm._v(" "), _c('el-menu-item', {
+  }), _vm._v(" "), _c('el-menu-item', {
     attrs: {
       "index": "3-2"
+    },
+    on: {
+      "click": _vm.signOut
     }
-  }, [_vm._v("Enable Auto-Save")])], 2)], 2)], 1), _vm._v(" "), _c('small', {
+  }, [_vm._v("Logout")])], 2)], 2)], 1), _vm._v(" "), _c('small', {
     staticClass: "creds"
   }, [_vm._v("\n              Powered by Vue, Blockstack, and loads of regex. \n              Source code on "), _c('a', {
     attrs: {
@@ -1214,7 +1210,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         _vm.signIn($event)
       }
     }
-  }, [_vm._v("Sign In With Blockstack")])]), _vm._v(" "), _c('div', {
+  }, [_vm._v("Get Started")])]), _vm._v(" "), _c('div', {
     staticClass: "loader-anim",
     style: ({
       display: _vm.displayStatus
@@ -1262,4 +1258,4 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 /***/ })
 
 },[323]);
-//# sourceMappingURL=app.be86d83e8661673a9c7f.js.map
+//# sourceMappingURL=app.64489753c76a6c7df52d.js.map
