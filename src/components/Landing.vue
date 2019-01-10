@@ -3,15 +3,19 @@
   <div class="bg-img">
   </div>
       <section class="main">
-      <transition name="slide-in" appear>  
+      <transition name="fade" appear>  
         <h1 v-if="show">xq</h1>
       </transition>
-      <transition name="fade" appear @after="displayEncryptionAnimation()">
-        <span v-if="show" id="logo" v-on:click="displayEncryptionAnimation()">CODEVAULT</span>
+      <transition name="slide-in" appear>
+        <span v-if="show" id="logo" v-on:click="displayEncryptionAnimation()">xq</span>
       </transition>
       
       <transition name="fadeslogan" appear>
-        <p v-if="showSlogan">Live, decentralized markdown editor</p>
+        <p v-if="showSlogan">Welcome to a markdown editor that's:</p>
+      </transition>
+
+      <transition name="fadepointone" appear>
+        <p>Decentralized</p>
       </transition>
       
       <transition name="fadebutton" appear>
@@ -20,7 +24,7 @@
       </transition>
       
       <transition name="fadefooter" appear>
-        <small>2019 | Created By Silvia O'Dwyer | View on <a href="https://github.com/silvia-odwyer/codevault">GitHub</a></small>
+        <small>2019 | Created By Silvia O'Dwyer | View on <a href="https://github.com/silvia-odwyer/xq">GitHub</a></small>
       </transition>
     </section>
 
@@ -90,12 +94,10 @@ h1 {
 
 * {
   box-sizing: border-box;
-  background-color: black;
 }
 
 h1, small {
 font-family: "Roboto", sans-serif;
-color: white;
 text-align: center;
 }
 
@@ -107,14 +109,12 @@ p {
   font-family: "Source Sans Pro";
   font-size: 1.5em;
   font-weight: 400;
-  color: white;
 }
 
 span {
   font-size: 2em;
   font-family: "Roboto 400", sans-serif;
   /* color: rgb(89, 100, 117); */
-  color: white;
 }
 
 .bg-img {
@@ -123,7 +123,6 @@ span {
 }
 
 .main {
-  color: white;
   top: 30vh;
   right: 50vh;
   position: absolute;
@@ -146,7 +145,6 @@ button {
   display: block;
   padding: 0.7em;
   margin-bottom: 2em;
-  background-color: black;
   color: gray;
   cursor: pointer;
   font-family: "Roboto", sans-serif;
@@ -201,6 +199,16 @@ small {
 .fadefooter-enter, .fadefooter-leave-to {
   opacity: 0;
 }
+
+.fadepointone-enter-active, .fadepointone-leave-active {
+  transition: opacity 2s;
+  transition-delay: 3s;
+}
+
+.fadepointone-enter, .fadepointone-leave-to {
+  opacity: 0;
+}
+
 
 .slide-in-enter-active, .slide-in-leave-active {
   transition: opacity 2s;
