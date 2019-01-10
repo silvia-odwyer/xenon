@@ -123,7 +123,7 @@ export default {
             {
               id: this.uidCount++,
               hash_id: String(this.getDateNow()),
-              content: "Welcome!",
+              content: "# xq \nA markdown editor built for the decentralized web.\nMarkdown is parsed to HTML using regular expressions.\n### Issues or Bugs\nThis is still in alpha, so bugs or issues may arise. If so, please submit an issue. <3 Thanks! \n *Current State*: alpha",
               filename: "README",
               language: "markdown",
               completed: false,
@@ -131,7 +131,7 @@ export default {
             }],
       todo: '',
       uidCount: 0,
-      content: "# Sample note",
+      content: "# Welcome to xq!\n## Some markdown to get you started\n### H3 heading\n#### H4 Heading\nRegular line with some **bold** and *italic* text. \nImage and link support coming soon!\n> 'Insert some famous or inspirational quote here, because this is a blockquote.' \n> ~ Someone famous\n* Bullet point one\n* Bullet point two\n* Bullet point three\n~~Strikethrough text~~",
       color: "#890912",
       cmOptions: {
         // Configuring codemirror options.
@@ -182,19 +182,16 @@ export default {
       markdown = markdown.replace(/^(.+)\n\+=/gm, '<h1>$1</h1>');
       markdown = markdown.replace(/^(.+)\n\-+/gm, '<h2>$1</h2>');
 	  
-      //ul
-      markdown = markdown.replace(/^\s*\n\*/gm, '<ul>\n*');
-      markdown = markdown.replace(/^\*(.+)/gm, '<li>$1</li>');
+      // bold text
+      markdown = markdown.replace(/[\*\_]{2}([^\*\_]+)[\*\_]{2}/g, '<b>$1</b>');
       
-      //ol
-      markdown = markdown.replace(/^\s*\n\d\./gm, '<ol>\n1.');
-      markdown = markdown.replace(/^\d\.(.+)/gm, '<li>$1</li>');
+      //ul
+      markdown = markdown.replace(/^\*(.+)/gm, '<li>$1</li>');
 	  
       // code 
       markdown = markdown.replace(/[\`]{1}([^\`]+)[\`]{1}/g, '<code>$1</code>');
 
-      // bold text
-      markdown = markdown.replace(/[\*\_]{2}([^\*\_]+)[\*\_]{2}/g, '<b>$1</b>');
+
       
       // em should technically be for placing emphasis on certain words,
       // so [TODO] add a check for single-words only.
@@ -202,6 +199,9 @@ export default {
 
       // Strikethrough
       markdown = markdown.replace(/\~~([^\~]+)\~~/g, '<del>$1</del>');
+
+      // blank lines
+      markdown = markdown.replace(/^\s*\n/gm, "<br>")
 
       return(markdown); 
     }
@@ -227,12 +227,7 @@ export default {
   methods: {
     saveNote() {
       console.log(this.content);
-      if (!this.content.trim()) {
-        console.log("No markdown entered in the editor.")
-        this.noMarkdownAlert = true;  
-        return;
-      }
-      else if (this.filename == "") {
+      if (this.filename == "") {
         // TODO: Add modal which pops up to alert the user to enter a title.
         console.log("No title entered");
         this.alertMessage = "No title entered!"
@@ -287,9 +282,7 @@ export default {
 
         }
         this.displayFileMessage('Saved note!')
-        console.log("LANGMODE", this.cmOptions.mode)
         this.showSnackbar = true;
-        console.log("ALL FILE IDS AFTR", this.all_file_ids);
       }
     },
 	displayFileMessage(message_content) {
@@ -388,8 +381,8 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
-  .dashboard {
-
+  * {
+    font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",Arial,sans-serif;
   }
 
   .el-header, .el-footer {
@@ -464,7 +457,6 @@ label {
 .new_note {
   margin-left: 5em;
 }
-
 
 // Scrollbar styles
  /* width */
@@ -546,8 +538,26 @@ label {
 }
 
 .el-menu-item, .el-menu-item a {
-  font-family: "Helvetica Neue", sans-serif;
+  font-family: "Helvetica Neue", Helvetica, sans-serif;
   color: #909399;
   font-style: "none";
+}
+
+/deep/ h1, /deep/ h2, /deep/ h2 {
+    font-family: "Helvetica Neue", Helvetica, sans-serif;
+}
+
+/deep/ #content h2 {
+  font-size: 1.2em;
+}
+
+/deep/ #content h1 {
+  font-size: 1.7em;
+  margin-bottom: 0.4em;
+  margin-top: 0em;
+}
+
+/deep/ #content h3 {
+  font-size: 0.93em;
 }
 </style>
