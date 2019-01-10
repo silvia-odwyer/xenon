@@ -21,7 +21,7 @@
       
       <transition name="fadebutton" appear>
 
-      <button class="btn btn-default" @click.prevent="signIn">Sign In With Blockstack</button>
+      <button class="btn btn-default" @click.prevent="signIn">Get Started</button>
       </transition>
 
       <div class="loader-anim" v-bind:style="{ display: displayStatus }">
@@ -184,18 +184,19 @@ button {
   padding: 0.7em;
   margin-bottom: 2em;
   margin-top: 1em;
-  color: gray;
   cursor: pointer;
   font-family: "Roboto", sans-serif;
   font-weight: 300;
   margin-right: auto;
   margin-left: auto;
   font-size: 1.2em;
+  border: none;
+  border-radius: 0.2em;
 
 }
 
 button:hover {
-  background-color: rgb(67, 77, 78);
+  font-weight: 500
 }
 
 .main {

@@ -49,10 +49,10 @@
                      </el-menu-item-group>
                 </el-submenu>
                     <el-submenu index="3">
-                     <template slot="title"><i class="el-icon-setting"></i>Settings</template>
+                     <template slot="title"><i class="el-icon-setting"></i>More</template>
                      <el-menu-item-group>
-                        <template slot="title">Options</template>
-                        <el-menu-item index="3-2">Enable Auto-Save</el-menu-item>
+                        <template slot="title"></template>
+                        <el-menu-item index="3-2" v-on:click="signOut">Logout</el-menu-item>
                      </el-menu-item-group>
                     </el-submenu>
                   </el-submenu>
@@ -351,13 +351,14 @@ export default {
         })
         this.uidCount = markdown_notes.length
         this.markdown_notes = markdown_notes
-        this.file = this.markdown_notes[0];
-        this.content = this.markdown_notes[0].content;
-        this.filename = this.markdown_notes[0].filename;
 
         if (this.markdown_notes.length == 0) {
           this.markdown_notes = this.sample_notes;
         }
+
+        this.file = this.markdown_notes[0];
+        this.content = this.markdown_notes[0].content;
+        this.filename = this.markdown_notes[0].filename;
       })
     },
     changeTheme(theme) {
