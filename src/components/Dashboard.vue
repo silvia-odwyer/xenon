@@ -32,7 +32,10 @@
                      <template slot="title"><i class="el-icon-message"></i>Your Notes</template>
                      <el-menu-item-group>
                         <template slot="title">Recently Added</template>
-                        <el-menu-item index="1-1" v-for="note in markdown_notes" v-on:click="displayNote(note)">{{note.filename}}</el-menu-item>
+                        <el-menu-item index="1-1" v-for="note in markdown_notes" v-on:click="displayNote(note)" class="note_listing">{{note.filename}}
+                        <a @click.prevent="markdown_notes.splice(markdown_notes.indexOf(file), 1)" class="delete pull-right" href="#">x</a>
+
+                        </el-menu-item>
                      </el-menu-item-group>
                     </el-submenu>
                  <el-submenu index="2">
@@ -69,8 +72,8 @@
 
             <codemirror v-model="content" id="editor" :options="cmOptions"></codemirror>
             
-            <section id="content" v-model="markdownToHTML">
-            {{markdownToHTML}}
+            <section id="content" v-html="markdownToHTML">
+            <!-- {{markdownToHTML}} -->
             </section>
 
 
@@ -147,8 +150,8 @@ export default {
   computed: {
     markdownToHTML() {
       // Renders markdown in HTML using regex.
-      // Some may a bit buggy; submit Issues if you see any bugs. 
-      console.log("CONTENT:", this.content)
+      // Some may a bit buggy; submit an issue if you see any bugs. 
+      console.log("CONTENT:", this.content);
 
       // Look for beginning of a line that contains a hashtag, and replace the token in h1 tags. 
       let markdown = this.content.replace(/^\>(.+)/gm, "<blockquote>$1</blockquote>");
@@ -223,6 +226,7 @@ export default {
         console.log("No title entered");
         this.alertMessage = "No title entered!"
         this.noFilenameAlert = true;
+        this.displayFileMessage('No title entered!')
       }
 
       // Both code and title entered
@@ -483,4 +487,31 @@ label {
   color: black;
   direction: ltr;
 }
+
+.note_listing{
+  .delete {
+    text-decoration: none;
+    display: none;
+    cursor: pointer;
+  }
+
+  &:hover .delete {
+    display: inline;
+    color: grey;
+    &:hover {
+      text-decoration: none;
+      color: red;
+    }
+  }
+
+  .pull-right {
+    float: right;
+  }
+}
+
+.el-submenu .el-menu-item {
+  padding: 0px;
+  padding-right: 15px;
+}
+
 </style>
