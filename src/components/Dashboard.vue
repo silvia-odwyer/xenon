@@ -35,7 +35,7 @@
                      <template slot="title"><i class="el-icon-message"></i>Your Notes</template>
                      <el-menu-item-group>
                         <template slot="title">Recently Added</template>
-                        <el-menu-item :index="note.id" v-for="note in markdown_notes" v-on:click="displayNote(note)" class="note_listing">{{note.filename}}
+                        <el-menu-item :index="String(note.id)" v-for="note in markdown_notes" v-on:click="displayNote(note)" class="note_listing">{{note.filename}}
                         <a @click.prevent="markdown_notes.splice(markdown_notes.indexOf(file), 1)" class="delete pull-right" href="#">x</a>
 
                         </el-menu-item>
@@ -47,12 +47,12 @@
                         <template slot="title">All Themes Available</template>
                         <el-menu-item index="1-1" v-for="theme in themes" v-on:click="changeTheme(theme)">{{theme}}</el-menu-item>
                      </el-menu-item-group>
-                    </el-submenu>
+                </el-submenu>
                     <el-submenu index="3">
                      <template slot="title"><i class="el-icon-setting"></i>Settings</template>
                      <el-menu-item-group>
                         <template slot="title">Options</template>
-                        <el-menu-item>Enable Auto-Save</el-menu-item>
+                        <el-menu-item index="3-2">Enable Auto-Save</el-menu-item>
                      </el-menu-item-group>
                     </el-submenu>
                   </el-submenu>
@@ -544,4 +544,9 @@ label {
   margin-left: 59vw;
 }
 
+.el-menu-item, .el-menu-item a {
+  font-family: "Helvetica Neue", sans-serif;
+  color: #909399;
+  font-style: "none";
+}
 </style>
