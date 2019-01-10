@@ -215,14 +215,14 @@ var themes = ["3024-day", "3024-night", "abcdef", "ambiance", "ambiance-mobile",
     return {
       blockstack: window.blockstack,
       markdown_notes: [],
-      sample_notes: [{ id: this.uidCount++,
+      sample_notes: [{ id: 0,
         hash_id: String(this.getDateNow()),
-        content: "Sample note",
+        content: "# Welcome to xq!\n## Some markdown to get you started\n### H3 heading\n#### H4 Heading\nRegular line with some **bold** and *italic* text. \nImage and link support coming soon!\n> 'Insert some famous or inspirational quote here, because this is a blockquote.' \n> ~ Someone famous\n* Bullet point one\n* Bullet point two\n* Bullet point three\n~~Strikethrough text~~",
         filename: "Sample Note",
         language: "markdown",
         completed: false,
         date: this.getDateStamp() }, {
-        id: this.uidCount++,
+        id: 1,
         hash_id: String(this.getDateNow()),
         content: "# xq \nA markdown editor built for the decentralized web.\nMarkdown is parsed to HTML using regular expressions.\n### Issues or Bugs\nThis is still in alpha, so bugs or issues may arise. If so, please submit an issue. <3 Thanks! \n *Current State*: alpha",
         filename: "README",
@@ -232,7 +232,7 @@ var themes = ["3024-day", "3024-night", "abcdef", "ambiance", "ambiance-mobile",
       }],
       todo: '',
       uidCount: 0,
-      content: "# Welcome to xq!\n## Some markdown to get you started\n### H3 heading\n#### H4 Heading\nRegular line with some **bold** and *italic* text. \nImage and link support coming soon!\n> 'Insert some famous or inspirational quote here, because this is a blockquote.' \n> ~ Someone famous\n* Bullet point one\n* Bullet point two\n* Bullet point three\n~~Strikethrough text~~",
+      content: "",
       color: "#890912",
       cmOptions: {
         tabSize: 4,
@@ -391,6 +391,8 @@ var themes = ["3024-day", "3024-night", "abcdef", "ambiance", "ambiance-mobile",
       this.content = "";
       this.filename = "";
       this.isNewFile = true;
+
+      this.displayFileMessage('New note created!');
     },
     getDateStamp: function getDateStamp() {
       var date = new Date();
@@ -1002,8 +1004,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     },
     on: {
       "click": function($event) {
-        _vm.createNewNote();
-        _vm.displayFileMessage('New note created!')
+        _vm.createNewNote()
       }
     }
   }, [_vm._v("New Note")]), _vm._v(" "), _c('el-submenu', {
@@ -1178,7 +1179,9 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "name": "fadepointone",
       "appear": ""
     }
-  }, [(_vm.show) ? _c('h1', [_vm._v("xq")]) : _vm._e()]), _vm._v(" "), _c('transition', {
+  }, [(_vm.show) ? _c('h1', {
+    staticClass: "logo"
+  }, [_vm._v("xq")]) : _vm._e()]), _vm._v(" "), _c('transition', {
     attrs: {
       "name": "fade",
       "appear": ""
@@ -1258,4 +1261,4 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 /***/ })
 
 },[323]);
-//# sourceMappingURL=app.64489753c76a6c7df52d.js.map
+//# sourceMappingURL=app.75c3e24c903e19623008.js.map
