@@ -12,7 +12,7 @@
       </transition>
 
       <transition name="fade" appear>
-        <span v-if="showSlogan">markdown</span>
+        <span v-if="showSlogan" id="markdown">markdown</span>
       </transition>
 
       <transition name="fade" appear>
@@ -51,7 +51,12 @@ export default {
       displayStatus: "none"
     }
   },
-
+  mounted () {
+    let app = this;
+    window.setTimeout(() => {
+      app.displayMarkdownAnimation();
+    }, 1000);
+  },
   methods: {
     signIn () {
       const blockstack = this.blockstack;
@@ -59,8 +64,31 @@ export default {
       this.displayStatus = "flex";
 
       blockstack.redirectToSignIn();
+    },
+    displayMarkdownAnimation() {
+      let markdown_elem = document.getElementById("markdown");
+      let app = this;
+      var interval_id = window.setInterval(function(){app.animateText(markdown_elem);}, 900);
+
+    },
+    getRandomNumber(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    },
+    animateText(current_message){
+        let colors = ["red", "navy", "blue"];
+        current_message.style.color = colors[this.getRandomNumber(0, colors.length - 1)];
+
+        let styles = ["oblique", "italic", "normal", "underline"];
+        current_message.style.fontStyle = styles[this.getRandomNumber(0, styles.length - 1)];
+
+        let weights = ["bold", "normal"]
+        current_message.style.fontWeight = weights[this.getRandomNumber(0, weights.length - 1)];
+
+        let decorations = ["underline", "line-through", "none", "underline wavy blue", "undeline wavy red"];
+        current_message.style.textDecoration = decorations[this.getRandomNumber(0, decorations.length - 1)];
+
+        }
     }
-  }
 }
 </script>
 
