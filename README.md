@@ -1,10 +1,16 @@
-# Blockstack Todo App
+# xq-editor
 
 A markdown editor built for the decentralized web.
 
 Markdown is parsed to HTML using regular expressions. 
 
 Features include live rendering of your markdown in HTML, a minimal interface, and end-to-end encryption of files.
+
+### Try It Out
+You can try it out [here](https://xq-alpha.herokuapp.com). 
+
+### Issues or Bugs
+This is still in alpha, so bugs or issues may arise. If so, please submit an issue. <3 Thanks!
 
 ## Build Setup
 If you'd like to run your own instance of xq, whether for dev purposes or personal use, just execute the following:
@@ -28,3 +34,5 @@ npm run build
 npm run build --report
 
 ```
+
+*Current State*: alpha
