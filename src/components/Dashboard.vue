@@ -5,20 +5,20 @@
          <el-menu :default-active="activeIndex" class="el-menu" mode="horizontal">
             
             <el-menu-item index="1">xq</el-menu-item>
-            <el-submenu index="2">
+            <el-submenu index="2" class="logout">
                <template slot="title">File</template>
                <el-menu-item index="2-1">New</el-menu-item>
                <el-menu-item index="2-2">Save</el-menu-item>
-               <el-menu-item index="2-3">Help Desk</el-menu-item>
-               <el-submenu index="2-4">
-                  <template slot="title">Appearance</template>
-                  <el-menu-item index="2-4-1">Code Editor Theme</el-menu-item>
-                  <el-menu-item index="2-4-2">Dark Mode</el-menu-item>
-                  <el-menu-item index="2-4-3">Sidebar</el-menu-item>
-               </el-submenu>
+
             </el-submenu>
-              <el-button type="primary" class="sign-out" icon="el-icon-edit" @click.prevent="signOut"></el-button>
- 
+            <el-submenu index="3" class="gh">
+               <template slot="title">GitHub</template>
+               <el-menu-item index="2-1">View Repo</el-menu-item>
+               <el-menu-item index="2-2">Submit Issue</el-menu-item>
+
+            </el-submenu>
+              <!-- <el-button type="primary" class="sign-out" icon="el-icon-edit" @click.prevent="signOut"></el-button>
+  -->
          </el-menu>
          
       </el-header>
@@ -32,7 +32,7 @@
                      <template slot="title"><i class="el-icon-message"></i>Your Notes</template>
                      <el-menu-item-group>
                         <template slot="title">Recently Added</template>
-                        <el-menu-item index="1-1" v-for="note in markdown_notes" v-on:click="displayNote(note)" class="note_listing">{{note.filename}}
+                        <el-menu-item :index="note.id" v-for="note in markdown_notes" v-on:click="displayNote(note)" class="note_listing">{{note.filename}}
                         <a @click.prevent="markdown_notes.splice(markdown_notes.indexOf(file), 1)" class="delete pull-right" href="#">x</a>
 
                         </el-menu-item>
@@ -64,7 +64,7 @@
          <el-main>
            <el-row>
              <el-col :span="24">
-              <el-input placeholder="Note Name" v-model="filename"></el-input>
+              <el-input placeholder="Note Name" v-model="filename" class="title_input"></el-input>
             </el-col>
             </el-row>
 
@@ -83,19 +83,6 @@
                 <form @submit.prevent="saveNote()" :disabled="! content">
                 </form>
                 
-            <!-- <ul class="list-group">
-               <li v-for="note in md_notes"
-                  class="list-group-item"
-                  :class="{completed: note.completed}"
-                  :key="note.id">
-                  <label>
-                  <input type="checkbox" v-model="note.completed">{{ note.text }}
-                  </label>
-                  <a @click.prevent="md_notes.splice(md_notes.indexOf(note), 1)"
-                     class="delete pull-right"
-                     href="#">X</a>
-               </li>
-            </ul> -->
          </el-main>
       </el-container>
    </el-container>
@@ -122,6 +109,23 @@ export default {
     return {
       blockstack: window.blockstack,
       markdown_notes: [],
+      sample_notes: [{id: this.uidCount++,
+            hash_id: String(this.getDateNow()),
+            content: "Sample note",
+            filename: "Sample Note",
+            language: "markdown",
+            completed: false,
+            date: this.getDateStamp()},
+            
+            {
+              id: this.uidCount++,
+              hash_id: String(this.getDateNow()),
+              content: "Welcome!",
+              filename: "README",
+              language: "markdown",
+              completed: false,
+              date: this.getDateStamp()
+            }],
       todo: '',
       uidCount: 0,
       content: "# Sample note",
@@ -130,7 +134,7 @@ export default {
         // Configuring codemirror options.
         tabSize: 4,
         mode: "markdown",
-        theme: 'base16-dark',
+        theme: 'elegant',
         lineNumbers: true,
         autofocus: true,
         styleActiveLine: true,
@@ -202,7 +206,11 @@ export default {
   watch: {
     markdown_notes: {
       handler: function (markdown_notes) {
-        const blockstack = this.blockstack
+        const blockstack = this.blockstack;
+
+        if (markdown_notes.length == 0) {
+          this.markdown_notes = this.sample_notes;
+        }
 
         // encryption is now enabled by default
         return blockstack.putFile(STORAGE_FILE, JSON.stringify(markdown_notes))
@@ -340,6 +348,13 @@ export default {
         })
         this.uidCount = markdown_notes.length
         this.markdown_notes = markdown_notes
+        this.file = this.markdown_notes[0];
+        this.content = this.markdown_notes[0].content;
+        this.filename = this.markdown_notes[0].filename;
+
+        if (this.markdown_notes.length == 0) {
+          this.markdown_notes = this.sample_notes;
+        }
       })
     },
     changeTheme(theme) {
@@ -512,6 +527,19 @@ label {
 .el-submenu .el-menu-item {
   padding: 0px;
   padding-right: 15px;
+}
+
+.title_input {
+  width: 30%;
+}
+
+.logout {
+  float: right;
+  margin-right: 30vh;
+}
+
+.gh {
+  float: right;
 }
 
 </style>
