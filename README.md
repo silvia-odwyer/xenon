@@ -8,7 +8,7 @@ Features include live rendering of your markdown in HTML, a minimal interface, a
 
 ## Demo
 
-![A GIF demo as the app stands on 10/01/2019](https://raw.githubusercontent.com/silvia-odwyer/xq/master/screenshots/demo2_10_01_2019.gif)
+![A GIF demo as the app stands on 10/01/2019](https://github.com/silvia-odwyer/xq/blob/master/screenshots/demo2_10_01_2019.gif)
 
 ### Try It Out
 You can try it out [here](https://xq-alpha.herokuapp.com). 
