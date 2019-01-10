@@ -23,6 +23,13 @@
 
       <button class="btn btn-default" @click.prevent="signIn">Sign In With Blockstack</button>
       </transition>
+
+      <div class="loader-anim" v-bind:style="{ display: displayStatus }">
+        <div></div>
+        <div></div>
+        <div></div>
+        </div>
+        
       
       <transition name="fadefooter" appear>
         <small>2019 | Created By Silvia O'Dwyer | View on <a href="https://github.com/silvia-odwyer/xq">GitHub</a></small>
@@ -40,14 +47,18 @@ export default {
     return {
       blockstack: window.blockstack,
       show: true,
-      showSlogan: true
+      showSlogan: true,
+      displayStatus: "none"
     }
   },
 
   methods: {
     signIn () {
-      const blockstack = this.blockstack
-      blockstack.redirectToSignIn()
+      const blockstack = this.blockstack;
+      let button = document.getElementById("signInButton");
+      this.displayStatus = "flex";
+
+      blockstack.redirectToSignIn();
     }
   }
 }
@@ -229,4 +240,33 @@ small {
   opacity: 0;
 
 }
+
+@keyframes loader-anim {
+to {
+  opacity: 0.1;
+  transform: translate3d(0, -1rem, 0);
+  }
+}
+  
+  .loader-anim {
+    display: "none";
+    justify-content: center;
+  }
+
+  .loader-anim > div:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+
+  .loader-anim > div:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+
+  .loader-anim > div {
+    width: 1rem;
+    height: 1rem;
+    margin: 3rem 0.2rem;
+    background: #8385aa;
+    border-radius: 50%;
+    animation: loader-anim 0.6s infinite alternate;
+    }
 </style>
