@@ -5,19 +5,22 @@
          <el-menu :default-active="activeIndex" class="el-menu" mode="horizontal">
             
             <el-menu-item index="1">xq</el-menu-item>
-            <el-submenu index="2" class="logout">
+            <el-submenu index="2" class="options">
                <template slot="title">File</template>
-               <el-menu-item index="2-1">New</el-menu-item>
-               <el-menu-item index="2-2">Save</el-menu-item>
+               <el-menu-item index="2-1" v-on:click="createNewNote()">New</el-menu-item>
+               <el-menu-item index="2-2" v-on:click="saveNote()">Save</el-menu-item>
 
             </el-submenu>
             <el-submenu index="3" class="gh">
                <template slot="title">GitHub</template>
-               <el-menu-item index="2-1">View Repo</el-menu-item>
-               <el-menu-item index="2-2">Submit Issue</el-menu-item>
+               <el-menu-item index="3-1"><a href="https://github.com/silvia-odwyer/xq">View Repo</a></el-menu-item>
+               <el-menu-item index="3-2"><a href="https://github.com/silvia-odwyer/xq/issues">Submit Issue</a></el-menu-item>
 
             </el-submenu>
-              <!-- <el-button type="primary" class="sign-out" icon="el-icon-edit" @click.prevent="signOut"></el-button>
+            <el-menu-item index="4" class="logout" v-on:click="signOut">
+               Logout
+            </el-menu-item>
+              <!-- <el-button type="primary" class="sign-out" icon="el-icon-edit"></el-button>
   -->
          </el-menu>
          
@@ -533,13 +536,12 @@ label {
   width: 30%;
 }
 
-.logout {
-  float: right;
-  margin-right: 30vh;
+.logout, .gh, .options {
+
 }
 
-.gh {
-  float: right;
+.options {
+  margin-left: 59vw;
 }
 
 </style>
