@@ -3,15 +3,20 @@
   <div class="bg-img">
   </div>
       <section class="main">
-      <transition name="fade" appear>  
+      <transition name="fadeslogan" appear>  
         <h1 v-if="show">xq</h1>
       </transition>
-      <transition name="slide-in" appear>
-        <span v-if="show" id="logo" v-on:click="displayEncryptionAnimation()">xq</span>
-      </transition>
       
-      <transition name="fadeslogan" appear>
-        <p v-if="showSlogan">Welcome to a markdown editor that's:</p>
+      <transition name="fade" appear>
+        <span>A live and decentralized</span>
+      </transition>
+
+      <transition name="bold" appear>
+        <span v-if="showSlogan">markdown</span>
+      </transition>
+
+      <transition name="fade" appear>
+        <span v-if="showSlogan">editor</span>
       </transition>
 
       <transition name="fadepointone" appear>
@@ -102,20 +107,16 @@ text-align: center;
 }
 
 span {
-  font-size: 9em;
-}
-
-p {
   font-family: "Source Sans Pro";
   font-size: 1.5em;
   font-weight: 400;
 }
 
-span {
+/* span {
   font-size: 2em;
   font-family: "Roboto 400", sans-serif;
   /* color: rgb(89, 100, 117); */
-}
+
 
 .bg-img {
     -webkit-filter: blur(2px) brightness(50%);;
@@ -217,8 +218,16 @@ small {
 
 .slide-in-enter, .slide-in-leave-to {
   opacity: 0;
-  
 
 }
 
+.bold-enter-active, .bold-leave-active {
+  transition: opacity 2s;
+  transition-delay: 1s;
+}
+
+.bold-enter, .bold-leave-to {
+  opacity: 0;
+
+}
 </style>
