@@ -1,22 +1,41 @@
 <template>
-  <div class="landing">
-    <div class="content">
-      <transition name="fade">
+<div>
+  <div class="bg-img">
+  </div>
+      <section class="main">
+      <transition name="slide-in" appear>  
         <h1 v-if="show">xq</h1>
       </transition>
-      <p>A live markdown editor and storage bin based on <a href="https://blockstack.org" target="_blank">Blockstack</a></p>
+      <transition name="fade" appear @after="displayEncryptionAnimation()">
+        <span v-if="show" id="logo" v-on:click="displayEncryptionAnimation()">CODEVAULT</span>
+      </transition>
+      
+      <transition name="fadeslogan" appear>
+        <p v-if="showSlogan">Live, decentralized markdown editor</p>
+      </transition>
+      
+      <transition name="fadebutton" appear>
+
       <button class="btn btn-default" @click.prevent="signIn">Sign In With Blockstack</button>
-    </div>
+      </transition>
+      
+      <transition name="fadefooter" appear>
+        <small>2019 | Created By Silvia O'Dwyer | View on <a href="https://github.com/silvia-odwyer/codevault">GitHub</a></small>
+      </transition>
+    </section>
+
   </div>
 </template>
 
 <script>
+/*eslint-disable*/
 export default {
   name: 'landing',
   data () {
     return {
       blockstack: window.blockstack,
-      show: true
+      show: true,
+      showSlogan: true
     }
   },
 
@@ -66,4 +85,132 @@ h1 {
   transform: translateX(10px);
   opacity: 0;
 }
+
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro|Roboto:100,300,400,500');
+
+* {
+  box-sizing: border-box;
+  background-color: black;
+}
+
+h1, small {
+font-family: "Roboto", sans-serif;
+color: white;
+text-align: center;
+}
+
+span {
+  font-size: 9em;
+}
+
+p {
+  font-family: "Source Sans Pro";
+  font-size: 1.5em;
+  font-weight: 400;
+  color: white;
+}
+
+span {
+  font-size: 2em;
+  font-family: "Roboto 400", sans-serif;
+  /* color: rgb(89, 100, 117); */
+  color: white;
+}
+
+.bg-img {
+    -webkit-filter: blur(2px) brightness(50%);;
+    min-height: 100vh;
+}
+
+.main {
+  color: white;
+  top: 30vh;
+  right: 50vh;
+  position: absolute;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 2em;
+  text-align: center;
+  width: 50%;
+  font-family: "Roboto 100", sans-serif;
+}
+
+.landing {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+button {
+  display: block;
+  padding: 0.7em;
+  margin-bottom: 2em;
+  background-color: black;
+  color: gray;
+  cursor: pointer;
+  font-family: "Roboto", sans-serif;
+  font-weight: 300;
+  margin-right: auto;
+  margin-left: auto;
+  font-size: 1.2em;
+
+}
+
+button:hover {
+  background-color: rgb(67, 77, 78);
+}
+
+.main {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+small {
+  
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 2s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
+}
+
+.fadeslogan-enter-active, .fadeslogan-leave-active {
+  transition: opacity 2s;
+  transition-delay: 1s;
+}
+.fadeslogan-enter, .fadeslogan-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
+}
+
+.fadebutton-enter-active, .fadeslogan-leave-active {
+  transition: opacity 2s;
+  transition-delay: 2s;
+}
+.fadebutton-enter, .fadeslogan-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
+}
+
+.fadefooter-enter-active, .fadefooter-leave-active {
+  transition: opacity 2s;
+  transition-delay: 3s;
+}
+
+.fadefooter-enter, .fadefooter-leave-to {
+  opacity: 0;
+}
+
+.slide-in-enter-active, .slide-in-leave-active {
+  transition: opacity 2s;
+  transition-delay: 4s;
+}
+
+.slide-in-enter, .slide-in-leave-to {
+  opacity: 0;
+  
+
+}
+
 </style>
