@@ -3,24 +3,20 @@
   <div class="bg-img">
   </div>
       <section class="main">
-      <transition name="fadeslogan" appear>  
-        <h1 v-if="show">xq</h1>
+      <transition name="fadepointone" appear>  
+        <h1 v-if="show" >xq</h1>
       </transition>
       
       <transition name="fade" appear>
         <span>A live and decentralized</span>
       </transition>
 
-      <transition name="bold" appear>
+      <transition name="fade" appear>
         <span v-if="showSlogan">markdown</span>
       </transition>
 
       <transition name="fade" appear>
         <span v-if="showSlogan">editor</span>
-      </transition>
-
-      <transition name="fadepointone" appear>
-        <p>Decentralized</p>
       </transition>
       
       <transition name="fadebutton" appear>
@@ -79,6 +75,8 @@ h1 {
   display: inline;
   margin-right: auto;
   margin-left: auto;
+  display: block;
+  width: 20%;
 }
 
 /* Enter and leave animations can use different */
@@ -124,7 +122,7 @@ span {
 }
 
 .main {
-  top: 30vh;
+  top: 10vh;
   right: 50vh;
   position: absolute;
   margin-left: auto;
@@ -146,6 +144,7 @@ button {
   display: block;
   padding: 0.7em;
   margin-bottom: 2em;
+  margin-top: 1em;
   color: gray;
   cursor: pointer;
   font-family: "Roboto", sans-serif;
@@ -203,7 +202,7 @@ small {
 
 .fadepointone-enter-active, .fadepointone-leave-active {
   transition: opacity 2s;
-  transition-delay: 3s;
+  transition-delay: 4s;
 }
 
 .fadepointone-enter, .fadepointone-leave-to {
