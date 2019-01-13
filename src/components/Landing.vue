@@ -4,7 +4,7 @@
   </div>
       <section class="main">
       <transition name="fadepointone" appear>  
-        <h1 v-if="show" >xq</h1>
+        <h1 v-if="show" class="logo">xq</h1>
       </transition>
       
       <transition name="fade" appear>
@@ -28,8 +28,7 @@
         <div></div>
         <div></div>
         <div></div>
-        </div>
-        
+      </div>  
       
       <transition name="fadefooter" appear>
         <small>2019 | Created By Silvia O'Dwyer | View on <a href="https://github.com/silvia-odwyer/xq">GitHub</a></small>
@@ -105,10 +104,13 @@ export default {
   font-family: "Helvetica Neue", sans-serif;
 }
 
+.logo {
+  font-family: "Roboto Condensed", sans-serif;
+}
+
 h1 {
   font-size: 3em;
   text-align: center;
-  border: solid black 0.1em;
   border-radius: 0.5em;
   padding: 0.5em;
   display: inline;
@@ -132,8 +134,7 @@ h1 {
   opacity: 0;
 }
 
-@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro|Roboto:100,300,400,500');
-
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro|Roboto:100,300,400,500|Montserrat');
 * {
   box-sizing: border-box;
 }

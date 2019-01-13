@@ -30,7 +30,7 @@
            
             <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
                <el-menu :default-openeds="['1', '3']">
-                  <el-button type="primary" plain icon="el-icon-edit" class="new_note" v-on:click="createNewNote(); displayFileMessage('New note created!')">New Note</el-button>
+                  <el-button type="primary" plain icon="el-icon-edit" class="new_note" v-on:click="createNewNote()">New Note</el-button>
                   <el-submenu index="1">
                      <template slot="title"><i class="el-icon-message"></i>Your Notes</template>
                      <el-menu-item-group>
@@ -92,7 +92,8 @@
 </template>
 
 <script>
-import {codemirror} from 'vue-codemirror'
+
+import { codemirror } from 'vue-codemirror'
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/theme/base16-dark.css'
 import 'codemirror/theme/abcdef.css'
@@ -103,461 +104,481 @@ import 'codemirror/addon/selection/mark-selection.js'
 
 var STORAGE_FILE = 'markdown_files.json'
 var themes = ["3024-day", "3024-night", "abcdef", "ambiance", "ambiance-mobile", "base16-dark", "base16-light", "bespin", "blackboard", "cobalt", "colorforth", "darcula", "duotone-dark", "duotone-light", "eclipse", "elegant", "erlang-dark",
-"gruvbox-dark", "hopscotch", "ice-coder", "idea", "isotope", "lesser-dark", "liquibyte", "lucario", "material", "mbo", "mdn-like", "midnight", "monokai", "neat", "neo", "night", "oceanic-next", "panda-syntax", "paraiso-dark", "paraiso-light", "pastel-on-dark", "railscasts", "rubyblue", "seti", "shadowfox", "solarized", "ssms", "the-matrix", "tomorrow-night-bright", "tomorrow-night-eighties", "ttcn", "twilight", "vibrant-ink", "xq-dark", "xq-light", "yeti", "zenburn"];
+	"gruvbox-dark", "hopscotch", "ice-coder", "idea", "isotope", "lesser-dark", "liquibyte", "lucario", "material", "mbo", "mdn-like", "midnight", "monokai", "neat", "neo", "night", "oceanic-next", "panda-syntax", "paraiso-dark", "paraiso-light", "pastel-on-dark", "railscasts", "rubyblue", "seti", "shadowfox", "solarized", "ssms", "the-matrix", "tomorrow-night-bright", "tomorrow-night-eighties", "ttcn", "twilight", "vibrant-ink", "xq-dark", "xq-light", "yeti", "zenburn"
+];
 
 export default {
-  name: 'dashboard',
-  props: ['user'],
-  data () {
-    return {
-      blockstack: window.blockstack,
-      markdown_notes: [],
-      sample_notes: [{id: this.uidCount++,
-            hash_id: String(this.getDateNow()),
-            content: "Sample note",
-            filename: "Sample Note",
-            language: "markdown",
-            completed: false,
-            date: this.getDateStamp()},
-            
-            {
-              id: this.uidCount++,
-              hash_id: String(this.getDateNow()),
-              content: "# xq \nA markdown editor built for the decentralized web.\nMarkdown is parsed to HTML using regular expressions.\n### Issues or Bugs\nThis is still in alpha, so bugs or issues may arise. If so, please submit an issue. <3 Thanks! \n *Current State*: alpha",
-              filename: "README",
-              language: "markdown",
-              completed: false,
-              date: this.getDateStamp()
-            }],
-      todo: '',
-      uidCount: 0,
-      content: "# Welcome to xq!\n## Some markdown to get you started\n### H3 heading\n#### H4 Heading\nRegular line with some **bold** and *italic* text. \nImage and link support coming soon!\n> 'Insert some famous or inspirational quote here, because this is a blockquote.' \n> ~ Someone famous\n* Bullet point one\n* Bullet point two\n* Bullet point three\n~~Strikethrough text~~",
-      color: "#890912",
-      cmOptions: {
-        // Configuring codemirror options.
-        tabSize: 4,
-        mode: "markdown",
-        theme: 'elegant',
-        lineNumbers: true,
-        autofocus: true,
-        styleActiveLine: true,
-        line: true,
-        lineWrapping: true
-      }, 
-      themes: themes,
-      activeIndex: "1",
-      alertMessage: "",
-      filename: "",
-      noMarkdownAlert: false, 
-      noFilenameAlert: false,
-      isNewFile: false,
-      file : ""
-    }
-  },
-  computed: {
-    markdownToHTML() {
-      // Renders markdown in HTML using regex.
-      // Some may a bit buggy; submit an issue if you see any bugs. 
-      console.log("CONTENT:", this.content);
-
-      // Look for beginning of a line that contains a hashtag, and replace the token in h1 tags. 
-      let markdown = this.content.replace(/^\>(.+)/gm, "<blockquote>$1</blockquote>");
-
-      // h5
-      markdown = markdown.replace(/[\#]{5}(.+)/gm, "<h5>$1</h5>");
-
-      // h4
-      markdown = markdown.replace(/[\#]{4}(.+)/gm, "<h4>$1</h4>");
-
-      // h3
-      markdown = markdown.replace(/[\#]{3}(.+)/gm, "<h3>$1</h3>");
-      
-      // h2
-      markdown = markdown.replace(/[\#]{2}(.+)/gm, "<h2>$1</h2>")
-
-      // h1
-      markdown = markdown.replace(/[\#]{1}(.+)/gm, "<h1>$1</h1>")
-
-      // h1 and h2s that consist of equals/plus signs underneath 
-      markdown = markdown.replace(/^(.+)\n\+=/gm, '<h1>$1</h1>');
-      markdown = markdown.replace(/^(.+)\n\-+/gm, '<h2>$1</h2>');
-	  
-      // bold text
-      markdown = markdown.replace(/[\*\_]{2}([^\*\_]+)[\*\_]{2}/g, '<b>$1</b>');
-      
-      //ul
-      markdown = markdown.replace(/^\*(.+)/gm, '<li>$1</li>');
-	  
-      // code 
-      markdown = markdown.replace(/[\`]{1}([^\`]+)[\`]{1}/g, '<code>$1</code>');
-
-
-      
-      // em should technically be for placing emphasis on certain words,
-      // so [TODO] add a check for single-words only.
-      markdown = markdown.replace(/[\*\_]{1}([^\*\_]+)[\*\_]{1}/g, '<i>$1</i>');
-
-      // Strikethrough
-      markdown = markdown.replace(/\~~([^\~]+)\~~/g, '<del>$1</del>');
-
-      // blank lines
-      markdown = markdown.replace(/^\s*\n/gm, "<br>")
-
-      return(markdown); 
-    }
-  },
-  watch: {
-    markdown_notes: {
-      handler: function (markdown_notes) {
-        const blockstack = this.blockstack;
-
-        if (markdown_notes.length == 0) {
-          this.markdown_notes = this.sample_notes;
-        }
-
-        // encryption is now enabled by default
-        return blockstack.putFile(STORAGE_FILE, JSON.stringify(markdown_notes))
-      },
-      deep: true
-    }
-  },
-  mounted () {
-    this.fetchData()
-  },
-  methods: {
-    saveNote() {
-      console.log(this.content);
-      if (this.filename == "") {
-        // TODO: Add modal which pops up to alert the user to enter a title.
-        console.log("No title entered");
-        this.alertMessage = "No title entered!"
-        this.noFilenameAlert = true;
-        this.displayFileMessage('No title entered!')
-      }
-
-      // Both code and title entered
-      else {
-
-        let datestamp = this.getDateStamp();
-        // If all_file_ids contains the current ID, then the file exists already
-        // Update the file, rather than create a new one
-        if (this.isNewFile) {
-          // Create a new file.
-
-          this.markdown_notes.unshift({
-            id: this.uidCount++,
-            hash_id: String(this.getDateNow()),
-            content: this.content.trim(),
-            filename: this.filename,
-            language: this.cmOptions.mode,
-            completed: false,
-            date: datestamp
-          })
-
-          console.log(this.markdown_notes);
-          this.alertMessage = `New file ${this.filename} saved!`;
-          this.isNewFile = false;
-        }
-
-        else {
-          console.log("file already exists");
-          console.log("this.file", this.file);
-
-          let current_file = this.markdown_notes.filter(file => file.hash_id == this.file.hash_id)[0];
-          console.log(current_file)
-
-          // Save code
-          current_file.content = this.content;
-
-          // Save title
-          this.updateTitle(current_file);
-
-          // Update language
-          current_file.language = this.cmOptions.mode;
-
-          // Update datestamp
-          current_file.datestamp = datestamp
-
-          this.alertMessage = "Saved file!"
-
-        }
-        this.displayFileMessage('Saved note!')
-        this.showSnackbar = true;
-      }
-    },
-	displayFileMessage(message_content) {
-		this.$message(message_content);
+	name: 'dashboard',
+	props: ['user'],
+	data() {
+		return {
+			blockstack: window.blockstack,
+			markdown_notes: [],
+			sample_notes: [],
+			todo: '',
+			uidCount: 0,
+			content: "",
+			color: "#890912",
+			cmOptions: {
+				// Configuring codemirror options.
+				tabSize: 4,
+				mode: "markdown",
+				theme: 'elegant',
+				lineNumbers: true,
+				autofocus: true,
+				styleActiveLine: true,
+				line: true,
+				lineWrapping: true
+			},
+			themes: themes,
+			activeIndex: "1",
+			alertMessage: "",
+			filename: "",
+			noMarkdownAlert: false,
+			noFilenameAlert: false,
+			isNewFile: false,
+			file: ""
+		}
 	},
-    updateTitle(file) {
-      if (this.filename == "") {
-            // TODO: Add a modal popup saying that the title must not be empty.
-          }
-          else {
-            file.filename = this.filename;
-      }
-    },
-    displayNote(file) {
-      this.file = file; 
-      console.log("DSPLYNOTES: ", this.markdown_notes);
-      console.log("displayCode for ", file);
-      
-      // Update code in the code editor
-      this.content = file.content;
-      console.log("current markdown content is", this.content);
+	computed: {
+		markdownToHTML() {
+			// Renders markdown in HTML using regex.
+			// Some may a bit buggy; submit an issue if you see any bugs. 
+			console.log("CONTENT:", this.content);
 
-      // Update the file's title
-      this.filename = file.filename;
-      this.current_file_id = file.id;
-      console.log("CURRENT FILE ID: ", this.current_file_id);
+			// Look for the beginning of a line that contains a greater-than symbol, 
+			// and enclose the token in blockquote tags. 
+			let markdown = this.content.replace(/^\>(.+)/gm, "<blockquote>$1</blockquote>");
 
-      // Update language mode
-      this.cmOptions.mode = file.language;
-      
-      // Scroll to the top of the page
-      window.scrollTo(0, 0);
-    },
-    getDateNow() {
-      let time = Date.now();
-      return time;
-    },
-    createNewNote() {
-      this.content = "";
-      this.filename = "";
-      this.isNewFile = true;
-    },
-    getDateStamp() {
-      let date = new Date();
-      let dd = date.getDate();
-      let mm = date.getMonth() + 1;
-      let yy = date.getFullYear();
-      
-      let datestamp = `${dd}/${mm}/${yy}`
-      return datestamp;
-    },
-    fetchData () {
-      const blockstack = this.blockstack
-      blockstack.getFile(STORAGE_FILE) // decryption is enabled by default
-      .then((todosText) => {
-        var markdown_notes = JSON.parse(todosText || '[]')
-        markdown_notes.forEach(function (note, index) {
-          note.id = index
-        })
-        this.uidCount = markdown_notes.length
-        this.markdown_notes = markdown_notes
+			// h5
+			markdown = markdown.replace(/[\#]{5}(.+)/gm, "<h5>$1</h5>");
 
-        if (this.markdown_notes.length == 0) {
-          this.markdown_notes = this.sample_notes;
-        }
+			// h4
+			markdown = markdown.replace(/[\#]{4}(.+)/gm, "<h4>$1</h4>");
 
-        this.file = this.markdown_notes[0];
-        this.content = this.markdown_notes[0].content;
-        this.filename = this.markdown_notes[0].filename;
-      })
-    },
-    changeTheme(theme) {
-      console.log("Theme changed to", theme);
-      this.getTheme(theme);
-      this.cmOptions.theme = theme;
-    },
-    getTheme(theme) {
-      return import('codemirror/theme/' + theme + '.css');
-    },
-    handleOpen(key, keyPath) {
-        console.log(key, keyPath);
-    },
-    handleClose(key, keyPath) {
-        console.log(key, keyPath);
-    },
+			// h3
+			markdown = markdown.replace(/[\#]{3}(.+)/gm, "<h3>$1</h3>");
 
-    signOut () {
-      this.blockstack.signUserOut(window.location.href)
-    }
-  },
-  components : {
-    codemirror
-  }
+			// h2
+			markdown = markdown.replace(/[\#]{2}(.+)/gm, "<h2>$1</h2>")
+
+			// h1
+			markdown = markdown.replace(/[\#]{1}(.+)/gm, "<h1>$1</h1>")
+
+			// h1 and h2s that consist of equals/plus signs underneath 
+			markdown = markdown.replace(/^(.+)\n\+=/gm, '<h1>$1</h1>');
+			markdown = markdown.replace(/^(.+)\n\-+/gm, '<h2>$1</h2>');
+
+			// bold text
+			markdown = markdown.replace(/[\*\_]{2}([^\*\_]+)[\*\_]{2}/g, '<b>$1</b>');
+
+			//ul
+			markdown = markdown.replace(/^\*(.+)/gm, '<li>$1</li>');
+			markdown = markdown.replace(/^\-(.+)/gm, '<li>$1</li>')
+
+			// code 
+			markdown = markdown.replace(/[\`]{1}([^\`]+)[\`]{1}/g, '<code>$1</code>');
+
+			// em should technically be for placing emphasis on certain words,
+			// so [TODO] add a check for single-words only.
+			markdown = markdown.replace(/[\*\_]{1}([^\*\_]+)[\*\_]{1}/g, '<i>$1</i>');
+
+			// Strikethrough
+			markdown = markdown.replace(/\~~([^\~]+)\~~/g, '<del>$1</del>');
+
+			// blank lines
+			markdown = markdown.replace(/^\s*\n/gm, "<br>");
+
+			return (markdown);
+		}
+	},
+	watch: {
+		markdown_notes: {
+			handler: function (markdown_notes) {
+				const blockstack = this.blockstack;
+
+				if (markdown_notes.length == 0) {
+					this.markdown_notes = this.sample_notes;
+				}
+
+				// encryption is now enabled by default
+				return blockstack.putFile(STORAGE_FILE, JSON.stringify(markdown_notes))
+			},
+			deep: true
+		}
+	},
+	mounted() {
+		this.fetchData();
+		this.generateSampleNotes();
+	},
+	methods: {
+		generateSampleNotes() {
+			// A method to generate sample notes (as they were hardcoded before)
+			// which will make sample note generation easier when tailoring sample notes to certain groups (devs vs consumers), 
+
+			// Will be used for creating templates in the future.
+			let note_contents = [{
+					title: "README",
+					content: "# Welcome to xq!\n## Some markdown to get you started\n### H3 heading\n#### H4 Heading\nRegular line with some **bold** and *italic* text. \nImage and link support coming soon!\n> 'Insert some famous or inspirational quote here, because this is a blockquote.' \n> ~ Someone famous\n* Bullet point one\n* Bullet point two\n* Bullet point three\n~~Strikethrough text~~"
+				},
+				{
+					title: "Sample Note",
+					note: "# xq \nA markdown editor built for the decentralized web.\nMarkdown is parsed to HTML using regular expressions.\n### Issues or Bugs\nThis is still in alpha, so bugs or issues may arise. If so, please submit an issue. <3 Thanks! \n *Current State*: alpha"
+				}
+			];
+
+			let generic_note = {
+				id: 0,
+				hash_id: "",
+				content: "",
+				filename: "Sample Note",
+				language: "markdown",
+				completed: false,
+				date: this.getDateStamp()
+			}
+
+			for (let k = 0; k < note_contents.length; k++) {
+				generic_note.id = k;
+				generic_note.hash_id = String(this.getDateNow());
+				generic_note.content = note_contents[k].content;
+				generic_note.title = note_contents[k].title;
+				this.sample_notes.push(generic_note);
+			}
+		},
+		saveNote() {
+			if (this.filename == "") {
+				this.noFilenameAlert = true;
+				this.displayFileMessage('No title entered!')
+			}
+
+			// Both code and title entered
+			else {
+				let datestamp = this.getDateStamp();
+				// If all_file_ids contains the current ID, then the file exists already
+				// Update the file, rather than create a new one
+
+				if (this.isNewFile) {
+					// Create a new file.
+					this.markdown_notes.unshift({
+						id: this.uidCount++,
+						hash_id: String(this.getDateNow()),
+						content: this.content.trim(),
+						filename: this.filename,
+						language: this.cmOptions.mode,
+						completed: false,
+						date: datestamp
+					})
+
+					this.alertMessage = `New file ${this.filename} saved!`;
+					this.isNewFile = false;
+        } 
+        else {
+          // Retrieve the file of interest
+					let current_file = this.markdown_notes.filter(file => file.hash_id == this.file.hash_id)[0];
+
+					// Save 
+					current_file.content = this.content;
+
+					// Save title
+					this.updateTitle(current_file);
+
+					// Update language
+					current_file.language = this.cmOptions.mode;
+
+					// Update datestamp
+					current_file.datestamp = datestamp
+
+					this.alertMessage = "Saved file!"
+
+				}
+				this.displayFileMessage('Saved note!')
+				this.showSnackbar = true;
+			}
+		},
+		displayFileMessage(message_content) {
+			this.$message(message_content);
+		},
+		updateTitle(file) {
+			if (this.filename == "") {
+				// TODO: Add a modal popup saying that the title must not be empty.
+			} else {
+				file.filename = this.filename;
+			}
+		},
+		displayNote(file) {
+			this.file = file;
+
+			// Update code in the code editor
+			this.content = file.content;
+
+			// Update the file's title
+			this.filename = file.filename;
+			this.current_file_id = file.id;
+
+			// Update language mode
+			this.cmOptions.mode = file.language;
+
+			// Scroll to the top of the page
+			window.scrollTo(0, 0);
+		},
+		getDateNow() {
+			let time = Date.now();
+			return time;
+		},
+		createNewNote() {
+			this.content = "";
+			this.filename = "";
+			this.isNewFile = true;
+
+			this.displayFileMessage('New note created!')
+		},
+		getDateStamp() {
+			let date = new Date();
+			let dd = date.getDate();
+			let mm = date.getMonth() + 1;
+			let yy = date.getFullYear();
+
+			let datestamp = `${dd}/${mm}/${yy}`
+			return datestamp;
+		},
+		fetchData() {
+			const blockstack = this.blockstack
+			blockstack.getFile(STORAGE_FILE) // decryption is enabled by default
+				.then((todosText) => {
+					var markdown_notes = JSON.parse(todosText || '[]')
+					markdown_notes.forEach(function (note, index) {
+						note.id = index
+					})
+					this.uidCount = markdown_notes.length
+					this.markdown_notes = markdown_notes
+
+					if (this.markdown_notes.length == 0) {
+						this.markdown_notes = this.sample_notes;
+					}
+
+					this.file = this.markdown_notes[0];
+					this.content = this.markdown_notes[0].content;
+					this.filename = this.markdown_notes[0].filename;
+				})
+		},
+		changeTheme(theme) {
+			console.log("Theme changed to", theme);
+			this.getTheme(theme);
+			this.cmOptions.theme = theme;
+		},
+		getTheme(theme) {
+			return import ('codemirror/theme/' + theme + '.css');
+		},
+		handleOpen(key, keyPath) {
+			console.log(key, keyPath);
+		},
+		handleClose(key, keyPath) {
+			console.log(key, keyPath);
+		},
+
+		signOut() {
+			this.blockstack.signUserOut(window.location.href)
+		}
+	},
+	components: {
+		codemirror
+	}
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
-  * {
-    font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",Arial,sans-serif;
-  }
 
-  .el-header, .el-footer {
-    color: #333;
-    font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+* {
+	font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+}
 
-  }
-  
-  .el-aside {
-    color: #333;
-    font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
-    margin-top: 1em;
-  }
+.el-header,
+.el-footer {
+	color: #333;
+	font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+}
 
-  .outer_aside {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .el-main {
-    color: #333;
-    font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
-    padding: 5vh;
-  }
+.el-aside {
+	color: #333;
+	font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+	margin-top: 1em;
+}
 
-  .el-input {
-    margin-bottom: 1em;
-  }
+.outer_aside {
+	display: flex;
+	flex-direction: column;
+}
 
+.el-main {
+	color: #333;
+	font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+	padding: 5vh;
+}
+
+.el-input {
+	margin-bottom: 1em;
+}
 
 .dashboard {
-  height: 100vh;
+	height: 100vh;
 }
 
 .creds {
-  margin-top: auto;
+	margin-top: auto;
 }
 
 #editor {
-  padding: 0;
-  margin-bottom: 1em;
-  margin-right: 1em;
+	padding: 0;
+	margin-bottom: 1em;
+	margin-right: 1em;
 }
-  
+
 label {
-  margin-bottom: 0;
-  // width: 100%;
-  cursor: pointer;
-  input[type="checkbox"] {
-    margin-right: 5px;
-  }
+	margin-bottom: 0;
+	// width: 100%;
+	cursor: pointer;
+	input[type="checkbox"] {
+		margin-right: 5px;
+	}
 }
+
 .list-group-item {
-  &.completed label {
-    text-decoration: line-through;
-  }
-
-  .delete {
-    display: none;
-  }
-
-  &:hover .delete {
-    display: inline;
-    color: grey;
-    &:hover {
-      text-decoration: none;
-      color: red;
-    }
-  }
+	&.completed label {
+		text-decoration: line-through;
+	}
+	.delete {
+		display: none;
+	}
+	&:hover .delete {
+		display: inline;
+		color: grey;
+		&:hover {
+			text-decoration: none;
+			color: red;
+		}
+	}
 }
 
 .new_note {
-  margin-left: 5em;
+	margin-left: 5em;
 }
 
 // Scrollbar styles
- /* width */
+
+/* width */
+
 ::-webkit-scrollbar {
-  width: 8px;
-  border-radius: 0.2em;
+	width: 8px;
+	border-radius: 0.2em;
 }
+
 
 /* Track */
+
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+	background: #f1f1f1;
 }
+
 
 /* Handle */
+
 ::-webkit-scrollbar-thumb {
-  background: #888;
+	background: #888;
 }
+
 
 /* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-  background: #555;
-} 
 
-#live_area {
-  display: flex;
-  flex-wrap: wrap;
+::-webkit-scrollbar-thumb:hover {
+	background: #555;
 }
 
-#editor, #content {
-  display: inline-block;
-  flex-grow: 1;
-  width: calc(100% * (1/2) - 10px - 1px);
-  vertical-align:top;
+#live_area {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+#editor,
+#content {
+	display: inline-block;
+	flex-grow: 1;
+	width: calc(100% * (1/2) - 10px - 1px);
+	vertical-align: top;
 }
 
 .CodeMirror {
-  font-family: sans-serif;
-  height: 100vh;
-  color: black;
-  direction: ltr;
+	font-family: sans-serif;
+	height: 100vh;
+	color: black;
+	direction: ltr;
 }
 
-.note_listing{
-  .delete {
-    text-decoration: none;
-    display: none;
-    cursor: pointer;
-  }
-
-  &:hover .delete {
-    display: inline;
-    color: grey;
-    &:hover {
-      text-decoration: none;
-      color: red;
-    }
-  }
-
-  .pull-right {
-    float: right;
-  }
+.note_listing {
+	.delete {
+		text-decoration: none;
+		display: none;
+		cursor: pointer;
+	}
+	&:hover .delete {
+		display: inline;
+		color: grey;
+		&:hover {
+			text-decoration: none;
+			color: red;
+		}
+	}
+	.pull-right {
+		float: right;
+	}
 }
 
 .el-submenu .el-menu-item {
-  padding: 0px;
-  padding-right: 15px;
+	padding: 0px;
+	padding-right: 15px;
 }
 
 .title_input {
-  width: 30%;
+	width: 30%;
 }
 
-.logout, .gh, .options {
-
-}
+.logout,
+.gh,
+.options {}
 
 .options {
-  margin-left: 59vw;
+	margin-left: 59vw;
 }
 
-.el-menu-item, .el-menu-item a {
-  font-family: "Helvetica Neue", Helvetica, sans-serif;
-  color: #909399;
-  font-style: "none";
+.el-menu-item,
+.el-menu-item a {
+	font-family: "Helvetica Neue", Helvetica, sans-serif;
+	color: #909399;
+	font-style: "none";
 }
 
-/deep/ h1, /deep/ h2, /deep/ h2 {
-    font-family: "Helvetica Neue", Helvetica, sans-serif;
+/deep/ h1,
+/deep/ h2,
+/deep/ h2 {
+	font-family: "Helvetica Neue", Helvetica, sans-serif;
 }
 
 /deep/ #content h2 {
-  font-size: 1.2em;
-}
-
-/deep/ #content h1 {
-  font-size: 1.7em;
-  margin-bottom: 0.4em;
+	font-size: 1.2em;
   margin-top: 0em;
 }
 
+/deep/ #content h1 {
+	font-size: 1.7em;
+	margin-bottom: 0.4em;
+	margin-top: 0em;
+}
+
 /deep/ #content h3 {
-  font-size: 0.93em;
+	font-size: 0.93em;
+}
+
+/deep/ #content {
+  margin-top: 0;
 }
 </style>
