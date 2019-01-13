@@ -13,6 +13,8 @@ Features include live rendering of your markdown in HTML, a minimal interface, a
 ### Try It Out
 You can try it out [here](https://xq-alpha.herokuapp.com). 
 
+Please ensure you're using Chrome, as Blockstack support for Firefox is patchy at the moment, and non-existent for >IE. 
+
 ### Issues or Bugs
 This is still in alpha, so bugs or issues may arise. If so, please submit an issue. <3 Thanks!
 
@@ -25,7 +27,7 @@ git clone https://github.com/silvia-odwyer/xq
 cd xq
 
 # install dependencies
-# previously we used yarn install. This is no longer supported.
+# yarn install is no longer supported.
 npm install
 
 # serve with hot reload at localhost:8080
