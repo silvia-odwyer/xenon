@@ -13,7 +13,17 @@ Features include live rendering of your markdown in HTML, a minimal interface, a
 ### Try It Out
 You can try it out [here](https://xq-alpha.herokuapp.com). 
 
-Please ensure you're using Chrome, as Blockstack support for Firefox is patchy at the moment, and non-existent for >IE. 
+### Not Working?
+Browser support for Blockstack is still in alpha at the moment, so you may find that the app remains
+on the landing page or doesn't log you in successfully. 
+
+**To ensure a successful experience**, make sure you are either: 
+- using the latest version of Chrome. 
+*or*
+-  have installed the [Blockstack browser](https://blockstack.org/install/), which allows you to use the app without browser support issues.
+
+*Alternative Browsers*
+Please ensure you're using Chrome, as Blockstack support for Firefox is patchy at the moment (works with an unofficial Blockstack Firefox extension), and non-existent for >IE. 
 
 ### Issues or Bugs
 This is still in alpha, so bugs or issues may arise. If so, please submit an issue. <3 Thanks!
