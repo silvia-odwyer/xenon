@@ -7,14 +7,14 @@
             <el-menu-item index="1">xq</el-menu-item>
             <el-submenu index="2" class="options">
                <template slot="title">File</template>
-               <el-menu-item index="2-1" v-on:click="createNewNote()">New</el-menu-item>
-               <el-menu-item index="2-2" v-on:click="saveNote()">Save</el-menu-item>
+               <el-menu-item index="2-1" v-on:click="createNewNote()"> <i class="el-icon-circle-plus"></i>New</el-menu-item>
+               <el-menu-item index="2-2" v-on:click="saveNote()"><i class="el-icon-document"></i>Save</el-menu-item>
 
             </el-submenu>
             <el-submenu index="3" class="gh">
                <template slot="title">GitHub</template>
-               <el-menu-item index="3-1"><a href="https://github.com/silvia-odwyer/xq">View Repo</a></el-menu-item>
-               <el-menu-item index="3-2"><a href="https://github.com/silvia-odwyer/xq/issues">Submit Issue</a></el-menu-item>
+               <el-menu-item index="3-1"><a href="https://github.com/silvia-odwyer/xq"><i class="el-icon-bell"></i>View Repo</a></el-menu-item>
+               <el-menu-item index="3-2"><a href="https://github.com/silvia-odwyer/xq/issues"><i class="el-icon-news"></i>Submit Issue</a></el-menu-item>
 
             </el-submenu>
             <el-menu-item index="4" class="logout" v-on:click="signOut">
@@ -43,7 +43,7 @@
                     </el-submenu>
                  <el-submenu index="2">
                      <template slot="title"><i class="el-icon-menu"></i>Themes</template>
-                     <el-menu-item-group>
+                     <el-menu-item-group class="themes_drawer">
                         <template slot="title">All Themes Available</template>
                         <el-menu-item index="1-1" v-for="theme in themes" v-on:click="changeTheme(theme)">{{theme}}</el-menu-item>
                      </el-menu-item-group>
@@ -137,7 +137,8 @@ export default {
 			noMarkdownAlert: false,
 			noFilenameAlert: false,
 			isNewFile: false,
-			file: ""
+			file: "",
+			displayNoteToast: true
 		}
 	},
 	computed: {
@@ -291,9 +292,16 @@ export default {
 					this.alertMessage = "Saved file!"
 
 				}
-				this.displayFileMessage('Saved note!')
-				this.showSnackbar = true;
+				if (this.displayNoteToast) {
+					this.displayFileMessage('Saved note!')
+					this.showSnackbar = true;
+				}
+
 			}
+		this.resetNoteToast();
+		},
+		resetNoteToast() {
+			this.displayNoteToast = true;
 		},
 		displayFileMessage(message_content) {
 			this.$message(message_content);
@@ -306,6 +314,10 @@ export default {
 			}
 		},
 		displayNote(file) {
+			// Save the current note, before moving to the next note.
+			this.displayNoteToast = false;
+			this.saveNote();
+			
 			this.file = file;
 
 			// Update code in the code editor
@@ -320,6 +332,7 @@ export default {
 
 			// Scroll to the top of the page
 			window.scrollTo(0, 0);
+
 		},
 		getDateNow() {
 			let time = Date.now();
@@ -580,5 +593,10 @@ label {
 
 /deep/ #content {
   margin-top: 0;
+}
+
+.themes_drawer {
+	max-height: 300px;
+	overflow: scroll;
 }
 </style>
