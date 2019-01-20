@@ -4,24 +4,25 @@
 
          <el-menu :default-active="activeIndex" class="el-menu" mode="horizontal">
             
-            <el-menu-item index="1">xq</el-menu-item>
+            <el-menu-item index="1" class="logo">xq</el-menu-item>
+			<el-menu-item v-if="isTabNav" v-for="note in markdown_notes" :index="note.id" v-on:click="displayNote(note)">{{note.filename}}</el-menu-item>
+
             <el-submenu index="2" class="options">
                <template slot="title">File</template>
                <el-menu-item index="2-1" v-on:click="createNewNote()"> <i class="el-icon-circle-plus"></i>New</el-menu-item>
                <el-menu-item index="2-2" v-on:click="saveNote()"><i class="el-icon-document"></i>Save</el-menu-item>
 
             </el-submenu>
+
             <el-submenu index="3" class="gh">
                <template slot="title">GitHub</template>
-               <el-menu-item index="3-1"><a href="https://github.com/silvia-odwyer/xq"><i class="el-icon-bell"></i>View Repo</a></el-menu-item>
-               <el-menu-item index="3-2"><a href="https://github.com/silvia-odwyer/xq/issues"><i class="el-icon-news"></i>Submit Issue</a></el-menu-item>
+               <el-menu-item index="3-1"><a href="https://github.com/silvia-odwyer/xq/issues"><i class="el-icon-bell"></i>Submit Issue</a></el-menu-item>
+               <el-menu-item index="3-2"><a href="https://github.com/silvia-odwyer/xq/"><i class="el-icon-news"></i>View Repo</a></el-menu-item>
 
             </el-submenu>
             <el-menu-item index="4" class="logout" v-on:click="signOut">
                Logout
             </el-menu-item>
-              <!-- <el-button type="primary" class="sign-out" icon="el-icon-edit"></el-button>
-  -->
          </el-menu>
          
       </el-header>
@@ -50,6 +51,13 @@
                 </el-submenu>
                     <el-submenu index="3">
                      <template slot="title"><i class="el-icon-setting"></i>More</template>
+
+					<el-menu-item-group>
+                        <template slot="title"></template>
+                        <el-menu-item index="3-1">
+							<el-checkbox v-model="isTabNav">Enable Tabs</el-checkbox>
+						</el-menu-item>
+                     </el-menu-item-group>
                      <el-menu-item-group>
                         <template slot="title"></template>
                         <el-menu-item index="3-2" v-on:click="signOut">Logout</el-menu-item>
@@ -138,14 +146,14 @@ export default {
 			noFilenameAlert: false,
 			isNewFile: false,
 			file: "",
-			displayNoteToast: true
+			displayNoteToast: true,
+			isTabNav: false
 		}
 	},
 	computed: {
 		markdownToHTML() {
 			// Renders markdown in HTML using regex.
 			// Some may a bit buggy; submit an issue if you see any bugs. 
-			console.log("CONTENT:", this.content);
 
 			// Look for the beginning of a line that contains a greater-than symbol, 
 			// and enclose the token in blockquote tags. 
@@ -249,7 +257,7 @@ export default {
 		saveNote() {
 			if (this.filename == "") {
 				this.noFilenameAlert = true;
-				this.displayFileMessage('No title entered!')
+				this.displayFileMessage('No title entered!', "warning")
 			}
 
 			// Both code and title entered
@@ -270,7 +278,6 @@ export default {
 						date: datestamp
 					})
 
-					this.alertMessage = `New file ${this.filename} saved!`;
 					this.isNewFile = false;
         } 
         else {
@@ -293,7 +300,7 @@ export default {
 
 				}
 				if (this.displayNoteToast) {
-					this.displayFileMessage('Saved note!')
+					this.displayFileMessage("Saved note!", "success")
 					this.showSnackbar = true;
 				}
 
@@ -303,8 +310,12 @@ export default {
 		resetNoteToast() {
 			this.displayNoteToast = true;
 		},
-		displayFileMessage(message_content) {
-			this.$message(message_content);
+		displayFileMessage(message_content, msg_type) {
+			this.$message({
+				message: message_content,
+				type: msg_type
+			}
+		);
 		},
 		updateTitle(file) {
 			if (this.filename == "") {
@@ -316,7 +327,7 @@ export default {
 		displayNote(file) {
 			// Save the current note, before moving to the next note.
 			this.displayNoteToast = false;
-			this.saveNote();
+			// this.saveNote();
 			
 			this.file = file;
 
@@ -339,11 +350,12 @@ export default {
 			return time;
 		},
 		createNewNote() {
+			console.log("CRTNEWNOTE files", this.markdown_notes);
 			this.content = "";
 			this.filename = "";
 			this.isNewFile = true;
 
-			this.displayFileMessage('New note created!')
+			this.displayFileMessage('New note created!', "success")
 		},
 		getDateStamp() {
 			let date = new Date();
@@ -439,6 +451,7 @@ export default {
 
 .creds {
 	margin-top: auto;
+	position: absolute;
 }
 
 #editor {
@@ -560,7 +573,7 @@ label {
 .options {}
 
 .options {
-	margin-left: 59vw;
+	margin-left: 39vw;
 }
 
 .el-menu-item,
@@ -598,5 +611,11 @@ label {
 .themes_drawer {
 	max-height: 300px;
 	overflow: scroll;
+	margin-right: 0.2em;
 }
+
+.logo {
+	margin-right: 8vw;
+}
+
 </style>
