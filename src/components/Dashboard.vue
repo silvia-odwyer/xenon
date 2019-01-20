@@ -2,10 +2,10 @@
    <el-container class="dashboard">
       <el-header style="text-align: right; font-size: 12px">
 
-         <el-menu :default-active="activeIndex" class="el-menu" mode="horizontal">
+         <el-menu :default-active="String(activeIndex)" class="el-menu" mode="horizontal">
             
             <el-menu-item index="1" class="logo">xq</el-menu-item>
-			<el-menu-item v-if="isTabNav" v-for="note in markdown_notes" :index="note.id" v-on:click="displayNote(note)">{{note.filename}}</el-menu-item>
+			<el-menu-item v-if="isTabNav" v-for="note in markdown_notes" :index="String(note.id)" v-on:click="displayNote(note)" v-bind:key="note.id">{{note.filename}}</el-menu-item>
 
             <el-submenu index="2" class="options">
                <template slot="title">File</template>
@@ -36,9 +36,9 @@
                      <template slot="title"><i class="el-icon-message"></i>Your Notes</template>
                      <el-menu-item-group>
                         <template slot="title">Recently Added</template>
-                        <el-menu-item :index="String(note.id)" v-for="note in markdown_notes" v-on:click="displayNote(note)" class="note_listing">{{note.filename}}
+                        <el-menu-item :index="String(note.id)" v-for="note in markdown_notes" v-on:click="displayNote(note); changeActiveFileListing($event)" class="note_listing" v-bind:key="note.id">
+							{{note.filename}}
                         <a @click.prevent="markdown_notes.splice(markdown_notes.indexOf(file), 1)" class="delete pull-right" href="#">x</a>
-
                         </el-menu-item>
                      </el-menu-item-group>
                     </el-submenu>
@@ -46,7 +46,7 @@
                      <template slot="title"><i class="el-icon-menu"></i>Themes</template>
                      <el-menu-item-group class="themes_drawer">
                         <template slot="title">All Themes Available</template>
-                        <el-menu-item index="1-1" v-for="theme in themes" v-on:click="changeTheme(theme)">{{theme}}</el-menu-item>
+                        <el-menu-item index="1-1" v-for="theme in themes" v-on:click="changeTheme(theme)" v-bind:key="theme">{{theme}}</el-menu-item>
                      </el-menu-item-group>
                 </el-submenu>
                     <el-submenu index="3">
@@ -250,7 +250,7 @@ export default {
 				generic_note.id = k;
 				generic_note.hash_id = String(this.getDateNow());
 				generic_note.content = note_contents[k].content;
-				generic_note.title = note_contents[k].title;
+				generic_note.filename = note_contents[k].filename;
 				this.sample_notes.push(generic_note);
 			}
 		},
@@ -344,6 +344,9 @@ export default {
 			// Scroll to the top of the page
 			window.scrollTo(0, 0);
 
+			// Update the relevant tab
+			this.activeIndex = file.id;
+
 		},
 		getDateNow() {
 			let time = Date.now();
@@ -399,6 +402,10 @@ export default {
 		},
 		handleClose(key, keyPath) {
 			console.log(key, keyPath);
+		},
+		changeActiveFileListing(event) {
+			event.className += " active";
+			console.log(event)
 		},
 
 		signOut() {
@@ -616,6 +623,10 @@ label {
 
 .logo {
 	margin-right: 8vw;
+}
+
+.active {
+	background-color: gray;
 }
 
 </style>

@@ -209,242 +209,262 @@ var STORAGE_FILE = 'markdown_files.json';
 var themes = ["3024-day", "3024-night", "abcdef", "ambiance", "ambiance-mobile", "base16-dark", "base16-light", "bespin", "blackboard", "cobalt", "colorforth", "darcula", "duotone-dark", "duotone-light", "eclipse", "elegant", "erlang-dark", "gruvbox-dark", "hopscotch", "ice-coder", "idea", "isotope", "lesser-dark", "liquibyte", "lucario", "material", "mbo", "mdn-like", "midnight", "monokai", "neat", "neo", "night", "oceanic-next", "panda-syntax", "paraiso-dark", "paraiso-light", "pastel-on-dark", "railscasts", "rubyblue", "seti", "shadowfox", "solarized", "ssms", "the-matrix", "tomorrow-night-bright", "tomorrow-night-eighties", "ttcn", "twilight", "vibrant-ink", "xq-dark", "xq-light", "yeti", "zenburn"];
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  name: 'dashboard',
-  props: ['user'],
-  data: function data() {
-    return {
-      blockstack: window.blockstack,
-      markdown_notes: [],
-      sample_notes: [{ id: 0,
-        hash_id: String(this.getDateNow()),
-        content: "# Welcome to xq!\n## Some markdown to get you started\n### H3 heading\n#### H4 Heading\nRegular line with some **bold** and *italic* text. \nImage and link support coming soon!\n> 'Insert some famous or inspirational quote here, because this is a blockquote.' \n> ~ Someone famous\n* Bullet point one\n* Bullet point two\n* Bullet point three\n~~Strikethrough text~~",
-        filename: "Sample Note",
-        language: "markdown",
-        completed: false,
-        date: this.getDateStamp() }, {
-        id: 1,
-        hash_id: String(this.getDateNow()),
-        content: "# xq \nA markdown editor built for the decentralized web.\nMarkdown is parsed to HTML using regular expressions.\n### Issues or Bugs\nThis is still in alpha, so bugs or issues may arise. If so, please submit an issue. <3 Thanks! \n *Current State*: alpha",
-        filename: "README",
-        language: "markdown",
-        completed: false,
-        date: this.getDateStamp()
-      }],
-      todo: '',
-      uidCount: 0,
-      content: "",
-      color: "#890912",
-      cmOptions: {
-        tabSize: 4,
-        mode: "markdown",
-        theme: 'elegant',
-        lineNumbers: true,
-        autofocus: true,
-        styleActiveLine: true,
-        line: true,
-        lineWrapping: true
-      },
-      themes: themes,
-      activeIndex: "1",
-      alertMessage: "",
-      filename: "",
-      noMarkdownAlert: false,
-      noFilenameAlert: false,
-      isNewFile: false,
-      file: ""
-    };
-  },
+	name: 'dashboard',
+	props: ['user'],
+	data: function data() {
+		return {
+			blockstack: window.blockstack,
+			markdown_notes: [],
+			sample_notes: [],
+			todo: '',
+			uidCount: 0,
+			content: "",
+			color: "#890912",
+			cmOptions: {
+				tabSize: 4,
+				mode: "markdown",
+				theme: 'elegant',
+				lineNumbers: true,
+				autofocus: true,
+				styleActiveLine: true,
+				line: true,
+				lineWrapping: true
+			},
+			themes: themes,
+			activeIndex: "1",
+			alertMessage: "",
+			filename: "",
+			noMarkdownAlert: false,
+			noFilenameAlert: false,
+			isNewFile: false,
+			file: "",
+			displayNoteToast: true,
+			isTabNav: false
+		};
+	},
 
-  computed: {
-    markdownToHTML: function markdownToHTML() {
-      console.log("CONTENT:", this.content);
+	computed: {
+		markdownToHTML: function markdownToHTML() {
+			var markdown = this.content.replace(/^\>(.+)/gm, "<blockquote>$1</blockquote>");
 
-      var markdown = this.content.replace(/^\>(.+)/gm, "<blockquote>$1</blockquote>");
+			markdown = markdown.replace(/[\#]{5}(.+)/gm, "<h5>$1</h5>");
 
-      markdown = markdown.replace(/[\#]{5}(.+)/gm, "<h5>$1</h5>");
+			markdown = markdown.replace(/[\#]{4}(.+)/gm, "<h4>$1</h4>");
 
-      markdown = markdown.replace(/[\#]{4}(.+)/gm, "<h4>$1</h4>");
+			markdown = markdown.replace(/[\#]{3}(.+)/gm, "<h3>$1</h3>");
 
-      markdown = markdown.replace(/[\#]{3}(.+)/gm, "<h3>$1</h3>");
+			markdown = markdown.replace(/[\#]{2}(.+)/gm, "<h2>$1</h2>");
 
-      markdown = markdown.replace(/[\#]{2}(.+)/gm, "<h2>$1</h2>");
+			markdown = markdown.replace(/[\#]{1}(.+)/gm, "<h1>$1</h1>");
 
-      markdown = markdown.replace(/[\#]{1}(.+)/gm, "<h1>$1</h1>");
+			markdown = markdown.replace(/^(.+)\n\+=/gm, '<h1>$1</h1>');
+			markdown = markdown.replace(/^(.+)\n\-+/gm, '<h2>$1</h2>');
 
-      markdown = markdown.replace(/^(.+)\n\+=/gm, '<h1>$1</h1>');
-      markdown = markdown.replace(/^(.+)\n\-+/gm, '<h2>$1</h2>');
+			markdown = markdown.replace(/[\*\_]{2}([^\*\_]+)[\*\_]{2}/g, '<b>$1</b>');
 
-      markdown = markdown.replace(/[\*\_]{2}([^\*\_]+)[\*\_]{2}/g, '<b>$1</b>');
+			markdown = markdown.replace(/^\*(.+)/gm, '<li>$1</li>');
+			markdown = markdown.replace(/^\-(.+)/gm, '<li>$1</li>');
 
-      markdown = markdown.replace(/^\*(.+)/gm, '<li>$1</li>');
+			markdown = markdown.replace(/[\`]{1}([^\`]+)[\`]{1}/g, '<code>$1</code>');
 
-      markdown = markdown.replace(/[\`]{1}([^\`]+)[\`]{1}/g, '<code>$1</code>');
+			markdown = markdown.replace(/[\*\_]{1}([^\*\_]+)[\*\_]{1}/g, '<i>$1</i>');
 
-      markdown = markdown.replace(/[\*\_]{1}([^\*\_]+)[\*\_]{1}/g, '<i>$1</i>');
+			markdown = markdown.replace(/\~~([^\~]+)\~~/g, '<del>$1</del>');
 
-      markdown = markdown.replace(/\~~([^\~]+)\~~/g, '<del>$1</del>');
+			markdown = markdown.replace(/^\s*\n/gm, "<br>");
 
-      markdown = markdown.replace(/^\s*\n/gm, "<br>");
+			return markdown;
+		}
+	},
+	watch: {
+		markdown_notes: {
+			handler: function handler(markdown_notes) {
+				var blockstack = this.blockstack;
 
-      return markdown;
-    }
-  },
-  watch: {
-    markdown_notes: {
-      handler: function handler(markdown_notes) {
-        var blockstack = this.blockstack;
+				if (markdown_notes.length == 0) {
+					this.markdown_notes = this.sample_notes;
+				}
 
-        if (markdown_notes.length == 0) {
-          this.markdown_notes = this.sample_notes;
-        }
+				return blockstack.putFile(STORAGE_FILE, __WEBPACK_IMPORTED_MODULE_0_babel_runtime_core_js_json_stringify___default()(markdown_notes));
+			},
+			deep: true
+		}
+	},
+	mounted: function mounted() {
+		this.fetchData();
+		this.generateSampleNotes();
+	},
 
-        return blockstack.putFile(STORAGE_FILE, __WEBPACK_IMPORTED_MODULE_0_babel_runtime_core_js_json_stringify___default()(markdown_notes));
-      },
-      deep: true
-    }
-  },
-  mounted: function mounted() {
-    this.fetchData();
-  },
+	methods: {
+		generateSampleNotes: function generateSampleNotes() {
+			var note_contents = [{
+				title: "README",
+				content: "# Welcome to xq!\n## Some markdown to get you started\n### H3 heading\n#### H4 Heading\nRegular line with some **bold** and *italic* text. \nImage and link support coming soon!\n> 'Insert some famous or inspirational quote here, because this is a blockquote.' \n> ~ Someone famous\n* Bullet point one\n* Bullet point two\n* Bullet point three\n~~Strikethrough text~~"
+			}, {
+				title: "Sample Note",
+				note: "# xq \nA markdown editor built for the decentralized web.\nMarkdown is parsed to HTML using regular expressions.\n### Issues or Bugs\nThis is still in alpha, so bugs or issues may arise. If so, please submit an issue. <3 Thanks! \n *Current State*: alpha"
+			}];
 
-  methods: {
-    saveNote: function saveNote() {
-      var _this = this;
+			var generic_note = {
+				id: 0,
+				hash_id: "",
+				content: "",
+				filename: "Sample Note",
+				language: "markdown",
+				completed: false,
+				date: this.getDateStamp()
+			};
 
-      console.log(this.content);
-      if (this.filename == "") {
-        console.log("No title entered");
-        this.alertMessage = "No title entered!";
-        this.noFilenameAlert = true;
-        this.displayFileMessage('No title entered!');
-      } else {
+			for (var k = 0; k < note_contents.length; k++) {
+				generic_note.id = k;
+				generic_note.hash_id = String(this.getDateNow());
+				generic_note.content = note_contents[k].content;
+				generic_note.filename = note_contents[k].filename;
+				this.sample_notes.push(generic_note);
+			}
+		},
+		saveNote: function saveNote() {
+			var _this = this;
 
-          var datestamp = this.getDateStamp();
+			if (this.filename == "") {
+				this.noFilenameAlert = true;
+				this.displayFileMessage('No title entered!', "warning");
+			} else {
+					var datestamp = this.getDateStamp();
 
-          if (this.isNewFile) {
 
-            this.markdown_notes.unshift({
-              id: this.uidCount++,
-              hash_id: String(this.getDateNow()),
-              content: this.content.trim(),
-              filename: this.filename,
-              language: this.cmOptions.mode,
-              completed: false,
-              date: datestamp
-            });
+					if (this.isNewFile) {
+						this.markdown_notes.unshift({
+							id: this.uidCount++,
+							hash_id: String(this.getDateNow()),
+							content: this.content.trim(),
+							filename: this.filename,
+							language: this.cmOptions.mode,
+							completed: false,
+							date: datestamp
+						});
 
-            console.log(this.markdown_notes);
-            this.alertMessage = 'New file ' + this.filename + ' saved!';
-            this.isNewFile = false;
-          } else {
-            console.log("file already exists");
-            console.log("this.file", this.file);
+						this.isNewFile = false;
+					} else {
+						var current_file = this.markdown_notes.filter(function (file) {
+							return file.hash_id == _this.file.hash_id;
+						})[0];
 
-            var current_file = this.markdown_notes.filter(function (file) {
-              return file.hash_id == _this.file.hash_id;
-            })[0];
-            console.log(current_file);
+						current_file.content = this.content;
 
-            current_file.content = this.content;
+						this.updateTitle(current_file);
 
-            this.updateTitle(current_file);
+						current_file.language = this.cmOptions.mode;
 
-            current_file.language = this.cmOptions.mode;
+						current_file.datestamp = datestamp;
 
-            current_file.datestamp = datestamp;
+						this.alertMessage = "Saved file!";
+					}
+					if (this.displayNoteToast) {
+						this.displayFileMessage("Saved note!", "success");
+						this.showSnackbar = true;
+					}
+				}
+			this.resetNoteToast();
+		},
+		resetNoteToast: function resetNoteToast() {
+			this.displayNoteToast = true;
+		},
+		displayFileMessage: function displayFileMessage(message_content, msg_type) {
+			this.$message({
+				message: message_content,
+				type: msg_type
+			});
+		},
+		updateTitle: function updateTitle(file) {
+			if (this.filename == "") {} else {
+				file.filename = this.filename;
+			}
+		},
+		displayNote: function displayNote(file) {
+			this.displayNoteToast = false;
 
-            this.alertMessage = "Saved file!";
-          }
-          this.displayFileMessage('Saved note!');
-          this.showSnackbar = true;
-        }
-    },
-    displayFileMessage: function displayFileMessage(message_content) {
-      this.$message(message_content);
-    },
-    updateTitle: function updateTitle(file) {
-      if (this.filename == "") {} else {
-        file.filename = this.filename;
-      }
-    },
-    displayNote: function displayNote(file) {
-      this.file = file;
-      console.log("DSPLYNOTES: ", this.markdown_notes);
-      console.log("displayCode for ", file);
 
-      this.content = file.content;
-      console.log("current markdown content is", this.content);
+			this.file = file;
 
-      this.filename = file.filename;
-      this.current_file_id = file.id;
-      console.log("CURRENT FILE ID: ", this.current_file_id);
+			this.content = file.content;
 
-      this.cmOptions.mode = file.language;
+			this.filename = file.filename;
+			this.current_file_id = file.id;
 
-      window.scrollTo(0, 0);
-    },
-    getDateNow: function getDateNow() {
-      var time = Date.now();
-      return time;
-    },
-    createNewNote: function createNewNote() {
-      this.content = "";
-      this.filename = "";
-      this.isNewFile = true;
+			this.cmOptions.mode = file.language;
 
-      this.displayFileMessage('New note created!');
-    },
-    getDateStamp: function getDateStamp() {
-      var date = new Date();
-      var dd = date.getDate();
-      var mm = date.getMonth() + 1;
-      var yy = date.getFullYear();
+			window.scrollTo(0, 0);
 
-      var datestamp = dd + '/' + mm + '/' + yy;
-      return datestamp;
-    },
-    fetchData: function fetchData() {
-      var _this2 = this;
+			this.activeIndex = file.id;
+		},
+		getDateNow: function getDateNow() {
+			var time = Date.now();
+			return time;
+		},
+		createNewNote: function createNewNote() {
+			console.log("CRTNEWNOTE files", this.markdown_notes);
+			this.content = "";
+			this.filename = "";
+			this.isNewFile = true;
 
-      var blockstack = this.blockstack;
-      blockstack.getFile(STORAGE_FILE).then(function (todosText) {
-        var markdown_notes = JSON.parse(todosText || '[]');
-        markdown_notes.forEach(function (note, index) {
-          note.id = index;
-        });
-        _this2.uidCount = markdown_notes.length;
-        _this2.markdown_notes = markdown_notes;
+			this.displayFileMessage('New note created!', "success");
+		},
+		getDateStamp: function getDateStamp() {
+			var date = new Date();
+			var dd = date.getDate();
+			var mm = date.getMonth() + 1;
+			var yy = date.getFullYear();
 
-        if (_this2.markdown_notes.length == 0) {
-          _this2.markdown_notes = _this2.sample_notes;
-        }
+			var datestamp = dd + '/' + mm + '/' + yy;
+			return datestamp;
+		},
+		fetchData: function fetchData() {
+			var _this2 = this;
 
-        _this2.file = _this2.markdown_notes[0];
-        _this2.content = _this2.markdown_notes[0].content;
-        _this2.filename = _this2.markdown_notes[0].filename;
-      });
-    },
-    changeTheme: function changeTheme(theme) {
-      console.log("Theme changed to", theme);
-      this.getTheme(theme);
-      this.cmOptions.theme = theme;
-    },
-    getTheme: function getTheme(theme) {
-      return __webpack_require__(423)("./" + theme + '.css');
-    },
-    handleOpen: function handleOpen(key, keyPath) {
-      console.log(key, keyPath);
-    },
-    handleClose: function handleClose(key, keyPath) {
-      console.log(key, keyPath);
-    },
-    signOut: function signOut() {
-      this.blockstack.signUserOut(window.location.href);
-    }
-  },
-  components: {
-    codemirror: __WEBPACK_IMPORTED_MODULE_1_vue_codemirror__["codemirror"]
-  }
+			var blockstack = this.blockstack;
+			blockstack.getFile(STORAGE_FILE).then(function (todosText) {
+				var markdown_notes = JSON.parse(todosText || '[]');
+				markdown_notes.forEach(function (note, index) {
+					note.id = index;
+				});
+				_this2.uidCount = markdown_notes.length;
+				_this2.markdown_notes = markdown_notes;
+
+				if (_this2.markdown_notes.length == 0) {
+					_this2.markdown_notes = _this2.sample_notes;
+				}
+
+				_this2.file = _this2.markdown_notes[0];
+				_this2.content = _this2.markdown_notes[0].content;
+				_this2.filename = _this2.markdown_notes[0].filename;
+			});
+		},
+		changeTheme: function changeTheme(theme) {
+			console.log("Theme changed to", theme);
+			this.getTheme(theme);
+			this.cmOptions.theme = theme;
+		},
+		getTheme: function getTheme(theme) {
+			return __webpack_require__(423)("./" + theme + '.css');
+		},
+		handleOpen: function handleOpen(key, keyPath) {
+			console.log(key, keyPath);
+		},
+		handleClose: function handleClose(key, keyPath) {
+			console.log(key, keyPath);
+		},
+		changeActiveFileListing: function changeActiveFileListing(event) {
+			event.className += " active";
+			console.log(event);
+		},
+		signOut: function signOut() {
+			this.blockstack.signUserOut(window.location.href);
+		}
+	},
+	components: {
+		codemirror: __WEBPACK_IMPORTED_MODULE_1_vue_codemirror__["codemirror"]
+	}
 });
 
 /***/ }),
@@ -910,14 +930,27 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, [_c('el-menu', {
     staticClass: "el-menu",
     attrs: {
-      "default-active": _vm.activeIndex,
+      "default-active": String(_vm.activeIndex),
       "mode": "horizontal"
     }
   }, [_c('el-menu-item', {
+    staticClass: "logo",
     attrs: {
       "index": "1"
     }
-  }, [_vm._v("xq")]), _vm._v(" "), _c('el-submenu', {
+  }, [_vm._v("xq")]), _vm._v(" "), _vm._l((_vm.markdown_notes), function(note) {
+    return (_vm.isTabNav) ? _c('el-menu-item', {
+      key: note.id,
+      attrs: {
+        "index": String(note.id)
+      },
+      on: {
+        "click": function($event) {
+          _vm.displayNote(note)
+        }
+      }
+    }, [_vm._v(_vm._s(note.filename))]) : _vm._e()
+  }), _vm._v(" "), _c('el-submenu', {
     staticClass: "options",
     attrs: {
       "index": "2"
@@ -936,7 +969,9 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         _vm.createNewNote()
       }
     }
-  }, [_vm._v("New")]), _vm._v(" "), _c('el-menu-item', {
+  }, [_c('i', {
+    staticClass: "el-icon-circle-plus"
+  }), _vm._v("New")]), _vm._v(" "), _c('el-menu-item', {
     attrs: {
       "index": "2-2"
     },
@@ -945,7 +980,9 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         _vm.saveNote()
       }
     }
-  }, [_vm._v("Save")])], 2), _vm._v(" "), _c('el-submenu', {
+  }, [_c('i', {
+    staticClass: "el-icon-document"
+  }), _vm._v("Save")])], 2), _vm._v(" "), _c('el-submenu', {
     staticClass: "gh",
     attrs: {
       "index": "3"
@@ -961,17 +998,21 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }
   }, [_c('a', {
     attrs: {
-      "href": "https://github.com/silvia-odwyer/xq"
+      "href": "https://github.com/silvia-odwyer/xq/issues"
     }
-  }, [_vm._v("View Repo")])]), _vm._v(" "), _c('el-menu-item', {
+  }, [_c('i', {
+    staticClass: "el-icon-bell"
+  }), _vm._v("Submit Issue")])]), _vm._v(" "), _c('el-menu-item', {
     attrs: {
       "index": "3-2"
     }
   }, [_c('a', {
     attrs: {
-      "href": "https://github.com/silvia-odwyer/xq/issues"
+      "href": "https://github.com/silvia-odwyer/xq/"
     }
-  }, [_vm._v("Submit Issue")])])], 2), _vm._v(" "), _c('el-menu-item', {
+  }, [_c('i', {
+    staticClass: "el-icon-news"
+  }), _vm._v("View Repo")])])], 2), _vm._v(" "), _c('el-menu-item', {
     staticClass: "logout",
     attrs: {
       "index": "4"
@@ -979,7 +1020,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     on: {
       "click": _vm.signOut
     }
-  }, [_vm._v("\n             Logout\n          ")])], 1)], 1), _vm._v(" "), _c('el-container', [_c('el-aside', {
+  }, [_vm._v("\n               Logout\n            ")])], 2)], 1), _vm._v(" "), _c('el-container', [_c('el-aside', {
     staticClass: "outer_aside",
     attrs: {
       "width": "200px"
@@ -1025,16 +1066,18 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     slot: "title"
   }, [_vm._v("Recently Added")]), _vm._v(" "), _vm._l((_vm.markdown_notes), function(note) {
     return _c('el-menu-item', {
+      key: note.id,
       staticClass: "note_listing",
       attrs: {
         "index": String(note.id)
       },
       on: {
         "click": function($event) {
-          _vm.displayNote(note)
+          _vm.displayNote(note);
+          _vm.changeActiveFileListing($event)
         }
       }
-    }, [_vm._v(_vm._s(note.filename) + "\n                      "), _c('a', {
+    }, [_vm._v("\n\t\t\t\t\t\t\t" + _vm._s(note.filename) + "\n                        "), _c('a', {
       staticClass: "delete pull-right",
       attrs: {
         "href": "#"
@@ -1057,13 +1100,16 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     slot: "title"
   }, [_c('i', {
     staticClass: "el-icon-menu"
-  }), _vm._v("Themes")]), _vm._v(" "), _c('el-menu-item-group', [_c('template', {
+  }), _vm._v("Themes")]), _vm._v(" "), _c('el-menu-item-group', {
+    staticClass: "themes_drawer"
+  }, [_c('template', {
     attrs: {
       "slot": "title"
     },
     slot: "title"
   }, [_vm._v("All Themes Available")]), _vm._v(" "), _vm._l((_vm.themes), function(theme) {
     return _c('el-menu-item', {
+      key: theme,
       attrs: {
         "index": "1-1"
       },
@@ -1091,6 +1137,23 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     slot: "title"
   }), _vm._v(" "), _c('el-menu-item', {
     attrs: {
+      "index": "3-1"
+    }
+  }, [_c('el-checkbox', {
+    model: {
+      value: (_vm.isTabNav),
+      callback: function($$v) {
+        _vm.isTabNav = $$v
+      },
+      expression: "isTabNav"
+    }
+  }, [_vm._v("Enable Tabs")])], 1)], 2), _vm._v(" "), _c('el-menu-item-group', [_c('template', {
+    attrs: {
+      "slot": "title"
+    },
+    slot: "title"
+  }), _vm._v(" "), _c('el-menu-item', {
+    attrs: {
       "index": "3-2"
     },
     on: {
@@ -1098,7 +1161,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }
   }, [_vm._v("Logout")])], 2)], 2)], 1), _vm._v(" "), _c('small', {
     staticClass: "creds"
-  }, [_vm._v("\n              Powered by Vue, Blockstack, and loads of regex. \n              Source code on "), _c('a', {
+  }, [_vm._v("\n                Powered by Vue, Blockstack, and loads of regex. \n                Source code on "), _c('a', {
     attrs: {
       "href": "https://github.com/blockstack/blockstack-todos",
       "target": "_blank"
@@ -1261,4 +1324,4 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 /***/ })
 
 },[323]);
-//# sourceMappingURL=app.75c3e24c903e19623008.js.map
+//# sourceMappingURL=app.7fc2a163d437dec69549.js.map
