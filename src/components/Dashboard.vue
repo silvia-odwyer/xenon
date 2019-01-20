@@ -30,7 +30,7 @@
          <el-aside width="200px" class="outer_aside"> 
            
             <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
-               <el-menu :default-openeds="['1', '3']">
+               <el-menu :default-openeds="['1', '3']" :collapse="isCollapse">
                   <el-button type="primary" plain icon="el-icon-edit" class="new_note" v-on:click="createNewNote()">New Note</el-button>
                   <el-submenu index="1">
                      <template slot="title"><i class="el-icon-message"></i>Your Notes</template>
@@ -58,12 +58,26 @@
 							<el-checkbox v-model="isTabNav">Enable Tabs</el-checkbox>
 						</el-menu-item>
                      </el-menu-item-group>
+					 
+					<el-menu-item-group>
+                        <template slot="title"></template>
+                        <el-menu-item index="3-2">
+							<el-checkbox v-model="isOnePane">One Pane Only</el-checkbox>
+						</el-menu-item>
+                     </el-menu-item-group>
+
+					<!-- <el-menu-item-group>
+                        <template slot="title"></template>
+                        <el-menu-item index="3-2">
+							<el-checkbox v-model="isCollapse">Collapse</el-checkbox>
+						</el-menu-item>
+                     </el-menu-item-group> -->
+
                      <el-menu-item-group>
                         <template slot="title"></template>
-                        <el-menu-item index="3-2" v-on:click="signOut">Logout</el-menu-item>
+                        <el-menu-item index="3-3" v-on:click="signOut">Logout</el-menu-item>
                      </el-menu-item-group>
                     </el-submenu>
-                  </el-submenu>
                </el-menu>
               <small class="creds">
                 Powered by Vue, Blockstack, and loads of regex. 
@@ -81,13 +95,25 @@
 
             <section class="live_area">
 
-            <codemirror v-model="content" id="editor" :options="cmOptions"></codemirror>
-            
-            <section id="content" v-html="markdownToHTML">
-            <!-- {{markdownToHTML}} -->
+			<!-- If the user wishes to have the markdown and rendered HTML in different and separate panes,
+			these panes will display. -->
+
+            	<codemirror v-model="content" class="editor" :options="cmOptions" v-if="isOnePane == false"></codemirror>
+
+            <section id="content" v-html="markdownToHTML" v-if="isOnePane == false">
             </section>
 
-
+			<!-- If the user wishes to have the HTML rendered in the same pane, only this pane should display. -->
+			<div>
+				
+				<div class="toolbar" v-if="isOnePane">
+					<i class="el-icon-edit"></i>
+					<i class="el-icon-minus"></i>
+					<i class="el-icon-sort"></i>
+					<i class="el-icon-document"></i>
+				</div>
+				<div contenteditable class="editor" id="singlePane" v-if="isOnePane" v-html="markdownToHTML" @input="renderWYSIWYG()"></div>
+            </div>
             </section>
 
               <el-button type="primary" plain icon="el-icon-circle-check-outline" v-on:click="saveNote()">Save</el-button>
@@ -147,12 +173,63 @@ export default {
 			isNewFile: false,
 			file: "",
 			displayNoteToast: true,
-			isTabNav: false
+			isTabNav: false,
+			isOnePane: false,
+			isCollapse: false
 		}
 	},
 	computed: {
 		markdownToHTML() {
 			// Renders markdown in HTML using regex.
+			// Some may a bit buggy; submit an issue if you see any bugs. 
+
+			// Look for the beginning of a line that contains a greater-than symbol, 
+			// and enclose the token in blockquote tags. 
+			let markdown = this.content.replace(/^\>(.+)/gm, "<blockquote>$1</blockquote>");
+
+			// h5
+			markdown = markdown.replace(/[\#]{5}(.+)/gm, "<h5>$1</h5>");
+
+			// h4
+			markdown = markdown.replace(/[\#]{4}(.+)/gm, "<h4>$1</h4>");
+
+			// h3
+			markdown = markdown.replace(/[\#]{3}(.+)/gm, "<h3>$1</h3>");
+
+			// h2
+			markdown = markdown.replace(/[\#]{2}(.+)/gm, "<h2>$1</h2>")
+
+			// h1
+			markdown = markdown.replace(/[\#]{1}(.+)/gm, "<h1>$1</h1>")
+
+			// h1 and h2s that consist of equals/plus signs underneath 
+			markdown = markdown.replace(/^(.+)\n\+=/gm, '<h1>$1</h1>');
+			markdown = markdown.replace(/^(.+)\n\-+/gm, '<h2>$1</h2>');
+
+			// bold text
+			markdown = markdown.replace(/[\*\_]{2}([^\*\_]+)[\*\_]{2}/g, '<b>$1</b>');
+
+			//ul
+			markdown = markdown.replace(/^\*(.+)/gm, '<li>$1</li>');
+			markdown = markdown.replace(/^\-(.+)/gm, '<li>$1</li>')
+
+			// code 
+			markdown = markdown.replace(/[\`]{1}([^\`]+)[\`]{1}/g, '<code>$1</code>');
+
+			// em should technically be for placing emphasis on certain words,
+			// so [TODO] add a check for single-words only.
+			markdown = markdown.replace(/[\*\_]{1}([^\*\_]+)[\*\_]{1}/g, '<i>$1</i>');
+
+			// Strikethrough
+			markdown = markdown.replace(/\~~([^\~]+)\~~/g, '<del>$1</del>');
+
+			// blank lines
+			markdown = markdown.replace(/^\s*\n/gm, "<br>");
+
+			return (markdown);
+		},
+		markdownToWYSIWYG() {
+			// Renders markdown to What You See is What You Get-style text.
 			// Some may a bit buggy; submit an issue if you see any bugs. 
 
 			// Look for the beginning of a line that contains a greater-than symbol, 
@@ -218,21 +295,22 @@ export default {
 	},
 	mounted() {
 		this.fetchData();
-		this.generateSampleNotes();
 	},
 	methods: {
 		generateSampleNotes() {
+			console.log("gen sample notes called")
 			// A method to generate sample notes (as they were hardcoded before)
 			// which will make sample note generation easier when tailoring sample notes to certain groups (devs vs consumers), 
 
 			// Will be used for creating templates in the future.
-			let note_contents = [{
-					title: "README",
+			this.sample_notes = [];
+			var note_contents = [{
+					filename: "README",
 					content: "# Welcome to xq!\n## Some markdown to get you started\n### H3 heading\n#### H4 Heading\nRegular line with some **bold** and *italic* text. \nImage and link support coming soon!\n> 'Insert some famous or inspirational quote here, because this is a blockquote.' \n> ~ Someone famous\n* Bullet point one\n* Bullet point two\n* Bullet point three\n~~Strikethrough text~~"
 				},
 				{
-					title: "Sample Note",
-					note: "# xq \nA markdown editor built for the decentralized web.\nMarkdown is parsed to HTML using regular expressions.\n### Issues or Bugs\nThis is still in alpha, so bugs or issues may arise. If so, please submit an issue. <3 Thanks! \n *Current State*: alpha"
+					filename: "Sample Note",
+					content: "# xq \nA markdown editor built for the decentralized web.\nMarkdown is parsed to HTML using regular expressions.\n### Issues or Bugs\nThis is still in alpha, so bugs or issues may arise. If so, please submit an issue. <3 Thanks! \n *Current State*: alpha"
 				}
 			];
 
@@ -248,11 +326,13 @@ export default {
 
 			for (let k = 0; k < note_contents.length; k++) {
 				generic_note.id = k;
-				generic_note.hash_id = String(this.getDateNow());
+				generic_note.hash_id = String(this.getDateNow() + note_contents[k].filename);
 				generic_note.content = note_contents[k].content;
 				generic_note.filename = note_contents[k].filename;
+				console.log("new note created", generic_note);
 				this.sample_notes.push(generic_note);
 			}
+			console.log("sample notes", this.sample_notes);
 		},
 		saveNote() {
 			if (this.filename == "") {
@@ -348,6 +428,13 @@ export default {
 			this.activeIndex = file.id;
 
 		},
+		renderWYSIWYG() {
+			let textarea = document.getElementById("singlePane");
+			let content = textarea.innerHTML;
+			console.log("content", content);
+			this.content = content;
+
+		},
 		getDateNow() {
 			let time = Date.now();
 			return time;
@@ -382,6 +469,7 @@ export default {
 
 					if (this.markdown_notes.length == 0) {
 						this.markdown_notes = this.sample_notes;
+						this.generateSampleNotes()
 					}
 
 					this.file = this.markdown_notes[0];
@@ -423,6 +511,7 @@ export default {
 
 * {
 	font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+
 }
 
 .el-header,
@@ -461,7 +550,7 @@ export default {
 	position: absolute;
 }
 
-#editor {
+.editor {
 	padding: 0;
 	margin-bottom: 1em;
 	margin-right: 1em;
@@ -532,7 +621,7 @@ label {
 	flex-wrap: wrap;
 }
 
-#editor,
+.editor,
 #content {
 	display: inline-block;
 	flex-grow: 1;
@@ -569,6 +658,7 @@ label {
 .el-submenu .el-menu-item {
 	padding: 0px;
 	padding-right: 15px;
+	
 }
 
 .title_input {
@@ -627,6 +717,21 @@ label {
 
 .active {
 	background-color: gray;
+}
+
+#singlePane {
+	margin-bottom: 5em;
+	border: none;
+}
+
+.toolbar {
+	display: flex;
+	flex-direction: row;
+	margin-bottom: 3em;
+}
+
+i {
+	margin-right: 1.2em;
 }
 
 </style>
