@@ -114,13 +114,14 @@
 			<div>
 				
 				<div class="toolbar" v-if="isOnePane">
-					<i class="el-icon-edit" data-command='h2' v-on:click="createH2()"></i>
-					<font-awesome-icon icon="bold" />
-					<font-awesome-icon icon="italic" />
-					<font-awesome-icon icon="strikethrough" />
-
+					<i class="el-icon-edit" v-on:click="createH2()"></i>
+					<font-awesome-icon icon="bold" v-on:click="formatText('bold')"/>
+					<font-awesome-icon icon="italic" v-on:click="formatText('italic')"/>
+					<font-awesome-icon icon="strikethrough" v-on:click="formatText('strikethrough')"/>
+					<font-awesome-icon icon="copy" v-on:click="copyToClipboard()"/>
 				</div>
-				<div contenteditable class="editor" id="singlePane" v-if="isOnePane" v-html="markdownToHTML" @input="renderWYSIWYG()"></div>
+				<textarea ref="text"></textarea>
+				<div contenteditable class="editor" ref="text" id="singlePane" v-if="isOnePane" v-html="markdownToHTML" @input="renderWYSIWYG()"></div>
             </div>
             </section>
 
@@ -188,7 +189,8 @@ export default {
 			displayNoteToast: true,
 			isTabNav: false,
 			isOnePane: false,
-			isCollapse: false
+			isCollapse: false,
+			selectedText: ""
 		}
 	},
 	computed: {
@@ -308,6 +310,12 @@ export default {
 		}
 	},
 	mounted() {
+		document.addEventListener("selectionchange", e => 
+		{
+		var textSelection = document.getSelection ? document.getSelection().toString() : document.selection.createRange().toString();
+		console.log(textSelection);
+		this.selectedText = textSelection;
+		})		
 		this.fetchData();
 	},
 	methods: {
@@ -418,6 +426,9 @@ export default {
 				file.filename = this.filename;
 			}
 		},
+		onTextSelected() {
+			console.log("text selected")
+		},
 		displayNote(file) {
 			// Save the current note, before moving to the next note.
 			this.displayNoteToast = false;
@@ -443,9 +454,10 @@ export default {
 
 		},
 		renderWYSIWYG() {
-			let editor = document.getElementById("singlePane");
-			editor.designMode = "on";
 			let textarea = document.getElementById("singlePane");
+		},
+		formatText(command) {
+			document.execCommand(command);
 		},
 		getDateNow() {
 			let time = Date.now();
@@ -494,12 +506,19 @@ export default {
 			this.activeIndex = 0;
 		},	
 		createH2() {
-			document.execCommand('formatBlock', false, "h2");
+			let editor = document.getElementById("singlePane");
+			editor.designMode = "on";
+			document.execCommand("bold");		
+			console.log("bold text")
 		},
 		changeTheme(theme) {
 			console.log("Theme changed to", theme);
 			this.getTheme(theme);
 			this.cmOptions.theme = theme;
+		},
+		copyToClipboard() {
+			this.$refs.text.select();
+      		document.execCommand('copy');
 		},
 		getTheme(theme) {
 			return import ('codemirror/theme/' + theme + '.css');

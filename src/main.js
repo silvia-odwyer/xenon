@@ -9,10 +9,10 @@ import locale from 'element-ui/lib/locale/lang/en'
 import VueCodemirror from 'vue-codemirror'
 import 'vue-material-design-icons/styles.css'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faBold, faItalic, faStrikethrough } from '@fortawesome/free-solid-svg-icons'
+import { faBold, faItalic, faStrikethrough, faCopy } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
-library.add(faItalic, faBold, faStrikethrough)
+library.add(faItalic, faBold, faStrikethrough, faCopy)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
