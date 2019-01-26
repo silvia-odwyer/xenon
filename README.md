@@ -6,6 +6,8 @@ Markdown is parsed to HTML using regular expressions.
 
 Features include live rendering of your markdown in HTML, a minimal interface, and end-to-end encryption of files.
 
+An accompanying WYSIWYG editor is also being developed, and a basic version is now available.
+
 ## Demo
 
 ![A GIF demo as the app stands on 10/01/2019](https://github.com/silvia-odwyer/xq/blob/master/screenshots/demo2_10_01_2019.gif)
@@ -28,9 +30,9 @@ on the landing page or doesn't log you in successfully.
 Please ensure you're using Chrome, as Blockstack support for Firefox is patchy at the moment (works with an unofficial Blockstack Firefox extension), and non-existent for >IE. 
 
 ### WYSIWYG Editor
-An additional WYSIWYG editor is also being developed to allow for rich text editing, but it is only available for Firefox currently. This is because it uses the experimental execCommand() method, but I am working on getting it functioning for Chrome also by trying other strategies.
+An additional WYSIWYG editor is also being developed to allow for rich text editing.
 
-Currently, text can be formatted in bold, italics, and strikethrough, but text is not being saved in its formatted form as of yet.
+Currently, text can be formatted to appear bold, in italics, etc., but text is not being saved in its formatted form as of yet.
 
 ### Issues or Bugs
 This is still in alpha, so bugs or issues may arise. If so, please submit an issue. <3 Thanks!
