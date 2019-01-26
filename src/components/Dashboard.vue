@@ -5,8 +5,6 @@
          <el-menu :default-active="String(activeIndex)" class="el-menu" mode="horizontal">
             
             <el-menu-item index="1" class="logo">xq</el-menu-item>
-			<el-menu-item v-if="isTabNav" v-for="note in markdown_notes" :index="String(note.id)" v-on:click="displayNote(note)" v-bind:key="note.id">{{note.filename}}</el-menu-item>
-
             <el-submenu index="2" class="options">
                <template slot="title">File</template>
                <el-menu-item index="2-1" v-on:click="createNewNote()"> <i class="el-icon-circle-plus"></i>New</el-menu-item>
@@ -27,6 +25,7 @@
          
       </el-header>
       <el-container>
+		  
          <el-aside width="200px" class="outer_aside"> 
            
             <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
@@ -81,12 +80,19 @@
                </el-menu>
               <small class="creds">
                 Powered by Vue, Blockstack, and loads of regex. 
-                Source code on <a href="https://github.com/blockstack/blockstack-todos" target="_blank">Github</a>
+                Source code on <a href="https://github.com/silvia-odwyer/xq" target="_blank">GitHub</a>
               </small>
             </el-aside>
 
          </el-aside>
          <el-main>
+			<el-row v-if="isTabNav" > 
+				<el-menu class="el-menu" mode="horizontal">
+					<el-menu-item  v-for="note in markdown_notes" :index="String(note.id)" v-on:click="displayNote(note)" v-bind:key="note.id">
+						{{note.filename}}
+					</el-menu-item>
+         		</el-menu>
+			</el-row>
            <el-row>
              <el-col :span="24">
               <el-input placeholder="Note Name" v-model="filename" class="title_input"></el-input>
@@ -103,11 +109,12 @@
             <section id="content" v-html="markdownToHTML" v-if="isOnePane == false">
             </section>
 
+			<!-- WYSIWYG Editor -->
 			<!-- If the user wishes to have the HTML rendered in the same pane, only this pane should display. -->
 			<div>
 				
 				<div class="toolbar" v-if="isOnePane">
-					<i class="el-icon-edit"></i>
+					<i class="el-icon-edit" data-command='h2' v-on:click="createH2()"></i>
 					<i class="el-icon-minus"></i>
 					<i class="el-icon-sort"></i>
 					<i class="el-icon-document"></i>
@@ -225,6 +232,7 @@ export default {
 
 			// blank lines
 			markdown = markdown.replace(/^\s*\n/gm, "<br>");
+
 
 			return (markdown);
 		},
@@ -429,11 +437,8 @@ export default {
 
 		},
 		renderWYSIWYG() {
+			document.designMode = "on";
 			let textarea = document.getElementById("singlePane");
-			let content = textarea.innerHTML;
-			console.log("content", content);
-			this.content = content;
-
 		},
 		getDateNow() {
 			let time = Date.now();
@@ -476,6 +481,13 @@ export default {
 					this.content = this.markdown_notes[0].content;
 					this.filename = this.markdown_notes[0].filename;
 				})
+			this.resetActiveIndex();
+		},
+		resetActiveIndex() {
+			this.activeIndex = 0;
+		},	
+		createH2() {
+			document.execCommand('formatBlock', false, "h2");
 		},
 		changeTheme(theme) {
 			console.log("Theme changed to", theme);
@@ -703,6 +715,10 @@ label {
 
 /deep/ #content {
   margin-top: 0;
+}
+
+/deep/ li {
+	margin-left: 0.5em;
 }
 
 .themes_drawer {
