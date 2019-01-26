@@ -9,7 +9,12 @@
                <template slot="title">File</template>
                <el-menu-item index="2-1" v-on:click="createNewNote()"> <i class="el-icon-circle-plus"></i>New</el-menu-item>
                <el-menu-item index="2-2" v-on:click="saveNote()"><i class="el-icon-document"></i>Save</el-menu-item>
-
+               <el-menu-item index="2-2">
+			   		<el-checkbox v-model="isOnePane">Rich Text Editor</el-checkbox>
+			   </el-menu-item>
+				<el-menu-item index="2-2">
+					<el-checkbox v-model="isTabNav">Enable Tabs</el-checkbox>
+			   </el-menu-item>
             </el-submenu>
 
             <el-submenu index="3" class="gh">
@@ -41,7 +46,7 @@
                         </el-menu-item>
                      </el-menu-item-group>
                     </el-submenu>
-                 <el-submenu index="2">
+                 <el-submenu index="2" v-if="isOnePane == false">
                      <template slot="title"><i class="el-icon-menu"></i>Themes</template>
                      <el-menu-item-group class="themes_drawer">
                         <template slot="title">All Themes Available</template>
@@ -111,18 +116,33 @@
 
 			<!-- WYSIWYG Editor -->
 			<!-- If the user wishes to have the HTML rendered in the same pane, only this pane should display. -->
-			<div>
+			<div id="wysiwyg">
 				
 				<div class="toolbar" v-if="isOnePane">
-					<i class="el-icon-edit" v-on:click="createH2()"></i>
-					<font-awesome-icon icon="bold" v-on:click="formatText('bold')"/>
-					<font-awesome-icon icon="italic" v-on:click="formatText('italic')"/>
-					<font-awesome-icon icon="strikethrough" v-on:click="formatText('strikethrough')"/>
-					<font-awesome-icon icon="copy" v-on:click="copyToClipboard()"/>
+					<button v-on:click="formatText('bold')">
+						<font-awesome-icon icon="bold" />
+					</button>
+					<button v-on:click="formatText('italic')">
+						<font-awesome-icon icon="italic" />
+					</button>
+					<button  v-on:click="formatText('strikethrough')">
+						<font-awesome-icon icon="strikethrough"/>
+					</button>
+					<button v-on:click="copyToClipboard()">
+						<font-awesome-icon icon="copy"/>
+					</button>
+
+					<button v-on:click="formatText('cut')">
+						<font-awesome-icon icon="cut" />
+					</button>
+
+					<button v-on:click="formatText('underline')">
+						<font-awesome-icon icon="underline" />
+					</button>
 				</div>
-				<textarea ref="text"></textarea>
-				<div contenteditable class="editor" ref="text" id="singlePane" v-if="isOnePane" v-html="markdownToHTML" @input="renderWYSIWYG()"></div>
-            </div>
+				<div contenteditable  ref="text" class="editor" id="singlePane" v-if="isOnePane" v-html="markdownToHTML" @input="renderWYSIWYG()"></div>
+
+			</div>
             </section>
 
               <el-button type="primary" plain icon="el-icon-circle-check-outline" v-on:click="saveNote()">
@@ -310,12 +330,14 @@ export default {
 		}
 	},
 	mounted() {
+		var textSelection;
 		document.addEventListener("selectionchange", e => 
 		{
-		var textSelection = document.getSelection ? document.getSelection().toString() : document.selection.createRange().toString();
-		console.log(textSelection);
+		textSelection = window.getSelection ? window.getSelection().toString() : window.selection.createRange().toString();
+		console.log(textSelection)
 		this.selectedText = textSelection;
 		})		
+		
 		this.fetchData();
 	},
 	methods: {
@@ -457,7 +479,7 @@ export default {
 			let textarea = document.getElementById("singlePane");
 		},
 		formatText(command) {
-			document.execCommand(command);
+			document.execCommand(command, false, "");
 		},
 		getDateNow() {
 			let time = Date.now();
@@ -505,12 +527,6 @@ export default {
 		resetActiveIndex() {
 			this.activeIndex = 0;
 		},	
-		createH2() {
-			let editor = document.getElementById("singlePane");
-			editor.designMode = "on";
-			document.execCommand("bold");		
-			console.log("bold text")
-		},
 		changeTheme(theme) {
 			console.log("Theme changed to", theme);
 			this.getTheme(theme);
@@ -585,15 +601,16 @@ export default {
 	height: 100vh;
 }
 
-.creds {
-	margin-top: auto;
-	position: absolute;
-}
-
 .editor {
 	padding: 0;
 	margin-bottom: 1em;
 	margin-right: 1em;
+}
+
+.toolbar > button {
+	background-color: white;	
+	border: none;
+	cursor: pointer;
 }
 
 label {
@@ -661,17 +678,8 @@ label {
 	flex-wrap: wrap;
 }
 
-.editor,
-#content {
-	display: inline-block;
-	flex-grow: 1;
-	width: calc(100% * (1/2) - 10px - 1px);
-	vertical-align: top;
-}
-
 .CodeMirror {
 	font-family: sans-serif;
-	height: 100vh;
 	color: black;
 	direction: ltr;
 }
@@ -708,10 +716,6 @@ label {
 .logout,
 .gh,
 .options {}
-
-.options {
-	margin-left: 39vw;
-}
 
 .el-menu-item,
 .el-menu-item a {
@@ -790,6 +794,30 @@ label {
 
 i {
 	margin-right: 1.2em;
+}
+
+@media only screen and (min-width: 800px) {
+	.options {
+		margin-left: 39vw;
+	}
+
+	.creds {
+	margin-top: auto;
+	position: absolute;
+	}
+
+	.editor,
+	#content {
+		display: inline-block;
+		flex-grow: 1;
+		width: calc(100% * (1/2) - 10px - 1px);
+		vertical-align: top;
+	}
+
+	CodeMirror {
+		height: 100vh;
+	}
+
 }
 
 </style>
