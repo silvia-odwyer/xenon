@@ -61,7 +61,7 @@
 					<el-menu-item-group>
                         <template slot="title"></template>
                         <el-menu-item index="3-2">
-							<el-checkbox v-model="isOnePane">One Pane Only</el-checkbox>
+							<el-checkbox v-model="isOnePane">Rich Text Editor</el-checkbox>
 						</el-menu-item>
                      </el-menu-item-group>
 
@@ -115,15 +115,18 @@
 				
 				<div class="toolbar" v-if="isOnePane">
 					<i class="el-icon-edit" data-command='h2' v-on:click="createH2()"></i>
-					<i class="el-icon-minus"></i>
-					<i class="el-icon-sort"></i>
-					<i class="el-icon-document"></i>
+					<font-awesome-icon icon="bold" />
+					<font-awesome-icon icon="italic" />
+					<font-awesome-icon icon="strikethrough" />
+
 				</div>
 				<div contenteditable class="editor" id="singlePane" v-if="isOnePane" v-html="markdownToHTML" @input="renderWYSIWYG()"></div>
             </div>
             </section>
 
-              <el-button type="primary" plain icon="el-icon-circle-check-outline" v-on:click="saveNote()">Save</el-button>
+              <el-button type="primary" plain icon="el-icon-circle-check-outline" v-on:click="saveNote()">
+				  Save
+			  </el-button>
                 <form @submit.prevent="saveNote()" :disabled="! content">
                 </form>
                 
@@ -141,6 +144,9 @@ import 'codemirror/theme/abcdef.css'
 import 'codemirror/mode/markdown/markdown.js'
 import 'codemirror/addon/selection/active-line.js'
 import 'codemirror/addon/selection/mark-selection.js'
+import MenuIcon from 'vue-material-design-icons/Menu.vue'
+import FormatBold from 'vue-material-design-icons/FormatBold.vue'
+
 /*eslint-disable*/
 
 var STORAGE_FILE = 'markdown_files.json'
@@ -437,7 +443,8 @@ export default {
 
 		},
 		renderWYSIWYG() {
-			document.designMode = "on";
+			let editor = document.getElementById("singlePane");
+			editor.designMode = "on";
 			let textarea = document.getElementById("singlePane");
 		},
 		getDateNow() {
@@ -513,7 +520,9 @@ export default {
 		}
 	},
 	components: {
-		codemirror
+		codemirror,
+		MenuIcon,
+		FormatBold
 	}
 }
 </script>
@@ -736,14 +745,28 @@ label {
 }
 
 #singlePane {
-	margin-bottom: 5em;
+	margin-bottom: 1em;
+	margin-top: 0.5em;
 	border: none;
+	min-height: 4vh;
+}
+
+[contenteditable]:focus {
+    outline: 0px solid transparent;
 }
 
 .toolbar {
 	display: flex;
 	flex-direction: row;
-	margin-bottom: 3em;
+	margin-bottom: 0.5em;
+	border: solid lightgray 0.01em;
+	padding: 0.5em;
+	width: 50%;
+}
+
+.toolbar > * {
+	cursor: pointer;
+	margin-left: 0.5em;
 }
 
 i {
