@@ -1,0 +1,126 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
+.button {
+  border-radius: 100px;
+}
+
+.row {
+  font-family: "Roboto", sans-serif;
+
+}
+
+.logo {
+  font-size: 1.5em;
+}
+
+.values {
+background-image: url('../images/values-bg.jpg');
+background-size: cover;
+color: #fff;
+}
+
+.value-multiplier {
+margin-bottom: .5rem;
+color: rgb(0, 73, 207);
+}
+
+.value-heading {
+margin-bottom: .3rem;
+}
+
+.value-description {
+opacity: .8;
+font-weight: 300;
+}
+
+.help {
+border-bottom: 1px solid #ddd;
+}
+
+/* Sections
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+.section {
+  padding: 8rem 0 7rem;
+  text-align: center;
+}
+.section-heading,
+.section-description {
+  margin-bottom: 1.2rem;
+}
+
+/* Nav */
+nav ul li {
+    list-style: none;
+    padding-right: 1em;
+    margin-right: 1em;
+    margin-top: 2em;
+    cursor: pointer;
+}
+
+nav ul {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+/* Categories
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+.categories {
+  /* background-image: url('../images/values-bg.jpg'); */
+  background-size: cover;
+}
+.categories .section-description { 
+  margin-bottom: 4rem;
+}
+
+/* Bigger than 550 */
+@media (min-width: 550px) {
+  .section {
+    padding: 12rem 0 11rem;
+  }
+  .hero {
+    text-align: left;
+    height: 165px;
+  }
+
+  .hero-heading {
+    font-size: 2.4rem;
+  }
+}
+
+/* Bigger than 750 */
+@media (min-width: 750px) {
+  .hero {
+    height: 10vh;
+  }
+  .hero-heading {
+    font-size: 2.6rem;
+  }
+  .section {
+    padding: 14rem 0 15rem;
+  }
+  .hero {
+    padding: 16rem 0 14rem;
+  }
+  .section-description {
+    max-width: 60%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .categories {
+    padding: 15rem 0 8rem;
+  }
+}
+
+/* Bigger than 1000 */
+@media (min-width: 1000px) {
+  .section {
+    padding: 20rem 0 19rem;
+  }
+  .hero {
+  }
+  .hero-heading {
+    font-size: 3.0rem;
+  }
+}
+
