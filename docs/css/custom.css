@@ -63,6 +63,10 @@ nav ul {
     flex-wrap: wrap;
 }
 
+.landing {
+  margin: 0em;
+}
+
 /* Categories
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 .categories {
@@ -76,7 +80,7 @@ nav ul {
 /* Bigger than 550 */
 @media (min-width: 550px) {
   .section {
-    padding: 12rem 0 11rem;
+    /* padding: 12rem 0 11rem; */
   }
   .hero {
     text-align: left;
@@ -97,10 +101,10 @@ nav ul {
     font-size: 2.6rem;
   }
   .section {
-    padding: 14rem 0 15rem;
+    /* padding: 14rem 0 15rem; */
   }
   .hero {
-    padding: 16rem 0 14rem;
+    /* padding: 16rem 0 14rem; */
   }
   .section-description {
     max-width: 60%;
@@ -115,9 +119,12 @@ nav ul {
 /* Bigger than 1000 */
 @media (min-width: 1000px) {
   .section {
-    padding: 20rem 0 19rem;
+    margin-bottom: 20em;
   }
   .hero {
+  }
+  .landing {
+    padding-top: 6em;
   }
   .hero-heading {
     font-size: 3.0rem;
