@@ -1,126 +1,163 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
+    <meta charset="utf-8" />
+    <title>xq-editor</title>
+    <meta name="description" content="" />
+    <meta name="author" content="" />
 
-  <meta charset="utf-8">
-  <title>xq-editor</title>
-  <meta name="description" content="">
-  <meta name="author" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link
+      href="//fonts.googleapis.com/css?family=Raleway:400,300,600|Roboto"
+      rel="stylesheet"
+      type="text/css"
+    />
 
-  <link href='//fonts.googleapis.com/css?family=Raleway:400,300,600|Roboto' rel='stylesheet' type='text/css'>
-   
-  <link rel="stylesheet" href="css/normalize.css">
-  <link rel="stylesheet" href="css/skeleton.css">
-  <link rel="stylesheet" href="css/custom.css">
+    <link rel="stylesheet" href="css/normalize.css" />
+    <link rel="stylesheet" href="css/skeleton.css" />
+    <link rel="stylesheet" href="css/custom.css" />
 
-  <!-- Scripts -->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-  <script type="text/javascript" src="js/lib/greensock/TweenMax.min.js"></script>
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.5/ScrollMagic.min.js"></script>
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.5/plugins/animation.gsap.js"></script>
-  <script src="animations.js"></script>
+    <!-- Scripts -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script
+      type="text/javascript"
+      src="js/lib/greensock/TweenMax.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.5/ScrollMagic.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.5/plugins/animation.gsap.js"
+    ></script>
+    <script src="animations.js"></script>
 
-  <!-- Favicon
+    <!-- Favicon
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-  <link rel="icon" type="image/png" href="../../dist/images/favicon.png">
-
-</head>
-<body>
+    <link rel="icon" type="image/png" href="../../dist/images/favicon.png" />
+  </head>
+  <body>
     <header>
-        <div class="container">
-            <div class="row">
-                <nav>
-                    <div class="two-thirds column">
-                        <p class="logo">xq</p>
-                    </div>
-                    <div class="one-third column">
-                            <ul>
-                                <li>Features</li>
-                                <li>Pricing</li>
-                                <li>Try It Out</li>
-                            </ul>
-                    </div>
-                </nav>
+      <div class="container">
+        <div class="row">
+          <nav>
+            <div class="two-thirds column">
+              <p class="logo">xq</p>
             </div>
+            <div class="one-third column">
+              <ul>
+                <li>Features</li>
+                <li>Pricing</li>
+                <li>Try It Out</li>
+              </ul>
+            </div>
+          </nav>
         </div>
+      </div>
     </header>
 
-  <section class="section hero">
-    <section class="container">
-      <section class="row">
-        <section class="one-half column landing">
-          <h4 class="hero-heading">The world's first decentralized markdown editor.</h4>
-          <h5>Finally. Write notes only you can view.</h5>
-          <a class="button button-primary" href="https://xq-alpha.herokuapp.com/" id="trigger2">Start Creating Notes</a>
-        </section>
-		
-		<section class="one-half column image">
-			<img src="images/encrypted.PNG" width="560" height="350"/>
-		</section>
+    <section class="section hero">
+      <section class="container">
+        <section class="row">
+          <section class="one-half column landing">
+            <h4 class="hero-heading">
+              The world's first decentralized markdown editor.
+            </h4>
+            <h5>Finally. Write notes only you can view.</h5>
+            <a
+              class="button button-primary"
+              href="https://xq-alpha.herokuapp.com/"
+              id="trigger2"
+              >Start Creating Notes</a>
+          </section>
 
+          <section class="one-half column image">
+            <img src="images/encrypted.PNG" width="560" height="350" />
+          </section>
+        </section>
       </section>
     </section>
-  </section>
 
-  <div class="section">
-    <div class="container">
-      <div class="row" id="animate2">
-        <div class="one-third column value">
-          <h2 class="value-multiplier">30+</h2>
-          <h5 class="value-heading">Themes</h5>
-          <p class="value-description">Customize the look and feel of xq with themes..</p>
-        </div>
-        <div class="one-third column value">
-          <h2 class="value-multiplier">90%</h2>
-          <h5 class="value-heading">Multi-device Syncing</h5>
-          <p class="value-description">Access your notes anytime, anywhere.</p>
-        </div>
-        <div class="one-third column value">
-          <h2 class="value-multiplier">12ms</h2>
-          <h5 class="value-heading">Load Time</h5>
-          <p class="value-description">xq is fast and lightweight. No lag.</p>
-        </div>
-      </div>
+    
+    <section class="section hero">
+      <section class="container">
+        <section class="row">
+          <section class="one-half column">
+            <h5 class="section-heading">View Notes Anytime, Anywhere</h5>
+            <p class="section-description">
+              Access your notes from your smartphone or edit them on your PC;
+              the choice will forever be yours.
+            </p>
+          </section>
 
-      <div class="row" id="animate2">
-        <div class="one-third column value">
-          <h2 class="value-multiplier">30+</h2>
-          <h5 class="value-heading">Themes</h5>
-          <p class="value-description">Customize the look and feel of xq with themes..</p>
-        </div>
-        <div class="one-third column value">
-          <h2 class="value-multiplier">90%</h2>
-          <h5 class="value-heading">Multi-device Syncing</h5>
-          <p class="value-description">Access your notes anytime, anywhere.</p>
-        </div>
-        <div class="one-third column value">
-          <h2 class="value-multiplier">12ms</h2>
-          <h5 class="value-heading">Load Time</h5>
-          <p class="value-description">xq is fast and lightweight. No lag.</p>
+          <section class="one-half column image">
+            <img src="images/encrypted.PNG" width="560" height="350" />
+          </section>
+        </section>
+      </section>
+    </section>
+    
+    <section class="section hero">
+      <section class="container">
+        <section class="row">
+          <section class="one-half column image">
+            <img src="images/encrypted.PNG" width="560" height="350" />
+          </section>
+          <section class="one-half column">
+            <h5 class="section-heading">Encrypted and stored in a decentralized system.</h5>
+            <p class="section-description">
+              End-to-end encryption of files ensures only you can view your notes.
+            </p>
+          </section>
+        </section>
+      </section>
+    </section>
+
+    <div class="section">
+      <div class="container">
+        <div class="row" id="animate2">
+          <div class="one-third column value">
+            <h2 class="value-multiplier">30+</h2>
+            <h5 class="value-heading">Themes</h5>
+            <p class="value-description">
+              Customize the look and feel of xq with themes..
+            </p>
+          </div>
+          <div class="one-third column value">
+            <h2 class="value-multiplier"></h2>
+            <h5 class="value-heading">Multi-device Syncing</h5>
+            <p class="value-description">
+              Access your notes anytime, anywhere.
+            </p>
+          </div>
+          <div class="one-third column value">
+            <h2 class="value-multiplier">12ms</h2>
+            <h5 class="value-heading">Lightweight</h5>
+            <p class="value-description">xq is fast and lightweight. No lag.</p>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="section get-help">
-    <div class="container">
-      <h3 class="section-heading">Get Started Now</h3>
-      <p class="section-description">Enjoy the benefits of creating notes with xq-editor, and get started today!</p>
-      <a class="button button-primary" href="http://getskeleton.com">View Skeleton Docs</a>
-    </div>
-  </div>
+    <section class="section hero">
+      <section class="container">
+        <section class="row">
+          <section class="one-half column">
+            <h5 class="section-heading">Get Started</h5>
+            <p class="section-description">
+              Enjoy the benefits of creating notes with xq-editor, and get started
+              today!
+            </p>
+            <a class="button button-primary" href="https://xq-alpha.herokuapp.com">Take Me to xq-editor</a>
+          </section>
+          <section class="one-half column image">
+            <img src="images/encrypted.PNG" width="560" height="350" />
+          </section>
+        </section>
+      </section>
+    </section>
 
-  <div class="section categories">
-    <div class="container">
-      <h3 class="section-heading">View Notes Anytime, Anywhere</h3>
-      <p class="section-description">Access your notes from your smartphone or edit them on your PC; the choice will forever be yours.</p>
-      <div class="row">
-
-      </div>
-    </div>
-  </div>
-
-</body>
+  </body>
 </html>
