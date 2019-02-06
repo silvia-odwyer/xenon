@@ -12,8 +12,7 @@
     <link
       href="//fonts.googleapis.com/css?family=Raleway:400,300,600|Roboto"
       rel="stylesheet"
-      type="text/css"
-    />
+      type="text/css"/>
 
     <link rel="stylesheet" href="css/normalize.css" />
     <link rel="stylesheet" href="css/skeleton.css" />
@@ -39,6 +38,27 @@
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
     <link rel="icon" type="image/png" href="../../dist/images/favicon.png" />
   </head>
+
+  <!-- SVG ICON DEFINITIONS -->
+
+  <svg aria-hidden="true" style="position: absolute; width: 0; height: 0; overflow: hidden;" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+    <symbol id="icon-droplet" viewBox="0 0 32 32">
+    <title>droplet</title>
+    <path d="M27.020 14.786c-2.055-5.732-6.41-10.88-11.020-14.786-4.61 3.907-8.965 9.054-11.020 14.786-1.271 3.545-1.396 7.393 0.393 10.794 2.058 3.911 6.207 6.42 10.626 6.42s8.569-2.509 10.626-6.42c1.79-3.401 1.664-7.249 0.393-10.794zM23.086 23.717c-1.369 2.602-4.15 4.283-7.086 4.283-1.723 0-3.391-0.579-4.753-1.583 0.414 0.054 0.832 0.083 1.254 0.083 3.67 0 7.146-2.1 8.856-5.351 1.402-2.665 1.281-5.433 0.746-7.636 0.455 0.88 0.841 1.756 1.151 2.623 0.706 1.971 1.251 4.886-0.168 7.581z"></path>
+    </symbol>
+    <symbol id="icon-stack" viewBox="0 0 32 32">
+    <title>stack</title>
+    <path d="M32 10l-16-8-16 8 16 8 16-8zM16 4.655l10.689 5.345-10.689 5.345-10.689-5.345 10.689-5.345zM28.795 14.398l3.205 1.602-16 8-16-8 3.205-1.602 12.795 6.398zM28.795 20.398l3.205 1.602-16 8-16-8 3.205-1.602 12.795 6.398z"></path>
+    </symbol>
+    <symbol id="icon-loop2" viewBox="0 0 32 32">
+    <title>loop2</title>
+    <path d="M27.802 5.197c-2.925-3.194-7.13-5.197-11.803-5.197-8.837 0-16 7.163-16 16h3c0-7.18 5.82-13 13-13 3.844 0 7.298 1.669 9.678 4.322l-4.678 4.678h11v-11l-4.198 4.197z"></path>
+    <path d="M29 16c0 7.18-5.82 13-13 13-3.844 0-7.298-1.669-9.678-4.322l4.678-4.678h-11v11l4.197-4.197c2.925 3.194 7.13 5.197 11.803 5.197 8.837 0 16-7.163 16-16h-3z"></path>
+    </symbol>
+    </defs>
+    </svg>
+
   <body>
     <header>
       <div class="container">
@@ -132,11 +152,13 @@
       </section>
     </section>
 
-    <div class="section">
+    <div class="section options">
       <div class="container">
         <div class="row" id="animate2">
           <div class="one-third column value">
-            <h2 class="value-multiplier">30+</h2>
+            <svg class="icon-droplet">
+                <use xlink:href="#icon-droplet"></use>
+              </svg>
             <h5 class="value-heading">Themes</h5>
             <p class="value-description">
               Customize the look and feel of xq with themes..
@@ -144,13 +166,18 @@
           </div>
           <div class="one-third column value">
             <h2 class="value-multiplier"></h2>
+            <svg class="icon-loop2">
+                <use xlink:href="#icon-loop2"></use>
+              </svg>
             <h5 class="value-heading">Multi-device Syncing</h5>
             <p class="value-description">
               Access your notes anytime, anywhere.
             </p>
           </div>
           <div class="one-third column value">
-            <h2 class="value-multiplier">12ms</h2>
+            <svg class="icon-stack">
+                <use xlink:href="#icon-stack"></use>
+              </svg>
             <h5 class="value-heading">Lightweight</h5>
             <p class="value-description">xq is fast and lightweight. No lag.</p>
           </div>
