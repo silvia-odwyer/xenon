@@ -10,7 +10,7 @@
         var scene1 = new ScrollMagic.Scene({
             triggerElement: "#trigger2"
         })
-            .setTween("#animate2", 0.5, { scale: 1.05 }) // trigger a TweenMax.to tween
+            .setTween("#animate2", 1.1, { scale: 1.1 }) // trigger a TweenMax.to tween
             .addTo(controller);
 
     }
