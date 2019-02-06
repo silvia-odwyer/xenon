@@ -2,11 +2,12 @@
 
 A markdown editor built for the decentralized web.
 
-Markdown is parsed to HTML using regular expressions. 
+View the ![official website](https://silvia-odwyer.github.io/xq/).
 
-Features include live rendering of your markdown in HTML, a minimal interface, and end-to-end encryption of files.
-
-An accompanying WYSIWYG editor is also being developed, and a basic version is now available.
+Features include:
+- live rendering of your markdown in HTML using regular expressions
+- a lightweight, minimal interface
+- end-to-end encryption of files.
 
 ## Demo
 
@@ -14,6 +15,9 @@ An accompanying WYSIWYG editor is also being developed, and a basic version is n
 
 ### Try It Out
 You can try it out [here](https://xq-alpha.herokuapp.com). 
+
+### Official Website
+The xq-editor now has its ![own official website](https://silvia-odwyer.github.io/xq/), which is available (for now) via GitHub Pages.
 
 ### Not Working?
 Browser support for Blockstack is still in alpha at the moment, so you may find that the app remains
