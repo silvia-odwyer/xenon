@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Roboto');
+@import url('https://fonts.googleapis.com/css?family=Roboto|Bebas+Neue');
 
 .button {
   border-radius: 100px;
@@ -108,7 +108,8 @@ nav ul {
 		grid-area: fright;
 		display: flex;
 		flex-direction: row;
-    flex-wrap: wrap;
+		flex-wrap: wrap;
+		font-family: "Bebas Neue", sans-serif;
   }
   footer a {
     color: black;
@@ -146,6 +147,9 @@ nav ul {
   .section {
     margin-bottom: 20em;
   }
+  .options {
+    margin-bottom: 5em;
+  }
   .hero {
   }
   .landing {
@@ -162,4 +166,8 @@ nav ul {
 
 .rhs_container {
   max-width: 100vw;
+}
+
+.icon {
+  max-height: 50%;
 }
