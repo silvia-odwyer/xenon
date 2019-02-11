@@ -2,7 +2,7 @@
 
 A markdown editor built for the decentralized web.
 
-View the ![official website](https://silvia-odwyer.github.io/xq/).
+View the [official website](https://silvia-odwyer.github.io/xq/).
 
 Features include:
 - live rendering of your markdown in HTML using regular expressions
@@ -17,7 +17,7 @@ Features include:
 You can try it out [here](https://xq-alpha.herokuapp.com). 
 
 ### Official Website
-The xq-editor now has its ![own official website](https://silvia-odwyer.github.io/xq/), which is available (for now) via GitHub Pages.
+The xq-editor now has its [own official website](https://silvia-odwyer.github.io/xq/), which is available (for now) via GitHub Pages.
 
 ### Not Working?
 Browser support for Blockstack is still in alpha at the moment, so you may find that the app remains
@@ -64,4 +64,13 @@ npm run build --report
 
 ```
 
+## Near-Future Plans
+Several features will be implemented in the following weeks, preceding the March 2019 release:
+- Auto-saving of notes. 
+- Full customization of the editor's appearance and UI. 
+- Dark mode 
+- Mobile responsiveness
+- Move the official website to a component which will be rendered from the xq-alpha site. 
+
 *Current State*: alpha
+
