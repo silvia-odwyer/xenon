@@ -112,17 +112,13 @@ nav ul {
 		font-family: "Bebas Neue", sans-serif;
   }
 
-  footer ul a {
-    padding-left: 1.1em;
+  footer a {
     margin: 0;
-    padding: 0;
+		padding: 0;
+		padding-left: 1.1em;
   }
+}
 
-}
-ul a {
-  color: black;
-  text-decoration: none;
-}
 /* Bigger than 750 */
 @media (min-width: 750px) {
   .hero {
@@ -173,4 +169,9 @@ ul a {
 
 .icon {
   max-height: 50%;
+}
+
+a {
+  color: black;
+  text-decoration: none;
 }
