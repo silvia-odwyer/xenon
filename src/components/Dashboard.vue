@@ -7,11 +7,11 @@
             <el-menu-item index="1" class="logo">xq</el-menu-item>
             <el-submenu index="2" class="options">
                <template slot="title">File</template>
-               <el-menu-item index="2-1" v-on:click="createNewNote()"> <i class="el-icon-circle-plus"></i>New</el-menu-item>
+               <el-menu-item index="2-1" v-on:click="displayFormDialog()"> <i class="el-icon-circle-plus"></i>New</el-menu-item>
                <el-menu-item index="2-2" v-on:click="saveNote()"><i class="el-icon-document"></i>Save</el-menu-item>
-               <el-menu-item index="2-2">
-			   		<el-checkbox v-model="isOnePane">Rich Text Editor</el-checkbox>
-			   </el-menu-item>
+               <!-- <el-menu-item index="2-2"> -->
+			   		<!-- <el-checkbox v-model="isOnePane">Rich Text Editor</el-checkbox> -->
+			   <!-- </el-menu-item> -->
 				<el-menu-item index="2-2">
 					<el-checkbox v-model="isTabNav">Enable Tabs</el-checkbox>
 			   </el-menu-item>
@@ -35,7 +35,7 @@
            
             <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
                <el-menu :default-openeds="['1', '3']" :collapse="isCollapse">
-                  <el-button type="primary" plain icon="el-icon-edit" class="new_note" v-on:click="createNewNote()">New Note</el-button>
+                  <el-button type="primary" plain icon="el-icon-edit" class="new_note" v-on:click="displayFormDialog()">New Note</el-button>
                   <el-submenu index="1">
                      <template slot="title"><i class="el-icon-message"></i>Your Notes</template>
                      <el-menu-item-group>
@@ -65,9 +65,9 @@
 					 
 					<el-menu-item-group>
                         <template slot="title"></template>
-                        <el-menu-item index="3-2">
-							<el-checkbox v-model="isOnePane">Rich Text Editor</el-checkbox>
-						</el-menu-item>
+                        <!-- <el-menu-item index="3-2">
+													<el-checkbox v-model="isOnePane">Rich Text Editor</el-checkbox>
+												</el-menu-item> -->
                      </el-menu-item-group>
 
 					<!-- <el-menu-item-group>
@@ -92,7 +92,7 @@
          </el-aside>
          <el-main>
 			<el-row v-if="isTabNav" > 
-				<el-menu class="el-menu" mode="horizontal">
+				<el-menu class="el-menu tabs" mode="horizontal">
 					<el-menu-item  v-for="note in markdown_notes" :index="String(note.id)" v-on:click="displayNote(note)" v-bind:key="note.id">
 						{{note.filename}}
 					</el-menu-item>
@@ -148,8 +148,20 @@
               <el-button type="primary" plain icon="el-icon-circle-check-outline" v-on:click="saveNote()">
 				  Save
 			  </el-button>
-                <form @submit.prevent="saveNote()" :disabled="! content">
-                </form>
+        <form @submit.prevent="saveNote()" :disabled="! content">
+        </form>
+
+				<el-dialog title="Filename" :visible.sync="dialogFormVisible">
+					<el-form :model="form">
+						<el-form-item label="Filename" label-width="120px">
+							<el-input v-model="filename" autocomplete="off"></el-input>
+						</el-form-item>
+					</el-form>
+					<span slot="footer" class="dialog-footer">
+						<el-button @click="dialogFormVisible = false">Cancel</el-button>
+						<el-button type="primary" v-on:click="confirmNoteCreation()">Create Note</el-button>
+					</span>
+				</el-dialog>
                 
          </el-main>
       </el-container>
@@ -210,7 +222,11 @@ export default {
 			isTabNav: false,
 			isOnePane: false,
 			isCollapse: false,
-			selectedText: ""
+			selectedText: "",
+			dialogFormVisible: false,
+        form: {
+          name: '',
+        },
 		}
 	},
 	computed: {
@@ -264,55 +280,55 @@ export default {
 
 			return (markdown);
 		},
-		markdownToWYSIWYG() {
-			// Renders markdown to What You See is What You Get-style text.
-			// Some may a bit buggy; submit an issue if you see any bugs. 
+	// 	markdownToWYSIWYG() {
+	// 		// Renders markdown to What You See is What You Get-style text.
+	// 		// Some may a bit buggy; submit an issue if you see any bugs. 
 
-			// Look for the beginning of a line that contains a greater-than symbol, 
-			// and enclose the token in blockquote tags. 
-			let markdown = this.content.replace(/^\>(.+)/gm, "<blockquote>$1</blockquote>");
+	// 		// Look for the beginning of a line that contains a greater-than symbol, 
+	// 		// and enclose the token in blockquote tags. 
+	// 		let markdown = this.content.replace(/^\>(.+)/gm, "<blockquote>$1</blockquote>");
 
-			// h5
-			markdown = markdown.replace(/[\#]{5}(.+)/gm, "<h5>$1</h5>");
+	// 		// h5
+	// 		markdown = markdown.replace(/[\#]{5}(.+)/gm, "<h5>$1</h5>");
 
-			// h4
-			markdown = markdown.replace(/[\#]{4}(.+)/gm, "<h4>$1</h4>");
+	// 		// h4
+	// 		markdown = markdown.replace(/[\#]{4}(.+)/gm, "<h4>$1</h4>");
 
-			// h3
-			markdown = markdown.replace(/[\#]{3}(.+)/gm, "<h3>$1</h3>");
+	// 		// h3
+	// 		markdown = markdown.replace(/[\#]{3}(.+)/gm, "<h3>$1</h3>");
 
-			// h2
-			markdown = markdown.replace(/[\#]{2}(.+)/gm, "<h2>$1</h2>")
+	// 		// h2
+	// 		markdown = markdown.replace(/[\#]{2}(.+)/gm, "<h2>$1</h2>")
 
-			// h1
-			markdown = markdown.replace(/[\#]{1}(.+)/gm, "<h1>$1</h1>")
+	// 		// h1
+	// 		markdown = markdown.replace(/[\#]{1}(.+)/gm, "<h1>$1</h1>")
 
-			// h1 and h2s that consist of equals/plus signs underneath 
-			markdown = markdown.replace(/^(.+)\n\+=/gm, '<h1>$1</h1>');
-			markdown = markdown.replace(/^(.+)\n\-+/gm, '<h2>$1</h2>');
+	// 		// h1 and h2s that consist of equals/plus signs underneath 
+	// 		markdown = markdown.replace(/^(.+)\n\+=/gm, '<h1>$1</h1>');
+	// 		markdown = markdown.replace(/^(.+)\n\-+/gm, '<h2>$1</h2>');
 
-			// bold text
-			markdown = markdown.replace(/[\*\_]{2}([^\*\_]+)[\*\_]{2}/g, '<b>$1</b>');
+	// 		// bold text
+	// 		markdown = markdown.replace(/[\*\_]{2}([^\*\_]+)[\*\_]{2}/g, '<b>$1</b>');
 
-			//ul
-			markdown = markdown.replace(/^\*(.+)/gm, '<li>$1</li>');
-			markdown = markdown.replace(/^\-(.+)/gm, '<li>$1</li>')
+	// 		//ul
+	// 		markdown = markdown.replace(/^\*(.+)/gm, '<li>$1</li>');
+	// 		markdown = markdown.replace(/^\-(.+)/gm, '<li>$1</li>')
 
-			// code 
-			markdown = markdown.replace(/[\`]{1}([^\`]+)[\`]{1}/g, '<code>$1</code>');
+	// 		// code 
+	// 		markdown = markdown.replace(/[\`]{1}([^\`]+)[\`]{1}/g, '<code>$1</code>');
 
-			// em should technically be for placing emphasis on certain words,
-			// so [TODO] add a check for single-words only.
-			markdown = markdown.replace(/[\*\_]{1}([^\*\_]+)[\*\_]{1}/g, '<i>$1</i>');
+	// 		// em should technically be for placing emphasis on certain words,
+	// 		// so [TODO] add a check for single-words only.
+	// 		markdown = markdown.replace(/[\*\_]{1}([^\*\_]+)[\*\_]{1}/g, '<i>$1</i>');
 
-			// Strikethrough
-			markdown = markdown.replace(/\~~([^\~]+)\~~/g, '<del>$1</del>');
+	// 		// Strikethrough
+	// 		markdown = markdown.replace(/\~~([^\~]+)\~~/g, '<del>$1</del>');
 
-			// blank lines
-			markdown = markdown.replace(/^\s*\n/gm, "<br>");
+	// 		// blank lines
+	// 		markdown = markdown.replace(/^\s*\n/gm, "<br>");
 
-			return (markdown);
-		}
+	// 		return (markdown);
+	// 	}
 	},
 	watch: {
 		markdown_notes: {
@@ -378,6 +394,12 @@ export default {
 			}
 			console.log("sample notes", this.sample_notes);
 		},
+		confirmNoteCreation() {
+			console.log("hi");
+			this.dialogFormVisible = false;
+			this.displayFileMessage('New note created!', "success");
+			this.saveNewNote();
+		},
 		saveNote() {
 			if (this.filename == "") {
 				this.noFilenameAlert = true;
@@ -386,25 +408,6 @@ export default {
 
 			// Both code and title entered
 			else {
-				let datestamp = this.getDateStamp();
-				// If all_file_ids contains the current ID, then the file exists already
-				// Update the file, rather than create a new one
-
-				if (this.isNewFile) {
-					// Create a new file.
-					this.markdown_notes.unshift({
-						id: this.uidCount++,
-						hash_id: String(this.getDateNow()),
-						content: this.content.trim(),
-						filename: this.filename,
-						language: this.cmOptions.mode,
-						completed: false,
-						date: datestamp
-					})
-
-					this.isNewFile = false;
-        } 
-        else {
           // Retrieve the file of interest
 					let current_file = this.markdown_notes.filter(file => file.hash_id == this.file.hash_id)[0];
 
@@ -428,9 +431,16 @@ export default {
 					this.showSnackbar = true;
 				}
 
-			}
+			
 		this.resetNoteToast();
 		},
+		handleClose(done) {
+        this.$confirm('Are you sure to close this dialog?')
+          .then(_ => {
+            done();
+          })
+          .catch(_ => {});
+    },
 		resetNoteToast() {
 			this.displayNoteToast = true;
 		},
@@ -485,13 +495,27 @@ export default {
 			let time = Date.now();
 			return time;
 		},
-		createNewNote() {
+		displayFormDialog() {
 			console.log("CRTNEWNOTE files", this.markdown_notes);
-			this.content = "";
-			this.filename = "";
 			this.isNewFile = true;
 
-			this.displayFileMessage('New note created!', "success")
+			// Display dialog asking for filename
+			this.dialogFormVisible = true;
+
+		},
+		saveNewNote() {
+			let datestamp = this.getDateStamp();
+			
+			// Create a new file.
+			this.markdown_notes.unshift({
+				id: this.uidCount++,
+				hash_id: String(this.getDateNow()),
+				content: this.content.trim(),
+				filename: this.filename,
+				language: this.cmOptions.mode,
+				completed: false,
+				date: datestamp
+			})
 		},
 		getDateStamp() {
 			let date = new Date();
@@ -816,6 +840,10 @@ i {
 
 	CodeMirror {
 		height: 100vh;
+	}
+
+	.tabs {
+		margin-bottom: 0.5em;
 	}
 
 }
