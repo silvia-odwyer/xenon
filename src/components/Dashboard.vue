@@ -1,9 +1,7 @@
-
-
 <template>
-    <el-container class="dashboard">
+    <el-container id="dashboard">
         <el-header style="text-align: right; font-size: 12px">
-            <el-menu :default-active="String(activeIndex)" class="el-menu" mode="horizontal">
+            <el-menu :default-active="String(activeIndex)" class="el-menu" mode="horizontal" id="el_menu">
                 <el-menu-item index="1" class="logo">xq</el-menu-item>
                 <el-submenu index="2" class="options">
                     <template slot="title">File</template>
@@ -21,17 +19,17 @@
                     <el-menu-item index="3-1"><a href="https://github.com/silvia-odwyer/xq/issues"><i class="el-icon-bell"></i>Submit Issue</a></el-menu-item>
                     <el-menu-item index="3-2"><a href="https://github.com/silvia-odwyer/xq/"><i class="el-icon-news"></i>View Repo</a></el-menu-item>
                 </el-submenu>
-                <el-menu-item index="4" class="logout" v-on:click="signOut">
+                <el-menu-item index="4-a" class="logout" v-on:click="signOut">
                     Logout
                 </el-menu-item>
             </el-menu>
         </el-header>
         <el-container>
             <el-aside width="200px" class="outer_aside">
-                <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
-                    <el-menu :default-openeds="['1', '3']" :collapse="isCollapse">
+                <el-aside width="200px">
+                    <el-menu :default-openeds="['1', '3']" :collapse="isCollapse" id="sidebar">
                         <el-button type="primary" plain icon="el-icon-edit" class="new_note" v-on:click="displayFormDialog()">New Note</el-button>
-                        <el-submenu index="1">
+                        <el-submenu index="1" class="submenu">
                             <template slot="title"><i class="el-icon-message"></i>Your Notes</template>
                             <el-menu-item-group>
                                 <template slot="title">Recently Added</template>
@@ -41,19 +39,22 @@
                                 </el-menu-item>
                             </el-menu-item-group>
                         </el-submenu>
-                        <el-submenu index="2" v-if="isOnePane == false">
+                        <el-submenu index="2" v-if="isOnePane == false" class="submenu">
                             <template slot="title"><i class="el-icon-menu"></i>Themes</template>
                             <el-menu-item-group class="themes_drawer">
                                 <template slot="title">All Themes Available</template>
                                 <el-menu-item index="1-1" v-for="theme in themes" v-on:click="changeTheme(theme)" v-bind:key="theme">{{theme}}</el-menu-item>
                             </el-menu-item-group>
                         </el-submenu>
-                        <el-submenu index="3">
+                        <el-submenu index="3" class="submenu">
                             <template slot="title"><i class="el-icon-setting"></i>More</template>
                             <el-menu-item-group>
                                 <template slot="title"></template>
                                 <el-menu-item index="3-1">
                                     <el-checkbox v-model="isTabNav">Enable Tabs</el-checkbox>
+                                </el-menu-item>
+																<el-menu-item index="3-1">
+                                    <el-checkbox v-model="isDarkMode" v-on:change="changeMode()">Enable Dark Mode</el-checkbox>
                                 </el-menu-item>
                             </el-menu-item-group>
                             <el-menu-item-group>
@@ -90,7 +91,7 @@
                 </el-row>
                 <el-row>
                     <el-col :span="24">
-                        <el-input placeholder="Note Name" v-model="filename" class="title_input"></el-input>
+                        <el-input placeholder="Note Name" v-model="filename" class="title_input" @input="enableAutoSave"></el-input>
                     </el-col>
                 </el-row>
                 <section class="live_area">
@@ -205,7 +206,8 @@ export default {
         form: {
           name: '',
         },
-				timeoutID: null
+				timeoutID: null,
+				isDarkMode: false
 		}
 	},
 	computed: {
@@ -387,13 +389,6 @@ export default {
 
 			this.alertMessage = "Saved file!"
 		},
-		handleClose(done) {
-        this.$confirm('Are you sure to close this dialog?')
-          .then(_ => {
-            done();
-          })
-          .catch(_ => {});
-    },
 		resetNoteToast() {
 			this.displayNoteToast = true;
 		},
@@ -544,7 +539,42 @@ export default {
 			event.className += " active";
 			console.log(event)
 		},
+		changeMode() {
+			var dashboard_bg_colour, dashboard_text_colour, cm_theme;
 
+			// Set colour values for each variable
+			if (this.isDarkMode) {
+				dashboard_bg_colour = "rgb(37, 37, 37)";
+				dashboard_text_colour = "white";
+				cm_theme = "darcula"
+			}
+			else {
+				dashboard_bg_colour = "white"
+				dashboard_text_colour = "black";
+				cm_theme = "idea";
+			}
+			
+			// Change the corresponding elements
+			let dashboard = document.getElementById("dashboard");
+			dashboard.style.backgroundColor = dashboard_bg_colour;
+
+			let el_menu = document.getElementById("el_menu")
+			el_menu.style.backgroundColor = dashboard_bg_colour
+
+			let sidebar = document.getElementById("sidebar");
+			sidebar.style.backgroundColor = dashboard_bg_colour;
+
+			let el_menu_class = document.getElementsByClassName("el-menu")[2];
+			console.log(el_menu_class)
+			el_menu_class.backgroundColor = dashboard_bg_colour;
+
+			let content = document.getElementById("content");
+			content.style.color = dashboard_text_colour;
+
+			dashboard.style.color = dashboard_text_colour;
+			this.changeTheme(cm_theme);
+			
+		},
 		signOut() {
 			this.blockstack.signUserOut(window.location.href)
 		}
