@@ -1,173 +1,151 @@
+
+
 <template>
-   <el-container class="dashboard">
-      <el-header style="text-align: right; font-size: 12px">
-
-         <el-menu :default-active="String(activeIndex)" class="el-menu" mode="horizontal">
-            
-            <el-menu-item index="1" class="logo">xq</el-menu-item>
-            <el-submenu index="2" class="options">
-               <template slot="title">File</template>
-               <el-menu-item index="2-1" v-on:click="displayFormDialog()"> <i class="el-icon-circle-plus"></i>New</el-menu-item>
-               <el-menu-item index="2-2" v-on:click="saveNote()"><i class="el-icon-document"></i>Save</el-menu-item>
-               <!-- <el-menu-item index="2-2"> -->
-			   		<!-- <el-checkbox v-model="isOnePane">Rich Text Editor</el-checkbox> -->
-			   <!-- </el-menu-item> -->
-				<el-menu-item index="2-2">
-					<el-checkbox v-model="isTabNav">Enable Tabs</el-checkbox>
-			   </el-menu-item>
-            </el-submenu>
-
-            <el-submenu index="3" class="gh">
-               <template slot="title">GitHub</template>
-               <el-menu-item index="3-1"><a href="https://github.com/silvia-odwyer/xq/issues"><i class="el-icon-bell"></i>Submit Issue</a></el-menu-item>
-               <el-menu-item index="3-2"><a href="https://github.com/silvia-odwyer/xq/"><i class="el-icon-news"></i>View Repo</a></el-menu-item>
-
-            </el-submenu>
-            <el-menu-item index="4" class="logout" v-on:click="signOut">
-               Logout
-            </el-menu-item>
-         </el-menu>
-         
-      </el-header>
-      <el-container>
-		  
-         <el-aside width="200px" class="outer_aside"> 
-           
-            <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
-               <el-menu :default-openeds="['1', '3']" :collapse="isCollapse">
-                  <el-button type="primary" plain icon="el-icon-edit" class="new_note" v-on:click="displayFormDialog()">New Note</el-button>
-                  <el-submenu index="1">
-                     <template slot="title"><i class="el-icon-message"></i>Your Notes</template>
-                     <el-menu-item-group>
-                        <template slot="title">Recently Added</template>
-                        <el-menu-item :index="String(note.id)" v-for="note in markdown_notes" v-on:click="displayNote(note); changeActiveFileListing($event)" class="note_listing" v-bind:key="note.id">
-							{{note.filename}}
-                        <a @click.prevent="markdown_notes.splice(markdown_notes.indexOf(note), 1) " class="delete pull-right" href="#">x</a>
-                        </el-menu-item>
-                     </el-menu-item-group>
-                    </el-submenu>
-                 <el-submenu index="2" v-if="isOnePane == false">
-                     <template slot="title"><i class="el-icon-menu"></i>Themes</template>
-                     <el-menu-item-group class="themes_drawer">
-                        <template slot="title">All Themes Available</template>
-                        <el-menu-item index="1-1" v-for="theme in themes" v-on:click="changeTheme(theme)" v-bind:key="theme">{{theme}}</el-menu-item>
-                     </el-menu-item-group>
+    <el-container class="dashboard">
+        <el-header style="text-align: right; font-size: 12px">
+            <el-menu :default-active="String(activeIndex)" class="el-menu" mode="horizontal">
+                <el-menu-item index="1" class="logo">xq</el-menu-item>
+                <el-submenu index="2" class="options">
+                    <template slot="title">File</template>
+                    <el-menu-item index="2-1" v-on:click="displayFormDialog()"> <i class="el-icon-circle-plus"></i>New</el-menu-item>
+                    <el-menu-item index="2-2" v-on:click="saveNote()"><i class="el-icon-document"></i>Save</el-menu-item>
+                    <!-- <el-menu-item index="2-2"> -->
+                    <!-- <el-checkbox v-model="isOnePane">Rich Text Editor</el-checkbox> -->
+                    <!-- </el-menu-item> -->
+                    <el-menu-item index="2-2">
+                        <el-checkbox v-model="isTabNav">Enable Tabs</el-checkbox>
+                    </el-menu-item>
                 </el-submenu>
-                    <el-submenu index="3">
-                     <template slot="title"><i class="el-icon-setting"></i>More</template>
-
-					<el-menu-item-group>
-                        <template slot="title"></template>
-                        <el-menu-item index="3-1">
-							<el-checkbox v-model="isTabNav">Enable Tabs</el-checkbox>
-						</el-menu-item>
-                     </el-menu-item-group>
-					 
-					<el-menu-item-group>
-                        <template slot="title"></template>
-                        <!-- <el-menu-item index="3-2">
-													<el-checkbox v-model="isOnePane">Rich Text Editor</el-checkbox>
-												</el-menu-item> -->
-                     </el-menu-item-group>
-
-					<!-- <el-menu-item-group>
-                        <template slot="title"></template>
-                        <el-menu-item index="3-2">
-							<el-checkbox v-model="isCollapse">Collapse</el-checkbox>
-						</el-menu-item>
-                     </el-menu-item-group> -->
-
-                     <el-menu-item-group>
-                        <template slot="title"></template>
-                        <el-menu-item index="3-3" v-on:click="signOut">Logout</el-menu-item>
-                     </el-menu-item-group>
-                    </el-submenu>
-               </el-menu>
-              <small class="creds">
-                Powered by Vue, Blockstack, and loads of regex. 
-                Source code on <a href="https://github.com/silvia-odwyer/xq" target="_blank">GitHub</a>
-              </small>
+                <el-submenu index="3" class="gh">
+                    <template slot="title">GitHub</template>
+                    <el-menu-item index="3-1"><a href="https://github.com/silvia-odwyer/xq/issues"><i class="el-icon-bell"></i>Submit Issue</a></el-menu-item>
+                    <el-menu-item index="3-2"><a href="https://github.com/silvia-odwyer/xq/"><i class="el-icon-news"></i>View Repo</a></el-menu-item>
+                </el-submenu>
+                <el-menu-item index="4" class="logout" v-on:click="signOut">
+                    Logout
+                </el-menu-item>
+            </el-menu>
+        </el-header>
+        <el-container>
+            <el-aside width="200px" class="outer_aside">
+                <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
+                    <el-menu :default-openeds="['1', '3']" :collapse="isCollapse">
+                        <el-button type="primary" plain icon="el-icon-edit" class="new_note" v-on:click="displayFormDialog()">New Note</el-button>
+                        <el-submenu index="1">
+                            <template slot="title"><i class="el-icon-message"></i>Your Notes</template>
+                            <el-menu-item-group>
+                                <template slot="title">Recently Added</template>
+                                <el-menu-item :index="String(note.id)" v-for="note in markdown_notes" v-on:click="displayNote(note); changeActiveFileListing($event)" class="note_listing" v-bind:key="note.id">
+                                    {{note.filename}}
+                                    <a @click.prevent="markdown_notes.splice(markdown_notes.indexOf(note), 1) " class="delete pull-right" href="#">x</a>
+                                </el-menu-item>
+                            </el-menu-item-group>
+                        </el-submenu>
+                        <el-submenu index="2" v-if="isOnePane == false">
+                            <template slot="title"><i class="el-icon-menu"></i>Themes</template>
+                            <el-menu-item-group class="themes_drawer">
+                                <template slot="title">All Themes Available</template>
+                                <el-menu-item index="1-1" v-for="theme in themes" v-on:click="changeTheme(theme)" v-bind:key="theme">{{theme}}</el-menu-item>
+                            </el-menu-item-group>
+                        </el-submenu>
+                        <el-submenu index="3">
+                            <template slot="title"><i class="el-icon-setting"></i>More</template>
+                            <el-menu-item-group>
+                                <template slot="title"></template>
+                                <el-menu-item index="3-1">
+                                    <el-checkbox v-model="isTabNav">Enable Tabs</el-checkbox>
+                                </el-menu-item>
+                            </el-menu-item-group>
+                            <el-menu-item-group>
+                                <template slot="title"></template>
+                                <!-- <el-menu-item index="3-2">
+                                    <el-checkbox v-model="isOnePane">Rich Text Editor</el-checkbox>
+                                    </el-menu-item> -->
+                            </el-menu-item-group>
+                            <!-- <el-menu-item-group>
+                                <template slot="title"></template>
+                                <el-menu-item index="3-2">
+                                <el-checkbox v-model="isCollapse">Collapse</el-checkbox>
+                                </el-menu-item>
+                                </el-menu-item-group> -->
+                            <el-menu-item-group>
+                                <template slot="title"></template>
+                                <el-menu-item index="3-3" v-on:click="signOut">Logout</el-menu-item>
+                            </el-menu-item-group>
+                        </el-submenu>
+                    </el-menu>
+                    <small class="creds">
+                    Powered by Vue, Blockstack, and loads of regex. 
+                    Source code on <a href="https://github.com/silvia-odwyer/xq" target="_blank">GitHub</a>
+                    </small>
+                </el-aside>
             </el-aside>
-
-         </el-aside>
-         <el-main>
-			<el-row v-if="isTabNav" > 
-				<el-menu class="el-menu tabs" mode="horizontal">
-					<el-menu-item  v-for="note in markdown_notes" :index="String(note.id)" v-on:click="displayNote(note)" v-bind:key="note.id">
-						{{note.filename}}
-					</el-menu-item>
-         		</el-menu>
-			</el-row>
-           <el-row>
-             <el-col :span="24">
-              <el-input placeholder="Note Name" v-model="filename" class="title_input"></el-input>
-            </el-col>
-            </el-row>
-
-            <section class="live_area">
-
-			<!-- If the user wishes to have the markdown and rendered HTML in different and separate panes,
-			these panes will display. -->
-
-            	<codemirror v-model="content" class="editor" :options="cmOptions" v-if="isOnePane == false"></codemirror>
-
-            <section id="content" v-html="markdownToHTML" v-if="isOnePane == false">
-            </section>
-
-			<!-- WYSIWYG Editor -->
-			<!-- If the user wishes to have the HTML rendered in the same pane, only this pane should display. -->
-			<div id="wysiwyg">
-				
-				<div class="toolbar" v-if="isOnePane">
-					<button v-on:click="formatText('bold')">
-						<font-awesome-icon icon="bold" />
-					</button>
-					<button v-on:click="formatText('italic')">
-						<font-awesome-icon icon="italic" />
-					</button>
-					<button  v-on:click="formatText('strikethrough')">
-						<font-awesome-icon icon="strikethrough"/>
-					</button>
-					<button v-on:click="copyToClipboard()">
-						<font-awesome-icon icon="copy"/>
-					</button>
-
-					<button v-on:click="formatText('cut')">
-						<font-awesome-icon icon="cut" />
-					</button>
-
-					<button v-on:click="formatText('underline')">
-						<font-awesome-icon icon="underline" />
-					</button>
-				</div>
-				<div contenteditable  ref="text" class="editor" id="singlePane" v-if="isOnePane" v-html="markdownToHTML" @input="renderWYSIWYG()"></div>
-
-			</div>
-            </section>
-
-              <el-button type="primary" plain icon="el-icon-circle-check-outline" v-on:click="saveNote()">
-				  Save
-			  </el-button>
-        <form @submit.prevent="saveNote()" :disabled="! content">
-        </form>
-
-				<el-dialog title="Filename" :visible.sync="dialogFormVisible">
-					<el-form :model="form">
-						<el-form-item label="Filename" label-width="120px">
-							<el-input v-model="filename" autocomplete="off"></el-input>
-						</el-form-item>
-					</el-form>
-					<span slot="footer" class="dialog-footer">
-						<el-button @click="dialogFormVisible = false">Cancel</el-button>
-						<el-button type="primary" v-on:click="confirmNoteCreation()">Create Note</el-button>
-					</span>
-				</el-dialog>
-                
-         </el-main>
-      </el-container>
-   </el-container>
+            <el-main>
+                <el-row v-if="isTabNav" >
+                    <el-menu class="el-menu tabs" mode="horizontal">
+                        <el-menu-item  v-for="note in markdown_notes" :index="String(note.id)" v-on:click="displayNote(note)" v-bind:key="note.id">
+                            {{note.filename}}
+                        </el-menu-item>
+                    </el-menu>
+                </el-row>
+                <el-row>
+                    <el-col :span="24">
+                        <el-input placeholder="Note Name" v-model="filename" class="title_input"></el-input>
+                    </el-col>
+                </el-row>
+                <section class="live_area">
+                    <!-- If the user wishes to have the markdown and rendered HTML in different and separate panes,
+                        these panes will display. -->
+                    <codemirror v-model="content" class="editor" :options="cmOptions" v-if="isOnePane == false" @input="enableAutoSave"></codemirror>
+                    
+										<section id="content" v-html="markdownToHTML" v-if="isOnePane == false">
+                    </section>
+                    <!-- WYSIWYG Editor -->
+                    <!-- If the user wishes to have the HTML rendered in the same pane, only this pane should display. -->
+                    <div id="wysiwyg">
+                        <div class="toolbar" v-if="isOnePane">
+                            <button v-on:click="formatText('bold')">
+                                <font-awesome-icon icon="bold" />
+                            </button>
+                            <button v-on:click="formatText('italic')">
+                                <font-awesome-icon icon="italic" />
+                            </button>
+                            <button  v-on:click="formatText('strikethrough')">
+                                <font-awesome-icon icon="strikethrough"/>
+                            </button>
+                            <button v-on:click="copyToClipboard()">
+                                <font-awesome-icon icon="copy"/>
+                            </button>
+                            <button v-on:click="formatText('cut')">
+                                <font-awesome-icon icon="cut" />
+                            </button>
+                            <button v-on:click="formatText('underline')">
+                                <font-awesome-icon icon="underline" />
+                            </button>
+                        </div>
+                        <div contenteditable  ref="text" class="editor" id="singlePane" v-if="isOnePane" v-html="markdownToHTML" @input="renderWYSIWYG()"></div>
+                    </div>
+                </section>
+                <el-button type="primary" plain icon="el-icon-circle-check-outline" v-on:click="saveNote()">
+                    Save
+                </el-button>
+                <form @submit.prevent="saveNote()" :disabled="! content">
+                </form>
+                <el-dialog title="Filename" :visible.sync="dialogFormVisible">
+                    <el-form :model="form">
+                        <el-form-item label="Filename" label-width="120px">
+                            <el-input v-model="filename" autocomplete="off"></el-input>
+                        </el-form-item>
+                    </el-form>
+                    <span slot="footer" class="dialog-footer">
+                        <el-button @click="dialogFormVisible = false">Cancel</el-button>
+                        <el-button type="primary" v-on:click="confirmNoteCreation()">Create Note</el-button>
+                    </span>
+                </el-dialog>
+            </el-main>
+        </el-container>
+    </el-container>
 </template>
-
 <script>
 
 import { codemirror } from 'vue-codemirror'
@@ -227,6 +205,7 @@ export default {
         form: {
           name: '',
         },
+				timeoutID: null
 		}
 	},
 	computed: {
@@ -280,55 +259,6 @@ export default {
 
 			return (markdown);
 		},
-	// 	markdownToWYSIWYG() {
-	// 		// Renders markdown to What You See is What You Get-style text.
-	// 		// Some may a bit buggy; submit an issue if you see any bugs. 
-
-	// 		// Look for the beginning of a line that contains a greater-than symbol, 
-	// 		// and enclose the token in blockquote tags. 
-	// 		let markdown = this.content.replace(/^\>(.+)/gm, "<blockquote>$1</blockquote>");
-
-	// 		// h5
-	// 		markdown = markdown.replace(/[\#]{5}(.+)/gm, "<h5>$1</h5>");
-
-	// 		// h4
-	// 		markdown = markdown.replace(/[\#]{4}(.+)/gm, "<h4>$1</h4>");
-
-	// 		// h3
-	// 		markdown = markdown.replace(/[\#]{3}(.+)/gm, "<h3>$1</h3>");
-
-	// 		// h2
-	// 		markdown = markdown.replace(/[\#]{2}(.+)/gm, "<h2>$1</h2>")
-
-	// 		// h1
-	// 		markdown = markdown.replace(/[\#]{1}(.+)/gm, "<h1>$1</h1>")
-
-	// 		// h1 and h2s that consist of equals/plus signs underneath 
-	// 		markdown = markdown.replace(/^(.+)\n\+=/gm, '<h1>$1</h1>');
-	// 		markdown = markdown.replace(/^(.+)\n\-+/gm, '<h2>$1</h2>');
-
-	// 		// bold text
-	// 		markdown = markdown.replace(/[\*\_]{2}([^\*\_]+)[\*\_]{2}/g, '<b>$1</b>');
-
-	// 		//ul
-	// 		markdown = markdown.replace(/^\*(.+)/gm, '<li>$1</li>');
-	// 		markdown = markdown.replace(/^\-(.+)/gm, '<li>$1</li>')
-
-	// 		// code 
-	// 		markdown = markdown.replace(/[\`]{1}([^\`]+)[\`]{1}/g, '<code>$1</code>');
-
-	// 		// em should technically be for placing emphasis on certain words,
-	// 		// so [TODO] add a check for single-words only.
-	// 		markdown = markdown.replace(/[\*\_]{1}([^\*\_]+)[\*\_]{1}/g, '<i>$1</i>');
-
-	// 		// Strikethrough
-	// 		markdown = markdown.replace(/\~~([^\~]+)\~~/g, '<del>$1</del>');
-
-	// 		// blank lines
-	// 		markdown = markdown.replace(/^\s*\n/gm, "<br>");
-
-	// 		return (markdown);
-	// 	}
 	},
 	watch: {
 		markdown_notes: {
@@ -422,7 +352,7 @@ export default {
 					current_file.language = this.cmOptions.mode;
 
 					// Update datestamp
-					current_file.datestamp = datestamp
+					current_file.datestamp = this.getDateStamp();
 
 					this.alertMessage = "Saved file!"
 
@@ -434,6 +364,28 @@ export default {
 
 			
 		this.resetNoteToast();
+		},
+		autoSaveNote() {
+
+			console.log("auto saving note")
+      
+			// Retrieve the file of interest
+			let current_file = this.markdown_notes.filter(file => file.hash_id == this.file.hash_id)[0];
+
+			// Save 
+			current_file.content = this.content;
+
+			// Save title
+			this.updateTitle(current_file);
+
+			// Update language
+			current_file.language = this.cmOptions.mode;
+
+			// Update datestamp
+			let datestamp = this.getDateStamp();
+			current_file.datestamp = datestamp;
+
+			this.alertMessage = "Saved file!"
 		},
 		handleClose(done) {
         this.$confirm('Are you sure to close this dialog?')
@@ -555,10 +507,17 @@ export default {
 					this.filename = this.markdown_notes[0].filename;
 				})
 			this.resetActiveIndex();
-			this.enableAutoSave();
 		},
 		enableAutoSave() {
+			if (this.timeoutID) {
+				clearTimeout(this.timeoutID);
+			}
 
+			// auto-save after 1000 ms of inactivity from the user.
+			this.timeoutID = setTimeout(() => {
+				this.autoSaveNote();
+			}, 1000);
+			
 		},
 		resetActiveIndex() {
 			this.activeIndex = 0;
