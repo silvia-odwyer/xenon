@@ -42,7 +42,7 @@
                         <template slot="title">Recently Added</template>
                         <el-menu-item :index="String(note.id)" v-for="note in markdown_notes" v-on:click="displayNote(note); changeActiveFileListing($event)" class="note_listing" v-bind:key="note.id">
 							{{note.filename}}
-                        <a @click.prevent="markdown_notes.splice(markdown_notes.indexOf(file), 1)" class="delete pull-right" href="#">x</a>
+                        <a @click.prevent="markdown_notes.splice(markdown_notes.indexOf(note), 1) " class="delete pull-right" href="#">x</a>
                         </el-menu-item>
                      </el-menu-item-group>
                     </el-submenu>
@@ -355,6 +355,7 @@ export default {
 		})		
 		
 		this.fetchData();
+
 	},
 	methods: {
 		generateSampleNotes() {
@@ -499,23 +500,30 @@ export default {
 			console.log("CRTNEWNOTE files", this.markdown_notes);
 			this.isNewFile = true;
 
+			// Re-init default content and filename back to empty strings
+			this.content = "";
+			this.filename = "";
+
 			// Display dialog asking for filename
 			this.dialogFormVisible = true;
 
 		},
 		saveNewNote() {
 			let datestamp = this.getDateStamp();
-			
+			console.log("uid", this.uidCount);
+
 			// Create a new file.
 			this.markdown_notes.unshift({
 				id: this.uidCount++,
 				hash_id: String(this.getDateNow()),
-				content: this.content.trim(),
+				content: "",
 				filename: this.filename,
 				language: this.cmOptions.mode,
 				completed: false,
 				date: datestamp
 			})
+
+			console.log(this.markdown_notes);
 		},
 		getDateStamp() {
 			let date = new Date();
@@ -547,6 +555,10 @@ export default {
 					this.filename = this.markdown_notes[0].filename;
 				})
 			this.resetActiveIndex();
+			this.enableAutoSave();
+		},
+		enableAutoSave() {
+
 		},
 		resetActiveIndex() {
 			this.activeIndex = 0;
