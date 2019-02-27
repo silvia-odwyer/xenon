@@ -313,6 +313,7 @@ var themes = ["3024-day", "3024-night", "abcdef", "ambiance", "ambiance-mobile",
 			activeIndex: "1",
 			alertMessage: "",
 			filename: "",
+			filename_input: "",
 			noMarkdownAlert: false,
 			noFilenameAlert: false,
 			isNewFile: false,
@@ -321,43 +322,18 @@ var themes = ["3024-day", "3024-night", "abcdef", "ambiance", "ambiance-mobile",
 			isTabNav: false,
 			isOnePane: false,
 			isCollapse: false,
-			selectedText: ""
+			selectedText: "",
+			dialogFormVisible: false,
+			form: {
+				name: ''
+			},
+			timeoutID: null,
+			isDarkMode: false
 		};
 	},
 
 	computed: {
 		markdownToHTML: function markdownToHTML() {
-			var markdown = this.content.replace(/^\>(.+)/gm, "<blockquote>$1</blockquote>");
-
-			markdown = markdown.replace(/[\#]{5}(.+)/gm, "<h5>$1</h5>");
-
-			markdown = markdown.replace(/[\#]{4}(.+)/gm, "<h4>$1</h4>");
-
-			markdown = markdown.replace(/[\#]{3}(.+)/gm, "<h3>$1</h3>");
-
-			markdown = markdown.replace(/[\#]{2}(.+)/gm, "<h2>$1</h2>");
-
-			markdown = markdown.replace(/[\#]{1}(.+)/gm, "<h1>$1</h1>");
-
-			markdown = markdown.replace(/^(.+)\n\+=/gm, '<h1>$1</h1>');
-			markdown = markdown.replace(/^(.+)\n\-+/gm, '<h2>$1</h2>');
-
-			markdown = markdown.replace(/[\*\_]{2}([^\*\_]+)[\*\_]{2}/g, '<b>$1</b>');
-
-			markdown = markdown.replace(/^\*(.+)/gm, '<li>$1</li>');
-			markdown = markdown.replace(/^\-(.+)/gm, '<li>$1</li>');
-
-			markdown = markdown.replace(/[\`]{1}([^\`]+)[\`]{1}/g, '<code>$1</code>');
-
-			markdown = markdown.replace(/[\*\_]{1}([^\*\_]+)[\*\_]{1}/g, '<i>$1</i>');
-
-			markdown = markdown.replace(/\~~([^\~]+)\~~/g, '<del>$1</del>');
-
-			markdown = markdown.replace(/^\s*\n/gm, "<br>");
-
-			return markdown;
-		},
-		markdownToWYSIWYG: function markdownToWYSIWYG() {
 			var markdown = this.content.replace(/^\>(.+)/gm, "<blockquote>$1</blockquote>");
 
 			markdown = markdown.replace(/[\#]{5}(.+)/gm, "<h5>$1</h5>");
@@ -449,6 +425,17 @@ var themes = ["3024-day", "3024-night", "abcdef", "ambiance", "ambiance-mobile",
 			}
 			console.log("sample notes", this.sample_notes);
 		},
+		confirmNoteCreation: function confirmNoteCreation() {
+			this.isNewFile = true;
+
+			this.content = "";
+
+			this.filename = this.filename_input;
+
+			this.dialogFormVisible = false;
+			this.displayFileMessage('New note created!', "success");
+			this.saveNewNote();
+		},
 		saveNote: function saveNote() {
 			var _this2 = this;
 
@@ -456,42 +443,46 @@ var themes = ["3024-day", "3024-night", "abcdef", "ambiance", "ambiance-mobile",
 				this.noFilenameAlert = true;
 				this.displayFileMessage('No title entered!', "warning");
 			} else {
-					var datestamp = this.getDateStamp();
+					var current_file = this.markdown_notes.filter(function (file) {
+						return file.hash_id == _this2.file.hash_id;
+					})[0];
 
+					current_file.content = this.content;
 
-					if (this.isNewFile) {
-						this.markdown_notes.unshift({
-							id: this.uidCount++,
-							hash_id: String(this.getDateNow()),
-							content: this.content.trim(),
-							filename: this.filename,
-							language: this.cmOptions.mode,
-							completed: false,
-							date: datestamp
-						});
+					this.updateTitle(current_file);
 
-						this.isNewFile = false;
-					} else {
-						var current_file = this.markdown_notes.filter(function (file) {
-							return file.hash_id == _this2.file.hash_id;
-						})[0];
+					current_file.language = this.cmOptions.mode;
 
-						current_file.content = this.content;
+					current_file.datestamp = this.getDateStamp();
 
-						this.updateTitle(current_file);
-
-						current_file.language = this.cmOptions.mode;
-
-						current_file.datestamp = datestamp;
-
-						this.alertMessage = "Saved file!";
-					}
-					if (this.displayNoteToast) {
-						this.displayFileMessage("Saved note!", "success");
-						this.showSnackbar = true;
-					}
+					this.alertMessage = "Saved file!";
 				}
+			if (this.displayNoteToast) {
+				this.displayFileMessage("Saved note!", "success");
+				this.showSnackbar = true;
+			}
+
 			this.resetNoteToast();
+		},
+		autoSaveNote: function autoSaveNote() {
+			var _this3 = this;
+
+			console.log("auto saving note");
+
+			var current_file = this.markdown_notes.filter(function (file) {
+				return file.hash_id == _this3.file.hash_id;
+			})[0];
+
+			current_file.content = this.content;
+
+			this.updateTitle(current_file);
+
+			current_file.language = this.cmOptions.mode;
+
+			var datestamp = this.getDateStamp();
+			current_file.datestamp = datestamp;
+
+			this.alertMessage = "Saved file!";
 		},
 		resetNoteToast: function resetNoteToast() {
 			this.displayNoteToast = true;
@@ -537,13 +528,28 @@ var themes = ["3024-day", "3024-night", "abcdef", "ambiance", "ambiance-mobile",
 			var time = Date.now();
 			return time;
 		},
-		createNewNote: function createNewNote() {
+		displayFormDialog: function displayFormDialog() {
 			console.log("CRTNEWNOTE files", this.markdown_notes);
-			this.content = "";
-			this.filename = "";
-			this.isNewFile = true;
 
-			this.displayFileMessage('New note created!', "success");
+			this.filename = "";
+
+			this.dialogFormVisible = true;
+		},
+		saveNewNote: function saveNewNote() {
+			var datestamp = this.getDateStamp();
+			console.log("uid", this.uidCount);
+
+			this.markdown_notes.unshift({
+				id: this.uidCount++,
+				hash_id: String(this.getDateNow()),
+				content: "",
+				filename: this.filename,
+				language: this.cmOptions.mode,
+				completed: false,
+				date: datestamp
+			});
+
+			console.log(this.markdown_notes);
 		},
 		getDateStamp: function getDateStamp() {
 			var date = new Date();
@@ -555,7 +561,7 @@ var themes = ["3024-day", "3024-night", "abcdef", "ambiance", "ambiance-mobile",
 			return datestamp;
 		},
 		fetchData: function fetchData() {
-			var _this3 = this;
+			var _this4 = this;
 
 			var blockstack = this.blockstack;
 			blockstack.getFile(STORAGE_FILE).then(function (todosText) {
@@ -563,19 +569,30 @@ var themes = ["3024-day", "3024-night", "abcdef", "ambiance", "ambiance-mobile",
 				markdown_notes.forEach(function (note, index) {
 					note.id = index;
 				});
-				_this3.uidCount = markdown_notes.length;
-				_this3.markdown_notes = markdown_notes;
+				_this4.uidCount = markdown_notes.length;
+				_this4.markdown_notes = markdown_notes;
 
-				if (_this3.markdown_notes.length == 0) {
-					_this3.markdown_notes = _this3.sample_notes;
-					_this3.generateSampleNotes();
+				if (_this4.markdown_notes.length == 0) {
+					_this4.markdown_notes = _this4.sample_notes;
+					_this4.generateSampleNotes();
 				}
 
-				_this3.file = _this3.markdown_notes[0];
-				_this3.content = _this3.markdown_notes[0].content;
-				_this3.filename = _this3.markdown_notes[0].filename;
+				_this4.file = _this4.markdown_notes[0];
+				_this4.content = _this4.markdown_notes[0].content;
+				_this4.filename = _this4.markdown_notes[0].filename;
 			});
 			this.resetActiveIndex();
+		},
+		enableAutoSave: function enableAutoSave() {
+			var _this5 = this;
+
+			if (this.timeoutID) {
+				clearTimeout(this.timeoutID);
+			}
+
+			this.timeoutID = setTimeout(function () {
+				_this5.autoSaveNote();
+			}, 1000);
 		},
 		resetActiveIndex: function resetActiveIndex() {
 			this.activeIndex = 0;
@@ -601,6 +618,47 @@ var themes = ["3024-day", "3024-night", "abcdef", "ambiance", "ambiance-mobile",
 		changeActiveFileListing: function changeActiveFileListing(event) {
 			event.className += " active";
 			console.log(event);
+		},
+		changeMode: function changeMode() {
+			var dashboard_bg_colour, dashboard_text_colour, cm_theme;
+
+			if (this.isDarkMode) {
+				dashboard_bg_colour = "rgb(37, 37, 37)";
+				dashboard_text_colour = "#B8B8B8";
+				cm_theme = "darcula";
+			} else {
+				dashboard_bg_colour = "white";
+				dashboard_text_colour = "black";
+				cm_theme = "idea";
+			}
+
+			var dashboard = document.getElementById("dashboard");
+			dashboard.style.backgroundColor = dashboard_bg_colour;
+
+			var el_menu = document.getElementById("el_menu");
+			el_menu.style.backgroundColor = dashboard_bg_colour;
+
+			var el_menu_class = document.getElementsByClassName("el-menu")[2];
+			console.log(el_menu_class);
+			el_menu_class.backgroundColor = dashboard_bg_colour;
+
+			var submenus = document.querySelectorAll("#sidebar .el-menu-item-group, #sidebar .el-submenu, .new_note, .el-menu");
+			for (var i = 0; i < submenus.length; i++) {
+				var submenu = submenus[i];
+				submenu.style.backgroundColor = dashboard_bg_colour;
+			}
+
+			var titles = document.querySelectorAll(".title, .logo");
+			for (var i = 0; i < titles.length; i++) {
+				var title = titles[i];
+				title.style.color = "#B8B8B8";
+			}
+
+			var content = document.getElementById("content");
+			content.style.color = dashboard_text_colour;
+
+			dashboard.style.color = dashboard_text_colour;
+			this.changeTheme(cm_theme);
 		},
 		signOut: function signOut() {
 			this.blockstack.signUserOut(window.location.href);
@@ -1137,7 +1195,9 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('el-container', {
-    staticClass: "dashboard"
+    attrs: {
+      "id": "dashboard"
+    }
   }, [_c('el-header', {
     staticStyle: {
       "text-align": "right",
@@ -1147,7 +1207,8 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     staticClass: "el-menu",
     attrs: {
       "default-active": String(_vm.activeIndex),
-      "mode": "horizontal"
+      "mode": "horizontal",
+      "id": "el_menu"
     }
   }, [_c('el-menu-item', {
     staticClass: "logo",
@@ -1170,7 +1231,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     },
     on: {
       "click": function($event) {
-        _vm.createNewNote()
+        _vm.displayFormDialog()
       }
     }
   }, [_c('i', {
@@ -1192,25 +1253,30 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }
   }, [_c('el-checkbox', {
     model: {
-      value: (_vm.isOnePane),
-      callback: function($$v) {
-        _vm.isOnePane = $$v
-      },
-      expression: "isOnePane"
-    }
-  }, [_vm._v("Rich Text Editor")])], 1), _vm._v(" "), _c('el-menu-item', {
-    attrs: {
-      "index": "2-2"
-    }
-  }, [_c('el-checkbox', {
-    model: {
       value: (_vm.isTabNav),
       callback: function($$v) {
         _vm.isTabNav = $$v
       },
       expression: "isTabNav"
     }
-  }, [_vm._v("Enable Tabs")])], 1)], 2), _vm._v(" "), _c('el-submenu', {
+  }, [_vm._v("Enable Tabs")])], 1), _vm._v(" "), _c('el-menu-item', {
+    attrs: {
+      "index": "2-3"
+    }
+  }, [_c('el-checkbox', {
+    on: {
+      "change": function($event) {
+        _vm.changeMode()
+      }
+    },
+    model: {
+      value: (_vm.isDarkMode),
+      callback: function($$v) {
+        _vm.isDarkMode = $$v
+      },
+      expression: "isDarkMode"
+    }
+  }, [_vm._v("Enable Dark Mode")])], 1)], 2), _vm._v(" "), _c('el-submenu', {
     staticClass: "gh",
     attrs: {
       "index": "3"
@@ -1243,27 +1309,27 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }), _vm._v("View Repo")])])], 2), _vm._v(" "), _c('el-menu-item', {
     staticClass: "logout",
     attrs: {
-      "index": "4"
+      "index": "4-a"
     },
     on: {
       "click": _vm.signOut
     }
-  }, [_vm._v("\n               Logout\n            ")])], 1)], 1), _vm._v(" "), _c('el-container', [_c('el-aside', {
+  }, [_vm._v("\n                    Logout\n                ")])], 1)], 1), _vm._v(" "), _c('el-container', [_c('el-aside', {
     staticClass: "outer_aside",
     attrs: {
       "width": "200px"
     }
   }, [_c('el-aside', {
-    staticStyle: {
-      "background-color": "rgb(238, 241, 246)"
-    },
+    staticClass: "scroll-thin-width",
     attrs: {
-      "width": "200px"
+      "width": "200px",
+      "id": "fixed"
     }
   }, [_c('el-menu', {
     attrs: {
       "default-openeds": ['1', '3'],
-      "collapse": _vm.isCollapse
+      "collapse": _vm.isCollapse,
+      "id": "sidebar"
     }
   }, [_c('el-button', {
     staticClass: "new_note",
@@ -1274,7 +1340,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     },
     on: {
       "click": function($event) {
-        _vm.createNewNote()
+        _vm.displayFormDialog()
       }
     }
   }, [_vm._v("New Note")]), _vm._v(" "), _c('el-submenu', {
@@ -1282,6 +1348,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "index": "1"
     }
   }, [_c('template', {
+    staticClass: "title",
     attrs: {
       "slot": "title"
     },
@@ -1306,7 +1373,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
           _vm.changeActiveFileListing($event)
         }
       }
-    }, [_vm._v("\n\t\t\t\t\t\t\t" + _vm._s(note.filename) + "\n                        "), _c('a', {
+    }, [_vm._v("\n                                    " + _vm._s(note.filename) + "\n                                    "), _c('a', {
       staticClass: "delete pull-right",
       attrs: {
         "href": "#"
@@ -1314,15 +1381,17 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       on: {
         "click": function($event) {
           $event.preventDefault();
-          _vm.markdown_notes.splice(_vm.markdown_notes.indexOf(_vm.file), 1)
+          _vm.markdown_notes.splice(_vm.markdown_notes.indexOf(note), 1)
         }
       }
     }, [_vm._v("x")])])
   })], 2)], 2), _vm._v(" "), (_vm.isOnePane == false) ? _c('el-submenu', {
+    staticClass: "submenu",
     attrs: {
       "index": "2"
     }
   }, [_c('template', {
+    staticClass: "title",
     attrs: {
       "slot": "title"
     },
@@ -1353,6 +1422,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "index": "3"
     }
   }, [_c('template', {
+    staticClass: "title",
     attrs: {
       "slot": "title"
     },
@@ -1376,24 +1446,24 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       },
       expression: "isTabNav"
     }
-  }, [_vm._v("Enable Tabs")])], 1)], 2), _vm._v(" "), _c('el-menu-item-group', [_c('template', {
-    attrs: {
-      "slot": "title"
-    },
-    slot: "title"
-  }), _vm._v(" "), _c('el-menu-item', {
+  }, [_vm._v("Enable Tabs")])], 1), _vm._v(" "), _c('el-menu-item', {
     attrs: {
       "index": "3-2"
     }
   }, [_c('el-checkbox', {
+    on: {
+      "change": function($event) {
+        _vm.changeMode()
+      }
+    },
     model: {
-      value: (_vm.isOnePane),
+      value: (_vm.isDarkMode),
       callback: function($$v) {
-        _vm.isOnePane = $$v
+        _vm.isDarkMode = $$v
       },
-      expression: "isOnePane"
+      expression: "isDarkMode"
     }
-  }, [_vm._v("Rich Text Editor")])], 1)], 2), _vm._v(" "), _c('el-menu-item-group', [_c('template', {
+  }, [_vm._v("Enable Dark Mode")])], 1)], 2), _vm._v(" "), _c('el-menu-item-group', [_c('template', {
     attrs: {
       "slot": "title"
     },
@@ -1407,13 +1477,13 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }
   }, [_vm._v("Logout")])], 2)], 2)], 1), _vm._v(" "), _c('small', {
     staticClass: "creds"
-  }, [_vm._v("\n                Powered by Vue, Blockstack, and loads of regex. \n                Source code on "), _c('a', {
+  }, [_vm._v("\n                    Powered by Vue, Blockstack, and loads of regex. \n                    Source code on "), _c('a', {
     attrs: {
       "href": "https://github.com/silvia-odwyer/xq",
       "target": "_blank"
     }
   }, [_vm._v("GitHub")])])], 1)], 1), _vm._v(" "), _c('el-main', [(_vm.isTabNav) ? _c('el-row', [_c('el-menu', {
-    staticClass: "el-menu",
+    staticClass: "el-menu tabs",
     attrs: {
       "mode": "horizontal"
     }
@@ -1428,7 +1498,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
           _vm.displayNote(note)
         }
       }
-    }, [_vm._v("\n\t\t\t\t\t\t" + _vm._s(note.filename) + "\n\t\t\t\t\t")])
+    }, [_vm._v("\n                            " + _vm._s(note.filename) + "\n                        ")])
   }))], 1) : _vm._e(), _vm._v(" "), _c('el-row', [_c('el-col', {
     attrs: {
       "span": 24
@@ -1437,6 +1507,9 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     staticClass: "title_input",
     attrs: {
       "placeholder": "Note Name"
+    },
+    on: {
+      "input": _vm.enableAutoSave
     },
     model: {
       value: (_vm.filename),
@@ -1448,9 +1521,12 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   })], 1)], 1), _vm._v(" "), _c('section', {
     staticClass: "live_area"
   }, [(_vm.isOnePane == false) ? _c('codemirror', {
-    staticClass: "editor",
+    staticClass: "editor scroll-thin-width",
     attrs: {
       "options": _vm.cmOptions
+    },
+    on: {
+      "input": _vm.enableAutoSave
     },
     model: {
       value: (_vm.content),
@@ -1547,28 +1623,58 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         _vm.renderWYSIWYG()
       }
     }
-  }) : _vm._e()])], 1), _vm._v(" "), _c('el-button', {
+  }) : _vm._e()])], 1), _vm._v(" "), _c('el-dialog', {
     attrs: {
-      "type": "primary",
-      "plain": "",
-      "icon": "el-icon-circle-check-outline"
+      "title": "Filename",
+      "visible": _vm.dialogFormVisible
+    },
+    on: {
+      "update:visible": function($event) {
+        _vm.dialogFormVisible = $event
+      }
+    }
+  }, [_c('el-form', {
+    attrs: {
+      "model": _vm.form
+    }
+  }, [_c('el-form-item', {
+    attrs: {
+      "label": "Filename",
+      "label-width": "120px"
+    }
+  }, [_c('el-input', {
+    attrs: {
+      "autocomplete": "off"
+    },
+    model: {
+      value: (_vm.filename_input),
+      callback: function($$v) {
+        _vm.filename_input = $$v
+      },
+      expression: "filename_input"
+    }
+  })], 1)], 1), _vm._v(" "), _c('span', {
+    staticClass: "dialog-footer",
+    attrs: {
+      "slot": "footer"
+    },
+    slot: "footer"
+  }, [_c('el-button', {
+    on: {
+      "click": function($event) {
+        _vm.dialogFormVisible = false
+      }
+    }
+  }, [_vm._v("Cancel")]), _vm._v(" "), _c('el-button', {
+    attrs: {
+      "type": "primary"
     },
     on: {
       "click": function($event) {
-        _vm.saveNote()
+        _vm.confirmNoteCreation()
       }
     }
-  }, [_vm._v("\n\t\t\t\t  Save\n\t\t\t  ")]), _vm._v(" "), _c('form', {
-    attrs: {
-      "disabled": !_vm.content
-    },
-    on: {
-      "submit": function($event) {
-        $event.preventDefault();
-        _vm.saveNote()
-      }
-    }
-  })], 1)], 1)], 1)
+  }, [_vm._v("Create Note")])], 1)], 1)], 1)], 1)], 1)
 },staticRenderFns: []}
 
 /***/ }),
@@ -1696,4 +1802,4 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 /***/ })
 
 },[327]);
-//# sourceMappingURL=app.909b99d6f1ab5b813c43.js.map
+//# sourceMappingURL=app.990011bb2b227c7bfdfc.js.map
