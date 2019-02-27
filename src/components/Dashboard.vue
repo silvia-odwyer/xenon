@@ -29,8 +29,9 @@
                 <el-aside width="200px">
                     <el-menu :default-openeds="['1', '3']" :collapse="isCollapse" id="sidebar">
                         <el-button type="primary" plain icon="el-icon-edit" class="new_note" v-on:click="displayFormDialog()">New Note</el-button>
-                        <el-submenu index="1" class="submenu">
-                            <template slot="title"><i class="el-icon-message"></i>Your Notes</template>
+                        <el-submenu index="1">
+                            	<template slot="title" class="title"><i class="el-icon-message"></i>Your Notes</template>
+							
                             <el-menu-item-group>
                                 <template slot="title">Recently Added</template>
                                 <el-menu-item :index="String(note.id)" v-for="note in markdown_notes" v-on:click="displayNote(note); changeActiveFileListing($event)" class="note_listing" v-bind:key="note.id">
@@ -40,28 +41,22 @@
                             </el-menu-item-group>
                         </el-submenu>
                         <el-submenu index="2" v-if="isOnePane == false" class="submenu">
-                            <template slot="title"><i class="el-icon-menu"></i>Themes</template>
+                            <template slot="title" class="title"><i class="el-icon-menu"></i>Themes</template>
                             <el-menu-item-group class="themes_drawer">
                                 <template slot="title">All Themes Available</template>
                                 <el-menu-item index="1-1" v-for="theme in themes" v-on:click="changeTheme(theme)" v-bind:key="theme">{{theme}}</el-menu-item>
                             </el-menu-item-group>
                         </el-submenu>
-                        <el-submenu index="3" class="submenu">
-                            <template slot="title"><i class="el-icon-setting"></i>More</template>
+                        <el-submenu index="3">
+                            <template slot="title" class="title"><i class="el-icon-setting"></i>More</template>
                             <el-menu-item-group>
                                 <template slot="title"></template>
                                 <el-menu-item index="3-1">
                                     <el-checkbox v-model="isTabNav">Enable Tabs</el-checkbox>
                                 </el-menu-item>
-																<el-menu-item index="3-1">
+								<el-menu-item index="3-1">
                                     <el-checkbox v-model="isDarkMode" v-on:change="changeMode()">Enable Dark Mode</el-checkbox>
                                 </el-menu-item>
-                            </el-menu-item-group>
-                            <el-menu-item-group>
-                                <template slot="title"></template>
-                                <!-- <el-menu-item index="3-2">
-                                    <el-checkbox v-model="isOnePane">Rich Text Editor</el-checkbox>
-                                    </el-menu-item> -->
                             </el-menu-item-group>
                             <!-- <el-menu-item-group>
                                 <template slot="title"></template>
@@ -135,7 +130,7 @@
                 <el-dialog title="Filename" :visible.sync="dialogFormVisible">
                     <el-form :model="form">
                         <el-form-item label="Filename" label-width="120px">
-                            <el-input v-model="filename" autocomplete="off"></el-input>
+                            <el-input v-model="filename_input" autocomplete="off"></el-input>
                         </el-form-item>
                     </el-form>
                     <span slot="footer" class="dialog-footer">
@@ -193,6 +188,7 @@ export default {
 			activeIndex: "1",
 			alertMessage: "",
 			filename: "",
+			filename_input: "",
 			noMarkdownAlert: false,
 			noFilenameAlert: false,
 			isNewFile: false,
@@ -328,7 +324,14 @@ export default {
 			console.log("sample notes", this.sample_notes);
 		},
 		confirmNoteCreation() {
-			console.log("hi");
+			this.isNewFile = true;
+
+			// Re-init default content and filename back to empty strings
+			this.content = "";
+
+			// Set the current filename to the filename entered by the user.
+			this.filename = this.filename_input;
+			
 			this.dialogFormVisible = false;
 			this.displayFileMessage('New note created!', "success");
 			this.saveNewNote();
@@ -445,10 +448,8 @@ export default {
 		},
 		displayFormDialog() {
 			console.log("CRTNEWNOTE files", this.markdown_notes);
-			this.isNewFile = true;
 
-			// Re-init default content and filename back to empty strings
-			this.content = "";
+			// Clear the filename
 			this.filename = "";
 
 			// Display dialog asking for filename
@@ -545,7 +546,7 @@ export default {
 			// Set colour values for each variable
 			if (this.isDarkMode) {
 				dashboard_bg_colour = "rgb(37, 37, 37)";
-				dashboard_text_colour = "white";
+				dashboard_text_colour = "#B8B8B8";
 				cm_theme = "darcula"
 			}
 			else {
@@ -555,18 +556,31 @@ export default {
 			}
 			
 			// Change the corresponding elements
+			// [TODO] Will replace with a theming solution next, this current solution will be adequate for Dark Mode styling without unnecessary use of vuex, etc.,
 			let dashboard = document.getElementById("dashboard");
 			dashboard.style.backgroundColor = dashboard_bg_colour;
 
 			let el_menu = document.getElementById("el_menu")
-			el_menu.style.backgroundColor = dashboard_bg_colour
-
-			let sidebar = document.getElementById("sidebar");
-			sidebar.style.backgroundColor = dashboard_bg_colour;
+			el_menu.style.backgroundColor = dashboard_bg_colour;
 
 			let el_menu_class = document.getElementsByClassName("el-menu")[2];
 			console.log(el_menu_class)
 			el_menu_class.backgroundColor = dashboard_bg_colour;
+
+			// Select all submenu components.
+			let submenus = document.querySelectorAll("#sidebar .el-menu-item-group, #sidebar .el-submenu, .new_note, .el-menu");
+			for (var i = 0; i < submenus.length; i++) {
+				let submenu = submenus[i];
+				submenu.style.backgroundColor = dashboard_bg_colour;
+			}
+
+			// Select all title components.
+			let titles = document.querySelectorAll(".title, .logo")
+			console.log(titles)
+			for (var i = 0; i < titles.length; i++) {
+				let title = titles[i];
+				title.style.color = "#B8B8B8"
+			}
 
 			let content = document.getElementById("content");
 			content.style.color = dashboard_text_colour;
@@ -847,6 +861,10 @@ i {
 		margin-bottom: 0.5em;
 	}
 
+}
+
+.el-submenu__title {
+	color: red;
 }
 
 </style>
