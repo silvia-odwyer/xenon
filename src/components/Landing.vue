@@ -102,6 +102,7 @@ export default {
 
 * {
   font-family: "Helvetica Neue", sans-serif;
+  background-color: "black";
 }
 
 .logo {

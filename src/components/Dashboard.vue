@@ -26,12 +26,11 @@
         </el-header>
         <el-container>
             <el-aside width="200px" class="outer_aside">
-                <el-aside width="200px">
+                <el-aside width="200px" id="fixed" class="scroll-thin-width">
                     <el-menu :default-openeds="['1', '3']" :collapse="isCollapse" id="sidebar">
                         <el-button type="primary" plain icon="el-icon-edit" class="new_note" v-on:click="displayFormDialog()">New Note</el-button>
                         <el-submenu index="1">
-                            	<template slot="title" class="title"><i class="el-icon-message"></i>Your Notes</template>
-							
+                            <template slot="title" class="title"><i class="el-icon-message"></i>Your Notes</template>
                             <el-menu-item-group>
                                 <template slot="title">Recently Added</template>
                                 <el-menu-item :index="String(note.id)" v-for="note in markdown_notes" v-on:click="displayNote(note); changeActiveFileListing($event)" class="note_listing" v-bind:key="note.id">
@@ -94,7 +93,7 @@
                         these panes will display. -->
                     <codemirror v-model="content" class="editor" :options="cmOptions" v-if="isOnePane == false" @input="enableAutoSave"></codemirror>
                     
-										<section id="content" v-html="markdownToHTML" v-if="isOnePane == false">
+					<section id="content" v-html="markdownToHTML" v-if="isOnePane == false">
                     </section>
                     <!-- WYSIWYG Editor -->
                     <!-- If the user wishes to have the HTML rendered in the same pane, only this pane should display. -->
@@ -122,11 +121,11 @@
                         <div contenteditable  ref="text" class="editor" id="singlePane" v-if="isOnePane" v-html="markdownToHTML" @input="renderWYSIWYG()"></div>
                     </div>
                 </section>
-                <el-button type="primary" plain icon="el-icon-circle-check-outline" v-on:click="saveNote()">
+                <!-- <el-button type="primary" plain icon="el-icon-circle-check-outline" v-on:click="saveNote()">
                     Save
                 </el-button>
                 <form @submit.prevent="saveNote()" :disabled="! content">
-                </form>
+                </form> -->
                 <el-dialog title="Filename" :visible.sync="dialogFormVisible">
                     <el-form :model="form">
                         <el-form-item label="Filename" label-width="120px">
@@ -576,7 +575,6 @@ export default {
 
 			// Select all title components.
 			let titles = document.querySelectorAll(".title, .logo")
-			console.log(titles)
 			for (var i = 0; i < titles.length; i++) {
 				let title = titles[i];
 				title.style.color = "#B8B8B8"
@@ -712,9 +710,10 @@ label {
 	background: #555;
 }
 
-#live_area {
+.live_area {
 	display: flex;
 	flex-wrap: wrap;
+	max-height: 100vh;
 }
 
 .CodeMirror {
@@ -837,7 +836,7 @@ i {
 
 @media only screen and (min-width: 800px) {
 	.options {
-		margin-left: 39vw;
+		margin-left: 59vw;
 	}
 
 	.creds {
@@ -863,8 +862,24 @@ i {
 
 }
 
-.el-submenu__title {
-	color: red;
+#sidebar el-menu-item-group {
+	background-color: green;
+}
+
+#fixed {
+	max-height: 85vh;
+	overflow: scroll;
+}
+
+
+
+.scroll-thin-width {
+  scrollbar-width: thin;
+}
+
+#content {
+	max-height: 80vh;
+	overflow-y: scroll;
 }
 
 </style>
