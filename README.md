@@ -13,6 +13,11 @@ Features include:
 
 ![A GIF demo as the app stands on 10/01/2019](https://github.com/silvia-odwyer/xq/blob/master/screenshots/demo2_10_01_2019.gif)
 
+### Dark Theme Demo
+The app also includes a dark theme for those late-night editing sessions. 
+
+![A GIF demo of the app with a dark theme on 27/02/2019](https://github.com/silvia-odwyer/xq/blob/master/screenshots/dark_theme_demo.gif)
+
 ### Try It Out
 You can try it out [here](https://xq-alpha.herokuapp.com). 
 

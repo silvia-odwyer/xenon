@@ -13,6 +13,10 @@
                     <el-menu-item index="2-2">
                         <el-checkbox v-model="isTabNav">Enable Tabs</el-checkbox>
                     </el-menu-item>
+
+					<el-menu-item index="2-3">
+                        <el-checkbox v-model="isDarkMode" v-on:change="changeMode()">Enable Dark Mode</el-checkbox>
+                    </el-menu-item>
                 </el-submenu>
                 <el-submenu index="3" class="gh">
                     <template slot="title">GitHub</template>
@@ -53,7 +57,7 @@
                                 <el-menu-item index="3-1">
                                     <el-checkbox v-model="isTabNav">Enable Tabs</el-checkbox>
                                 </el-menu-item>
-								<el-menu-item index="3-1">
+								<el-menu-item index="3-2">
                                     <el-checkbox v-model="isDarkMode" v-on:change="changeMode()">Enable Dark Mode</el-checkbox>
                                 </el-menu-item>
                             </el-menu-item-group>
@@ -91,7 +95,7 @@
                 <section class="live_area">
                     <!-- If the user wishes to have the markdown and rendered HTML in different and separate panes,
                         these panes will display. -->
-                    <codemirror v-model="content" class="editor" :options="cmOptions" v-if="isOnePane == false" @input="enableAutoSave"></codemirror>
+                    <codemirror v-model="content" class="editor scroll-thin-width" :options="cmOptions" v-if="isOnePane == false" @input="enableAutoSave"></codemirror>
                     
 					<section id="content" v-html="markdownToHTML" v-if="isOnePane == false">
                     </section>
@@ -793,7 +797,7 @@ label {
 
 .themes_drawer {
 	max-height: 300px;
-	overflow: scroll;
+	overflow-y: auto;
 	margin-right: 0.2em;
 }
 
@@ -868,7 +872,11 @@ i {
 
 #fixed {
 	max-height: 85vh;
-	overflow: scroll;
+	overflow-y: auto;
+}
+
+#dashboard {
+	max-height: 100vh;
 }
 
 
@@ -878,8 +886,8 @@ i {
 }
 
 #content {
-	max-height: 80vh;
-	overflow-y: scroll;
+	max-height: 75vh;
+	overflow-y: auto;
 }
 
 </style>
