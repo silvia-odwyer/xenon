@@ -44,7 +44,7 @@
                             </el-menu-item-group>
                         </el-submenu>
                         <el-submenu index="2" v-if="isOnePane == false" class="submenu">
-                            <template slot="title" class="title"><i class="el-icon-menu"></i>Themes</template>
+                            <template slot="title" class="title" id="submenu_heading"><i class="el-icon-menu"></i>Themes</template>
                             <el-menu-item-group class="themes_drawer">
                                 <template slot="title">All Themes Available</template>
                                 <el-menu-item index="1-1" v-for="theme in themes" v-on:click="changeTheme(theme)" v-bind:key="theme">{{theme}}</el-menu-item>
@@ -88,14 +88,23 @@
                     </el-menu>
                 </el-row>
                 <el-row>
-                    <el-col :span="24">
+                    <el-col :span="16">
                         <el-input placeholder="Note Name" v-model="filename" class="title_input" @input="enableAutoSave"></el-input>
+
                     </el-col>
+					    
+					<el-col :span="8">
+						<!-- <el-button type="primary" plain v-bind:icon="modeIcon" v-on:click="enableMode('readOnly')">	
+							Enable Read-Only Mode
+						</el-button>							 -->
+					<el-switch style="display: block" v-model="this.showEditor" v-on:change="enableMode('readOnly')" active-color="#13ce66" inactive-color="#ff4949" active-text="Edit mode" inactive-text="Read-only"> </el-switch>
+					</el-col>
+
                 </el-row>
                 <section class="live_area">
                     <!-- If the user wishes to have the markdown and rendered HTML in different and separate panes,
                         these panes will display. -->
-                    <codemirror v-model="content" class="editor scroll-thin-width" :options="cmOptions" v-if="isOnePane == false" @input="enableAutoSave"></codemirror>
+                    <codemirror v-model="content" class="editor scroll-thin-width" :options="cmOptions" v-if="showEditor" @input="enableAutoSave"></codemirror>
                     
 					<section id="content" v-html="markdownToHTML" v-if="isOnePane == false">
                     </section>
@@ -199,9 +208,12 @@ export default {
 			displayNoteToast: true,
 			isTabNav: false,
 			isOnePane: false,
+			showEditor: true,
 			isCollapse: false,
 			selectedText: "",
 			dialogFormVisible: false,
+			modeIcon: "el-icon-document",
+			value4: true,
         form: {
           name: '',
         },
@@ -256,7 +268,8 @@ export default {
 
 			// blank lines
 			markdown = markdown.replace(/^\s*\n/gm, "<br>");
-
+			markdown = markdown.replace(/^\s*(\n)?(.+)/gm, function(item){
+    			return  /\<(\/)?(h\d|ul|ol|li|blockquote|pre|img)/.test(item) ? item : '<p>'+item+'</p>'; });
 
 			return (markdown);
 		},
@@ -517,6 +530,17 @@ export default {
 				this.autoSaveNote();
 			}, 1000);
 			
+		},
+		enableMode(mode) {
+			let modeIcons = {true : "el-icon-document", false : "el-icon-edit-outline"}
+			if (mode == "readOnly") {
+				// toggle the boolean value
+				this.showEditor = !this.showEditor;
+
+				// change icon
+				let icon = modeIcons[this.showEditor];
+				this.modeIcon = icon;
+			}
 		},
 		resetActiveIndex() {
 			this.activeIndex = 0;
@@ -888,6 +912,10 @@ i {
 #content {
 	max-height: 75vh;
 	overflow-y: auto;
+}
+
+.el-submenu__title, #submenu_heading {
+	color: green;
 }
 
 </style>
