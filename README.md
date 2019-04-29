@@ -1,8 +1,8 @@
-# xq
+# xenon
 
 A markdown editor built for the decentralized web.
 
-View the [official website](https://silvia-odwyer.github.io/xq/).
+View the [official website](https://silvia-odwyer.github.io/xenon/).
 
 Features include:
 - live rendering of your markdown in HTML using regular expressions
@@ -11,18 +11,18 @@ Features include:
 
 ## Demo
 
-![A GIF demo as the app stands on 10/01/2019](https://github.com/silvia-odwyer/xq/blob/master/screenshots/demo2_10_01_2019.gif)
+![A GIF demo as the app stands on 10/01/2019](https://github.com/silvia-odwyer/xenon/blob/master/screenshots/demo2_10_01_2019.gif)
 
 ### Dark Theme Demo
 The app also includes a dark theme for those late-night editing sessions. 
 
-![A GIF demo of the app with a dark theme on 27/02/2019](https://github.com/silvia-odwyer/xq/blob/master/screenshots/dark_theme_demo.gif)
+![A GIF demo of the app with a dark theme on 27/02/2019](https://github.com/silvia-odwyer/xenon/blob/master/screenshots/dark_theme_demo.gif)
 
 ### Try It Out
 You can try it out [here](https://xq-alpha.herokuapp.com). 
 
 ### Official Website
-The xq-editor now has its [own official website](https://silvia-odwyer.github.io/xq/), which is available (for now) via GitHub Pages.
+Xenon now has its [own official website](https://silvia-odwyer.github.io/xenon/), which is available (for now) via GitHub Pages.
 
 ### Not Working?
 Browser support for Blockstack is still in alpha at the moment, so you may find that the app remains
@@ -38,21 +38,16 @@ on the landing page or doesn't log you in successfully.
 *Alternative Browsers*
 Please ensure you're using Chrome, as Blockstack support for Firefox is patchy at the moment (works with an unofficial Blockstack Firefox extension), and non-existent for >IE. 
 
-### WYSIWYG Editor
-An additional WYSIWYG editor is also being developed to allow for rich text editing.
-
-Currently, text can be formatted to appear bold, in italics, etc., but text is not being saved in its formatted form as of yet.
-
 ### Issues or Bugs
 This is still in alpha, so bugs or issues may arise. If so, please submit an issue. <3 Thanks!
 
 ## Build Setup
-If you'd like to run your own instance of xq, whether for dev purposes or personal use, just execute the following:
+If you'd like to run your own instance of xenon, whether for dev purposes or personal use, just execute the following:
 
 ``` bash
 # clone the repo
-git clone https://github.com/silvia-odwyer/xq
-cd xq
+git clone https://github.com/silvia-odwyer/xenon
+cd xenon
 
 # install dependencies
 # yarn install is no longer supported.
@@ -75,7 +70,6 @@ Several features will be implemented in the following weeks, preceding the March
 - Full customization of the editor's appearance and UI. 
 - Dark mode 
 - Mobile responsiveness
-- Move the official website to a component which will be rendered from the xq-alpha site. 
+- Move the official website to a component which will be rendered from the xenon-alpha site. 
 
 *Current State*: alpha
-

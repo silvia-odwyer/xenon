@@ -2,26 +2,27 @@
     <el-container id="dashboard">
         <el-header style="text-align: right; font-size: 12px">
             <el-menu :default-active="String(activeIndex)" class="el-menu" mode="horizontal" id="el_menu">
-                <el-menu-item index="1" class="logo">xq</el-menu-item>
-                <el-submenu index="2" class="options">
+                <el-menu-item index="1" class="logo">xenon</el-menu-item>
+				<el-submenu index="2" class="options">
+                    <template slot="title">Notes</template>
+                    <el-menu-item :index="String(note.id)" v-for="note in markdown_notes" v-on:click="displayNote(note); changeActiveFileListing($event)" class="note_listing" v-bind:key="note.id">{{note.filename}}</el-menu-item>
+                </el-submenu>
+                <el-submenu index="3">
                     <template slot="title">File</template>
-                    <el-menu-item index="2-1" v-on:click="displayFormDialog()"> <i class="el-icon-circle-plus"></i>New</el-menu-item>
-                    <el-menu-item index="2-2" v-on:click="saveNote()"><i class="el-icon-document"></i>Save</el-menu-item>
-                    <!-- <el-menu-item index="2-2"> -->
-                    <!-- <el-checkbox v-model="isOnePane">Rich Text Editor</el-checkbox> -->
-                    <!-- </el-menu-item> -->
-                    <el-menu-item index="2-2">
+                    <el-menu-item index="3-1" v-on:click="displayFormDialog()"> <i class="el-icon-circle-plus"></i>New</el-menu-item>
+                    <el-menu-item index="3-2" v-on:click="saveNote()"><i class="el-icon-document"></i>Save</el-menu-item>
+                    <el-menu-item index="3-3">
                         <el-checkbox v-model="isTabNav">Enable Tabs</el-checkbox>
                     </el-menu-item>
 
-					<el-menu-item index="2-3">
+					<el-menu-item index="3-4">
                         <el-checkbox v-model="isDarkMode" v-on:change="changeMode()">Enable Dark Mode</el-checkbox>
                     </el-menu-item>
                 </el-submenu>
-                <el-submenu index="3" class="gh">
+                <el-submenu index="4" class="gh">
                     <template slot="title">GitHub</template>
-                    <el-menu-item index="3-1"><a href="https://github.com/silvia-odwyer/xq/issues"><i class="el-icon-bell"></i>Submit Issue</a></el-menu-item>
-                    <el-menu-item index="3-2"><a href="https://github.com/silvia-odwyer/xq/"><i class="el-icon-news"></i>View Repo</a></el-menu-item>
+                    <el-menu-item index="4-1"><a href="https://github.com/silvia-odwyer/xenon/issues"><i class="el-icon-bell"></i>Submit Issue</a></el-menu-item>
+                    <el-menu-item index="4-2"><a href="https://github.com/silvia-odwyer/xenon/"><i class="el-icon-news"></i>View Repo</a></el-menu-item>
                 </el-submenu>
                 <el-menu-item index="4-a" class="logout" v-on:click="signOut">
                     Logout
@@ -75,7 +76,7 @@
                     </el-menu>
                     <small class="creds">
                     Powered by Vue, Blockstack, and loads of regex. 
-                    Source code on <a href="https://github.com/silvia-odwyer/xq" target="_blank">GitHub</a>
+                    Source code on <a href="https://github.com/silvia-odwyer/xenon" target="_blank">GitHub</a>
                     </small>
                 </el-aside>
             </el-aside>
@@ -277,11 +278,15 @@ export default {
 	watch: {
 		markdown_notes: {
 			handler: function (markdown_notes) {
+				console.log("uploading to blockstack")
 				const blockstack = this.blockstack;
 
 				if (markdown_notes.length == 0) {
+					console.log("setting to sample notes");
 					this.markdown_notes = this.sample_notes;
 				}
+
+				console.log(markdown_notes)
 
 				// encryption is now enabled by default
 				return blockstack.putFile(STORAGE_FILE, JSON.stringify(markdown_notes))
@@ -311,29 +316,21 @@ export default {
 			this.sample_notes = [];
 			var note_contents = [{
 					filename: "README",
-					content: "# Welcome to xq!\n## Some markdown to get you started\n### H3 heading\n#### H4 Heading\nRegular line with some **bold** and *italic* text. \nImage and link support coming soon!\n> 'Insert some famous or inspirational quote here, because this is a blockquote.' \n> ~ Someone famous\n* Bullet point one\n* Bullet point two\n* Bullet point three\n~~Strikethrough text~~"
+					content: "# Welcome to xenon!\n## Some markdown to get you started\n### H3 heading\n#### H4 Heading\nRegular line with some **bold** and *italic* text. \nImage and link support coming soon!\n> 'Insert some famous or inspirational quote here, because this is a blockquote.' \n> ~ Someone famous\n* Bullet point one\n* Bullet point two\n* Bullet point three\n~~Strikethrough text~~"
 				},
 				{
 					filename: "Sample Note",
-					content: "# xq \nA markdown editor built for the decentralized web.\nMarkdown is parsed to HTML using regular expressions.\n### Issues or Bugs\nThis is still in alpha, so bugs or issues may arise. If so, please submit an issue. <3 Thanks! \n *Current State*: alpha"
+					content: "# xenon \nA markdown editor built for the decentralized web.\nMarkdown is parsed to HTML using regular expressions.\n### Issues or Bugs\nThis is still in alpha, so bugs or issues may arise. If so, please submit an issue. <3 Thanks! \n *Current State*: alpha"
 				}
 			];
 
-			let generic_note = {
-				id: 0,
-				hash_id: "",
-				content: "",
-				filename: "Sample Note",
-				language: "markdown",
-				completed: false,
-				date: this.getDateStamp()
-			}
-
-			for (let k = 0; k < note_contents.length; k++) {
+			for (var k = 0; k < note_contents.length; k++) {
 				generic_note.id = k;
 				generic_note.hash_id = String(this.getDateNow() + note_contents[k].filename);
 				generic_note.content = note_contents[k].content;
 				generic_note.filename = note_contents[k].filename;
+				console.log("note filename", generic_note.filename);
+				console.log("note content", generic_note.content);
 				console.log("new note created", generic_note);
 				this.sample_notes.push(generic_note);
 			}
@@ -775,9 +772,6 @@ label {
 	
 }
 
-.title_input {
-	width: 30%;
-}
 
 .logout,
 .gh,
@@ -864,13 +858,9 @@ i {
 
 @media only screen and (min-width: 800px) {
 	.options {
-		margin-left: 59vw;
+		margin-left: 49vw;
 	}
 
-	.creds {
-	margin-top: auto;
-	position: absolute;
-	}
 
 	.editor,
 	#content {
@@ -889,6 +879,7 @@ i {
 	}
 
 }
+
 
 #sidebar el-menu-item-group {
 	background-color: green;
@@ -916,6 +907,38 @@ i {
 
 .el-submenu__title, #submenu_heading {
 	color: green;
+}
+
+// Collapse Sidebar
+@media only screen and (max-width: 35em) {
+	.outer_aside {
+		display: none;
+	}
+}
+
+@media only screen and (min-width: 40em) {
+	.el-main {
+		margin-top: 22vh;
+	}
+}
+
+@media only screen and (min-width: 50em) {
+	.el-main {
+		margin-top: 0vh;
+	}
+}
+
+@media only screen and (min-width: 40em) {
+	.creds {
+		margin-top: auto;
+		position: absolute;
+	}
+}
+
+@media only screen and (min-width: 45em) {
+	.title_input {
+		width: 30%;
+	}
 }
 
 </style>
