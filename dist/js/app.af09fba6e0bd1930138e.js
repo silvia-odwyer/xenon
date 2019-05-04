@@ -475,19 +475,26 @@ var themes = ["3024-day", "3024-night", "abcdef", "ambiance", "ambiance-mobile",
 			this.sample_notes = [];
 			var note_contents = [{
 				filename: "README",
-				content: "# Welcome to xenon!\n## Some markdown to get you started\n### H3 heading\n#### H4 Heading\nRegular line with some **bold** and *italic* text. \nImage and link support coming soon!\n> 'Insert some famous or inspirational quote here, because this is a blockquote.' \n> ~ Someone famous\n* Bullet point one\n* Bullet point two\n* Bullet point three\n~~Strikethrough text~~"
+				content: "# Welcome to Xenon!\n## Some markdown to get you started\n### H3 heading\n#### H4 Heading\nRegular line with some **bold** and *italic* text. \nImage and link support coming soon!\n> 'Insert some famous or inspirational quote here, because this is a blockquote.' \n> ~ Someone famous\n* Bullet point one\n* Bullet point two\n* Bullet point three\n~~Strikethrough text~~"
 			}, {
 				filename: "Sample Note",
-				content: "# xenon \nA markdown editor built for the decentralized web.\nMarkdown is parsed to HTML using regular expressions.\n### Issues or Bugs\nThis is still in alpha, so bugs or issues may arise. If so, please submit an issue. <3 Thanks! \n *Current State*: alpha"
+				content: "# Xenon \nA markdown editor built for the decentralized web.\nMarkdown is parsed to HTML using regular expressions.\n### Issues or Bugs\nThis is still in alpha, so bugs or issues may arise. If so, please submit an issue. <3 Thanks! \n *Current State*: alpha"
 			}];
-
+			var generic_note = {
+				id: 0,
+				hash_id: String(this.getDateNow() + note_contents[0].filename),
+				content: note_contents[0].content,
+				filename: "Sample Note",
+				language: "markdown",
+				completed: false,
+				date: this.getDateStamp()
+			};
+			this.sample_notes.push(generic_note);
 			for (var k = 0; k < note_contents.length; k++) {
 				generic_note.id = k;
 				generic_note.hash_id = String(this.getDateNow() + note_contents[k].filename);
 				generic_note.content = note_contents[k].content;
 				generic_note.filename = note_contents[k].filename;
-				console.log("note filename", generic_note.filename);
-				console.log("note content", generic_note.content);
 				console.log("new note created", generic_note);
 				this.sample_notes.push(generic_note);
 			}
@@ -514,6 +521,7 @@ var themes = ["3024-day", "3024-night", "abcdef", "ambiance", "ambiance-mobile",
 					var current_file = this.markdown_notes.filter(function (file) {
 						return file.hash_id == _this2.file.hash_id;
 					})[0];
+					console.log("the current file is", current_file);
 
 					current_file.content = this.content;
 
@@ -606,8 +614,7 @@ var themes = ["3024-day", "3024-night", "abcdef", "ambiance", "ambiance-mobile",
 		saveNewNote: function saveNewNote() {
 			var datestamp = this.getDateStamp();
 			console.log("uid", this.uidCount);
-
-			this.markdown_notes.unshift({
+			this.file = {
 				id: this.uidCount++,
 				hash_id: String(this.getDateNow()),
 				content: "",
@@ -615,7 +622,9 @@ var themes = ["3024-day", "3024-night", "abcdef", "ambiance", "ambiance-mobile",
 				language: this.cmOptions.mode,
 				completed: false,
 				date: datestamp
-			});
+			};
+
+			this.markdown_notes.unshift(this.file);
 
 			console.log(this.markdown_notes);
 		},
@@ -2029,4 +2038,4 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 /***/ })
 
 },[330]);
-//# sourceMappingURL=app.6bc5c791cd8264d3e678.js.map
+//# sourceMappingURL=app.af09fba6e0bd1930138e.js.map
