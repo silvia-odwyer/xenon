@@ -20,14 +20,16 @@
                     </el-menu-item>
                 </el-submenu>
                 <el-submenu index="4" class="gh">
-            <router-link to='/home'>Home</router-link>
                     <template slot="title">GitHub</template>
                     <el-menu-item index="4-1"><a href="https://github.com/silvia-odwyer/xenon/issues"><i class="el-icon-bell"></i>Submit Issue</a></el-menu-item>
                     <el-menu-item index="4-2"><a href="https://github.com/silvia-odwyer/xenon/"><i class="el-icon-news"></i>View Repo</a></el-menu-item>
                 </el-submenu>
-                <el-menu-item index="4-a" class="logout" v-on:click="signOut">
+
+                <el-menu-item index="4-b" v-on:click="signOut()">
                     Logout
                 </el-menu-item>
+
+
             </el-menu>
         </el-header>
         <el-container>
@@ -69,15 +71,16 @@
                                 <el-checkbox v-model="isCollapse">Collapse</el-checkbox>
                                 </el-menu-item>
                                 </el-menu-item-group> -->
+
                             <el-menu-item-group>
                                 <template slot="title"></template>
-                                <el-menu-item index="3-3" v-on:click="signOut">Logout</el-menu-item>
+								<el-menu-item index="3-3" v-on:click="showHelpCarousel">Help</el-menu-item>
+                                <el-menu-item index="3-4" v-on:click="signOut">Logout</el-menu-item>
                             </el-menu-item-group>
                         </el-submenu>
                     </el-menu>
                     <small class="creds">
-                    Powered by Vue, Blockstack, and loads of regex. 
-                    Source code on <a href="https://github.com/silvia-odwyer/xenon" target="_blank">GitHub</a>
+                    	<p>Saved.</p>
                     </small>
                 </el-aside>
             </el-aside>
@@ -107,9 +110,9 @@
                     <!-- If the user wishes to have the markdown and rendered HTML in different and separate panes,
                         these panes will display. -->
                     <codemirror v-model="content" class="editor scroll-thin-width" :options="cmOptions" v-if="showEditor" @input="enableAutoSave"></codemirror>
-                    
 					<section id="content" v-html="markdownToHTML" v-if="isOnePane == false">
                     </section>
+
                     <!-- WYSIWYG Editor -->
                     <!-- If the user wishes to have the HTML rendered in the same pane, only this pane should display. -->
                     <div id="wysiwyg">
@@ -151,7 +154,13 @@
                         <el-button @click="dialogFormVisible = false">Cancel</el-button>
                         <el-button type="primary" v-on:click="confirmNoteCreation()">Create Note</el-button>
                     </span>
+
                 </el-dialog>
+
+				<el-dialog title="Help Guide" :visible.sync="displayHelpCarousel" width="80%" >
+					<HelpCarousel></HelpCarousel>
+                </el-dialog>
+
             </el-main>
         </el-container>
     </el-container>
@@ -167,6 +176,7 @@ import 'codemirror/addon/selection/active-line.js'
 import 'codemirror/addon/selection/mark-selection.js'
 import MenuIcon from 'vue-material-design-icons/Menu.vue'
 import FormatBold from 'vue-material-design-icons/FormatBold.vue'
+import HelpCarousel from './HelpCarousel.vue'
 
 /*eslint-disable*/
 
@@ -216,6 +226,7 @@ export default {
 			dialogFormVisible: false,
 			modeIcon: "el-icon-document",
 			value4: true,
+			displayHelpCarousel: false,
         form: {
           name: '',
         },
@@ -477,6 +488,11 @@ export default {
 			this.dialogFormVisible = true;
 
 		},
+		showHelpCarousel() {
+			// Display dialog asking for filename
+			console.log("displayHelpCarousel")
+			this.displayHelpCarousel = true;
+		},
 		saveNewNote() {
 			let datestamp = this.getDateStamp();
 			console.log("uid", this.uidCount);
@@ -627,7 +643,8 @@ export default {
 	components: {
 		codemirror,
 		MenuIcon,
-		FormatBold
+		FormatBold,
+		HelpCarousel
 	}
 }
 </script>
@@ -948,5 +965,25 @@ i {
 		width: 30%;
 	}
 }
+
+  .el-carousel__item h3 {
+    color: #475669;
+    font-size: 14px;
+    opacity: 0.75;
+    line-height: 200px;
+    margin: 0;
+  }
+
+  .el-carousel__item:nth-child(2n) {
+    background-color: #99a9bf;
+  }
+
+  .el-carousel__item:nth-child(2n+1) {
+    background-color: #d3dce6;
+  }
+
+  .el-menu-item a {
+	  text-decoration: none;
+  }
 
 </style>
