@@ -326,7 +326,7 @@ export default {
 			// Will be used for creating templates in the future.
 			this.sample_notes = [];
 			var note_contents = [{
-					filename: "README",
+					filename: "Markdown Guide",
 					content: "# Welcome to Xenon!\n## Some markdown to get you started\n### H3 heading\n#### H4 Heading\nRegular line with some **bold** and *italic* text. \nImage and link support coming soon!\n> 'Insert some famous or inspirational quote here, because this is a blockquote.' \n> ~ Someone famous\n* Bullet point one\n* Bullet point two\n* Bullet point three\n~~Strikethrough text~~"
 				},
 				{
@@ -334,25 +334,29 @@ export default {
 					content: "# Xenon \nA markdown editor built for the decentralized web.\nMarkdown is parsed to HTML using regular expressions.\n### Issues or Bugs\nThis is still in alpha, so bugs or issues may arise. If so, please submit an issue. <3 Thanks! \n *Current State*: alpha"
 				}
 			];
-			let generic_note = {
-			 	id: 0,
-			 	hash_id: String(this.getDateNow() + note_contents[0].filename),
-			 	content: note_contents[0].content,
-			 	filename: "Sample Note",
-			 	language: "markdown",
-			 	completed: false,
-			 	date: this.getDateStamp()
-			}
-			this.sample_notes.push(generic_note)
-			for (let k = 0; k < note_contents.length; k++) {
-			 	generic_note.id = k;
+
+
+			for (let k = 0; k < note_contents.length; k += 1) {
+							
+				let generic_note = {
+					id: 0,
+					hash_id: String(this.getDateNow() + note_contents[0].filename),
+					content: note_contents[0].content,
+					filename: "Sample Note",
+					language: "markdown",
+					completed: "false",
+					date: this.getDateStamp()
+				}
+				console.log("current id is", Number(k));
+			 	generic_note.id = Number(k);
 			 	generic_note.hash_id = String(this.getDateNow() + note_contents[k].filename);
 			 	generic_note.content = note_contents[k].content;
-			 	generic_note.filename = note_contents[k].filename;
+				generic_note.filename = note_contents[k].filename;
+				generic_note.completed = "false";
 			 	console.log("new note created", generic_note);
 			 	this.sample_notes.push(generic_note);
 			}
-			console.log("sample notes", this.sample_notes);
+			console.log("sample notes after creation", this.sample_notes);
 		},
 		confirmNoteCreation() {
 			this.isNewFile = true;

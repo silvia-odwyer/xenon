@@ -1,7 +1,7 @@
 {
-  "name": "xq-editor",
+  "name": "xenon",
   "version": "0.0.4",
-  "description": "A live markdown editor built on Blockstack, where users can edit and save markdown notes.",
+  "description": "A markdown editor built on Blockstack, where users can edit and save markdown notes.",
   "author": "Silvia O'Dwyer <silviaodwyerdev@gmail.com>",
   "scripts": {
     "dev": "node build/dev-server.js",
@@ -24,7 +24,7 @@
     "vue": "^2.3.3",
     "vue-codemirror": "^4.0.6",
     "vue-material-design-icons": "^2.6.0",
-    "vue-router": "^2.3.1"
+    "vue-router": "^2.8.1"
   },
   "devDependencies": {
     "autoprefixer": "^6.7.2",
