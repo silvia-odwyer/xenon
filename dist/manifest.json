@@ -1,7 +1,7 @@
 {
-  "name": "xq",
-  "start_url": "https://xq-alpha.herokuapp.com/",
-  "description": "A live markdown editor built on Blockstack",
+  "name": "Xenon",
+  "start_url": "https://xenoneditor.com",
+  "description": "A decentralised markdown editor built on Blockstack",
   "icons": [{
     "src": "http://blockstack-todos.appartisan.com/logo.png",
     "sizes": "400x400",
