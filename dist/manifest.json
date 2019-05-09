@@ -3,12 +3,12 @@
   "start_url": "https://xenoneditor.com",
   "description": "A decentralised markdown editor built on Blockstack",
   "icons": [{
-    "src": "http://blockstack-todos.appartisan.com/logo.png",
+    "src": "https://silvia-odwyer.github.io/xenon/images/xenon400.png",
     "sizes": "400x400",
     "type": "image/png"
   },
   {
-    "src": "http://blockstack-todos.appartisan.com/avatar-placeholder.png",
+    "src": "https://silvia-odwyer.github.io/xenon/images/xenon400.png",
     "sizes": "400x400",
     "type": "image/png"
   }]
