@@ -1,8 +1,8 @@
 <template>
     <el-container id="dashboard">
-        <el-header style="text-align: right; font-size: 12px">
-            <el-menu :default-active="String(activeIndex)" class="el-menu" mode="horizontal" id="el_menu">
-                <el-menu-item index="1" class="logo">xenon</el-menu-item>
+        <el-header style="text-align: right; font-size: 12px; background-color: #303030">
+            <el-menu :default-active="String(activeIndex)" class="el-menu" mode="horizontal" id="el_menu"  background-color="#303030">
+                <el-menu-item index="1-a" class="logo">xenon</el-menu-item>
 				<el-submenu index="2" class="options">
                     <template slot="title">Notes</template>
                     <el-menu-item :index="String(note.id)" v-for="note in markdown_notes" v-on:click="displayNote(note); changeActiveFileListing($event)" class="note_listing" v-bind:key="note.id">{{note.filename}}</el-menu-item>
@@ -16,7 +16,7 @@
                     </el-menu-item>
 
 					<el-menu-item index="3-4">
-                        <el-checkbox v-model="isDarkMode" v-on:change="changeMode()">Enable Dark Mode</el-checkbox>
+                        <el-checkbox v-model="isDarkMode" v-on:change="toggleDarkMode()">Enable Dark Mode</el-checkbox>
                     </el-menu-item>
                 </el-submenu>
                 <el-submenu index="4" class="gh">
@@ -62,15 +62,9 @@
                                     <el-checkbox v-model="isTabNav">Enable Tabs</el-checkbox>
                                 </el-menu-item>
 								<el-menu-item index="3-2">
-                                    <el-checkbox v-model="isDarkMode" v-on:change="changeMode()">Enable Dark Mode</el-checkbox>
+                                    <el-checkbox v-model="isDarkMode" v-on:change="toggleDarkMode()">Enable Dark Mode</el-checkbox>
                                 </el-menu-item>
-                            </el-menu-item-group>
-                            <!-- <el-menu-item-group>
-                                <template slot="title"></template>
-                                <el-menu-item index="3-2">
-                                <el-checkbox v-model="isCollapse">Collapse</el-checkbox>
-                                </el-menu-item>
-                                </el-menu-item-group> -->
+                            </el-menu-item-group> 
 
                             <el-menu-item-group>
                                 <template slot="title"></template>
@@ -98,57 +92,72 @@
 
                     </el-col>
 					    
-					<el-col :span="8">
-						<!-- <el-button type="primary" plain v-bind:icon="modeIcon" v-on:click="enableMode('readOnly')">	
+					<el-col :span="8"> 
+					 <el-button type="primary" plain v-bind:icon="modeIcon" v-on:click="enableMode('readOnly')">	
 							Enable Read-Only Mode
-						</el-button>							 -->
+						</el-button>							 
 					<el-switch style="display: block" v-model="this.showEditor" v-on:change="enableMode('readOnly')" active-color="#13ce66" inactive-color="#ff4949" active-text="Edit mode" inactive-text="Read-only"> </el-switch>
+					<!-- <el-switch style="display: block" v-model="this.isMarkdownMode"  v-on:change="enableEditMode" active-color="#13ce66" inactive-color="#ff4949" active-text="Markdown mode" inactive-text="WYSIWYG"> </el-switch> -->
+
 					</el-col>
 
                 </el-row>
-                <section class="live_area">
-                    <!-- If the user wishes to have the markdown and rendered HTML in different and separate panes,
-                        these panes will display. -->
-                    <codemirror v-model="content" class="editor scroll-thin-width" :options="cmOptions" v-if="showEditor" @input="enableAutoSave"></codemirror>
-					<section id="content" v-html="markdownToHTML" v-if="isOnePane == false">
-                    </section>
 
-                    <!-- WYSIWYG Editor -->
-                    <!-- If the user wishes to have the HTML rendered in the same pane, only this pane should display. -->
-                    <div id="wysiwyg">
-                        <div class="toolbar" v-if="isOnePane">
-                            <button v-on:click="formatText('bold')">
-                                <font-awesome-icon icon="bold" />
-                            </button>
-                            <button v-on:click="formatText('italic')">
-                                <font-awesome-icon icon="italic" />
-                            </button>
-                            <button  v-on:click="formatText('strikethrough')">
-                                <font-awesome-icon icon="strikethrough"/>
-                            </button>
-                            <button v-on:click="copyToClipboard()">
-                                <font-awesome-icon icon="copy"/>
-                            </button>
-                            <button v-on:click="formatText('cut')">
-                                <font-awesome-icon icon="cut" />
-                            </button>
-                            <button v-on:click="formatText('underline')">
-                                <font-awesome-icon icon="underline" />
-                            </button>
-                        </div>
-                        <div contenteditable  ref="text" class="editor" id="singlePane" v-if="isOnePane" v-html="markdownToHTML" @input="renderWYSIWYG()"></div>
-                    </div>
-                </section>
-                <!-- <el-button type="primary" plain icon="el-icon-circle-check-outline" v-on:click="saveNote()">
-                    Save
-                </el-button>
-                <form @submit.prevent="saveNote()" :disabled="! content">
-                </form> -->
-                <el-dialog title="Filename" :visible.sync="dialogFormVisible">
+				<el-row>
+
+					<el-col :span="24">
+						<section class="live_area"> 
+							<!-- If the user wishes to have the markdown and rendered HTML in different and separate panes,
+								these panes will display. -->
+							<section class="markdown_editor" v-if="isMarkdownMode">
+								<codemirror  v-model="content" class="editor scroll-thin-width" :options="cmOptions" @input="enableAutoSave" v-if="showEditor"></codemirror>
+								<section id="content" v-html="markdownToHTML" v-if="isOnePane == false"></section>
+							</section>
+
+								<section class="rich_text_editor" v-show="!isMarkdownMode">
+									<!-- WYSIWYG Editor -->
+									<!-- If the user wishes to have the HTML rendered in the same pane, only this pane should display. -->
+									<div id="wysiwyg">    
+										
+										<div class="toolbar">
+											<button v-on:click="formatText('bold')">
+												<font-awesome-icon icon="bold" />
+											</button>
+											<button v-on:click="formatText('italic')">
+												<font-awesome-icon icon="italic" />
+											</button>
+											<button  v-on:click="formatText('strikethrough')">
+												<font-awesome-icon icon="strikethrough"/>
+											</button>
+											<button v-on:click="copyToClipboard()">
+												<font-awesome-icon icon="copy"/>
+											</button>
+											<button v-on:click="formatText('cut')">
+												<font-awesome-icon icon="cut" />
+											</button>
+											<button v-on:click="formatText('underline')">
+												<font-awesome-icon icon="underline" />
+											</button>
+										</div>
+
+										
+									</div>
+											
+									<div contenteditable class="editme" v-html="tmp" @input="onEdit"></div>
+							</section>
+						</section>
+					</el-col>
+				</el-row>
+
+                 <el-dialog title="Filename" :visible.sync="dialogFormVisible">
                     <el-form :model="form">
                         <el-form-item label="Filename" label-width="120px">
                             <el-input v-model="filename_input" autocomplete="off"></el-input>
                         </el-form-item>
+						<el-form-item>
+							  <el-radio v-model="noteFormat" label="wysiwyg">Rich Text (What You See is What You Get)</el-radio>
+							  <el-radio v-model="noteFormat" label="markdown">Markdown</el-radio>
+						</el-form-item>
                     </el-form>
                     <span slot="footer" class="dialog-footer">
                         <el-button @click="dialogFormVisible = false">Cancel</el-button>
@@ -163,9 +172,12 @@
 
             </el-main>
         </el-container>
-    </el-container>
+    </el-container> 
+
+
 </template>
 <script>
+/*eslint-disable*/
 
 import { codemirror } from 'vue-codemirror'
 import 'codemirror/lib/codemirror.css'
@@ -177,8 +189,7 @@ import 'codemirror/addon/selection/mark-selection.js'
 import MenuIcon from 'vue-material-design-icons/Menu.vue'
 import FormatBold from 'vue-material-design-icons/FormatBold.vue'
 import HelpCarousel from './HelpCarousel.vue'
-
-/*eslint-disable*/
+import Editor from '@/components/Editor.vue'
 
 var STORAGE_FILE = 'markdown_files.json'
 var themes = ["3024-day", "3024-night", "abcdef", "ambiance", "ambiance-mobile", "base16-dark", "base16-light", "bespin", "blackboard", "cobalt", "colorforth", "darcula", "duotone-dark", "duotone-light", "eclipse", "elegant", "erlang-dark",
@@ -188,6 +199,13 @@ var themes = ["3024-day", "3024-night", "abcdef", "ambiance", "ambiance-mobile",
 export default {
 	name: 'dashboard',
 	props: ['user'],
+	components: {
+		codemirror,
+		MenuIcon,
+		FormatBold,
+		HelpCarousel, 
+		Editor
+	},
 	data() {
 		return {
 			blockstack: window.blockstack,
@@ -222,16 +240,22 @@ export default {
 			isOnePane: false,
 			showEditor: true,
 			isCollapse: false,
+			noteFormat: "wysiwyg",
 			selectedText: "",
 			dialogFormVisible: false,
 			modeIcon: "el-icon-document",
 			value4: true,
 			displayHelpCarousel: false,
+			textInHTML: "<p>You can get started by typing some text, <i>editing it</i> and <b>playing</b> around with <u>formatting</u>.",
+			isMarkdownMode: true,
         form: {
           name: '',
         },
-				timeoutID: null,
-				isDarkMode: false
+		timeoutID: null,
+		isDarkMode: false,
+		      txt:'This is a <b>text</b> <a href="">link</a>',
+      tmp: "<h4>Welcome to Xenon!</h4> <p>You can get started by typing some text, <i>editing it</i> and <b>playing</b> around with <u>formatting</u>."
+ 
 		}
 	},
 	computed: {
@@ -307,20 +331,12 @@ export default {
 		}
 	},
 	mounted() {
-		var textSelection;
-		document.addEventListener("selectionchange", e => 
-		{
-		textSelection = window.getSelection ? window.getSelection().toString() : window.selection.createRange().toString();
-		console.log(textSelection)
-		this.selectedText = textSelection;
-		})		
-		
+			
 		this.fetchData();
 
 	},
 	methods: {
 		generateSampleNotes() {
-			console.log("gen sample notes called")
 			// A method to generate sample notes (as they were hardcoded before)
 			// which will make sample note generation easier when tailoring sample notes to certain groups (devs vs consumers), 
 			// Will be used for creating templates in the future.
@@ -347,13 +363,11 @@ export default {
 					completed: "false",
 					date: this.getDateStamp()
 				}
-				console.log("current id is", Number(k));
 			 	generic_note.id = Number(k);
 			 	generic_note.hash_id = String(this.getDateNow() + note_contents[k].filename);
 			 	generic_note.content = note_contents[k].content;
 				generic_note.filename = note_contents[k].filename;
 				generic_note.completed = "false";
-			 	console.log("new note created", generic_note);
 			 	this.sample_notes.push(generic_note);
 			}
 			console.log("sample notes after creation", this.sample_notes);
@@ -370,27 +384,34 @@ export default {
 			this.dialogFormVisible = false;
 			this.displayFileMessage('New note created!', "success");
 			this.saveNewNote();
+			
 		},
 		saveNote() {
+			console.log("save note called")
 			if (this.filename == "") {
 				this.noFilenameAlert = true;
-				this.displayFileMessage('No title entered!', "warning")
+				this.displayFileMessage('No title entered!', "warning");
 			}
 
 			// Both code and title entered
 			else {
-          // Retrieve the file of interest
+          			// Retrieve the file of interest
 					let current_file = this.markdown_notes.filter(file => file.hash_id == this.file.hash_id)[0];
 					console.log("the current file is", current_file);
 
 					// Save 
-					current_file.content = this.content;
+					if (this.isMarkdownMode) {
+						current_file.content = this.content;
+						// Update language
+						current_file.language = this.cmOptions.mode;
+					}
+					else {
+						current_file.content = this.txt;
+					}
 
 					// Save title
 					this.updateTitle(current_file);
 
-					// Update language
-					current_file.language = this.cmOptions.mode;
 
 					// Update datestamp
 					current_file.datestamp = this.getDateStamp();
@@ -398,35 +419,23 @@ export default {
 					this.alertMessage = "Saved file!"
 
 				}
-				if (this.displayNoteToast) {
-					this.displayFileMessage("Saved note!", "success")
-					this.showSnackbar = true;
-				}
+				// if (this.displayNoteToast) {
+				// 	this.displayFileMessage("Saved note!", "success")
+				// 	this.showSnackbar = true;
+				// }
 
 			
 		this.resetNoteToast();
 		},
+		   onEdit(evt){
+             var src = evt.target.innerHTML
+			 this.txt = src
+			 this.enableAutoSave();
+         },
+
 		autoSaveNote() {
 
-			console.log("auto saving note")
-      
-			// Retrieve the file of interest
-			let current_file = this.markdown_notes.filter(file => file.hash_id == this.file.hash_id)[0];
-
-			// Save 
-			current_file.content = this.content;
-
-			// Save title
-			this.updateTitle(current_file);
-
-			// Update language
-			current_file.language = this.cmOptions.mode;
-
-			// Update datestamp
-			let datestamp = this.getDateStamp();
-			current_file.datestamp = datestamp;
-
-			this.alertMessage = "Saved file!"
+			this.saveNote();
 		},
 		resetNoteToast() {
 			this.displayNoteToast = true;
@@ -455,15 +464,30 @@ export default {
 			
 			this.file = file;
 
-			// Update code in the code editor
-			this.content = file.content;
+			if (this.file.format == undefined) {
+				this.file.format = "markdown";
+			}
 
+			if (this.file.format == "markdown") {
+				// Update code in the code editor
+				this.content = file.content;
+
+				// Update language mode
+				this.cmOptions.mode = file.language;
+
+				this.isMarkdownMode = true;
+			}
+
+			else if (this.file.format == "wysiwyg") {
+				this.isMarkdownMode = false;
+				this.txt = this.file.content;
+				this.tmp = this.file.content;
+			}
+
+			
 			// Update the file's title
 			this.filename = file.filename;
 			this.current_file_id = file.id;
-
-			// Update language mode
-			this.cmOptions.mode = file.language;
 
 			// Scroll to the top of the page
 			window.scrollTo(0, 0);
@@ -471,9 +495,6 @@ export default {
 			// Update the relevant tab
 			this.activeIndex = file.id;
 
-		},
-		renderWYSIWYG() {
-			let textarea = document.getElementById("singlePane");
 		},
 		formatText(command) {
 			document.execCommand(command, false, "");
@@ -486,7 +507,7 @@ export default {
 			console.log("CRTNEWNOTE files", this.markdown_notes);
 
 			// Clear the filename
-			this.filename = "";
+			this.filename_input = "";
 
 			// Display dialog asking for filename
 			this.dialogFormVisible = true;
@@ -506,6 +527,7 @@ export default {
 				content: "",
 				filename: this.filename,
 				language: this.cmOptions.mode,
+				format: this.noteFormat,
 				completed: false,
 				date: datestamp
 			}
@@ -513,6 +535,14 @@ export default {
 			this.markdown_notes.unshift(this.file);
 
 			console.log(this.markdown_notes);
+			if (this.noteFormat == "markdown") {
+				this.isMarkdownMode = true;
+			}
+			else {
+				this.isMarkdownMode = false;
+				this.file.content = "<h2>Welcome to Xenon!</h2> <p>Type here...</p>";
+
+			}
 		},
 		getDateStamp() {
 			let date = new Date();
@@ -567,6 +597,26 @@ export default {
 				this.modeIcon = icon;
 			}
 		},
+		enableEditMode() {
+			// toggle the boolean value
+			this.isMarkdownMode = !this.isMarkdownMode;
+
+			console.log("this.markdownToHTML is", this.markdownToHTML)
+
+			if (this.isMarkdownMode == true) {
+				this.tmp = this.markdownToHTML;
+			}
+			else if (this.isMarkdownMode == false) {
+				// this.markdownToHTML = this.tmp;
+				let markdown_to_html = this.markdownToHTML;
+				markdown_to_html.replace(/[<p>\_]{1}([^</p\>\_]+)/g, '# $1')
+				this.content = markdown_to_html;
+		
+
+			}
+
+		
+		},	
 		resetActiveIndex() {
 			this.activeIndex = 0;
 		},	
@@ -582,17 +632,12 @@ export default {
 		getTheme(theme) {
 			return import ('codemirror/theme/' + theme + '.css');
 		},
-		handleOpen(key, keyPath) {
-			console.log(key, keyPath);
-		},
-		handleClose(key, keyPath) {
-			console.log(key, keyPath);
-		},
+
 		changeActiveFileListing(event) {
 			event.className += " active";
 			console.log(event)
 		},
-		changeMode() {
+		toggleDarkMode() {
 			var dashboard_bg_colour, dashboard_text_colour, cm_theme;
 
 			// Set colour values for each variable
@@ -612,15 +657,15 @@ export default {
 			let dashboard = document.getElementById("dashboard");
 			dashboard.style.backgroundColor = dashboard_bg_colour;
 
-			let el_menu = document.getElementById("el_menu")
-			el_menu.style.backgroundColor = dashboard_bg_colour;
+			// let el_menu = document.getElementById("el_menu")
+			// el_menu.style.backgroundColor = dashboard_bg_colour;
 
-			let el_menu_class = document.getElementsByClassName("el-menu")[2];
-			console.log(el_menu_class)
-			el_menu_class.backgroundColor = dashboard_bg_colour;
+			// let el_menu_class = document.getElementsByClassName("el-menu")[2];
+			// console.log(el_menu_class)
+			// el_menu_class.backgroundColor = dashboard_bg_colour;
 
-			// Select all submenu components.
-			let submenus = document.querySelectorAll("#sidebar .el-menu-item-group, #sidebar .el-submenu, .new_note, .el-menu");
+			// // Select all submenu components.
+			let submenus = document.querySelectorAll("#sidebar .el-menu-item-group, #sidebar .el-submenu, .new_note");
 			for (var i = 0; i < submenus.length; i++) {
 				let submenu = submenus[i];
 				submenu.style.backgroundColor = dashboard_bg_colour;
@@ -644,350 +689,8 @@ export default {
 			this.blockstack.signUserOut(window.location.href)
 		}
 	},
-	components: {
-		codemirror,
-		MenuIcon,
-		FormatBold,
-		HelpCarousel
-	}
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style lang="scss" scoped>
-
-* {
-	font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
-
-}
-
-.el-header,
-.el-footer {
-	color: #333;
-	font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
-}
-
-.el-aside {
-	color: #333;
-	font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
-	margin-top: 1em;
-}
-
-.outer_aside {
-	display: flex;
-	flex-direction: column;
-}
-
-.el-main {
-	color: #333;
-	font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
-	padding: 5vh;
-}
-
-.el-input {
-	margin-bottom: 1em;
-}
-
-.dashboard {
-	height: 100vh;
-}
-
-.editor {
-	padding: 0;
-	margin-bottom: 1em;
-	margin-right: 1em;
-}
-
-.toolbar > button {
-	background-color: white;	
-	border: none;
-	cursor: pointer;
-}
-
-label {
-	margin-bottom: 0;
-	// width: 100%;
-	cursor: pointer;
-	input[type="checkbox"] {
-		margin-right: 5px;
-	}
-}
-
-.list-group-item {
-	&.completed label {
-		text-decoration: line-through;
-	}
-	.delete {
-		display: none;
-	}
-	&:hover .delete {
-		display: inline;
-		color: grey;
-		&:hover {
-			text-decoration: none;
-			color: red;
-		}
-	}
-}
-
-.new_note {
-	margin-left: 5em;
-}
-
-// Scrollbar styles
-
-/* width */
-
-::-webkit-scrollbar {
-	width: 8px;
-	border-radius: 0.2em;
-}
-
-
-/* Track */
-
-::-webkit-scrollbar-track {
-	background: #f1f1f1;
-}
-
-
-/* Handle */
-
-::-webkit-scrollbar-thumb {
-	background: #888;
-}
-
-
-/* Handle on hover */
-
-::-webkit-scrollbar-thumb:hover {
-	background: #555;
-}
-
-.live_area {
-	display: flex;
-	flex-wrap: wrap;
-	max-height: 100vh;
-}
-
-.CodeMirror {
-	font-family: sans-serif;
-	color: black;
-	direction: ltr;
-}
-
-.note_listing {
-	.delete {
-		text-decoration: none;
-		display: none;
-		cursor: pointer;
-	}
-	&:hover .delete {
-		display: inline;
-		color: grey;
-		&:hover {
-			text-decoration: none;
-			color: red;
-		}
-	}
-	.pull-right {
-		float: right;
-	}
-}
-
-.el-submenu .el-menu-item {
-	padding: 0px;
-	padding-right: 15px;
-	
-}
-
-
-.logout,
-.gh,
-.options {}
-
-.el-menu-item,
-.el-menu-item a {
-	font-family: "Helvetica Neue", Helvetica, sans-serif;
-	color: #909399;
-	font-style: "none";
-}
-
-/deep/ h1,
-/deep/ h2,
-/deep/ h2 {
-	font-family: "Helvetica Neue", Helvetica, sans-serif;
-}
-
-/deep/ #content h2 {
-	font-size: 1.2em;
-  margin-top: 0em;
-}
-
-/deep/ #content h1 {
-	font-size: 1.7em;
-	margin-bottom: 0.4em;
-	margin-top: 0em;
-}
-
-/deep/ #content h3 {
-	font-size: 0.93em;
-}
-
-/deep/ #content {
-  margin-top: 0;
-}
-
-/deep/ li {
-	margin-left: 0.5em;
-}
-
-.themes_drawer {
-	max-height: 300px;
-	overflow-y: auto;
-	margin-right: 0.2em;
-}
-
-.logo {
-	margin-right: 8vw;
-}
-
-.active {
-	background-color: gray;
-}
-
-#singlePane {
-	margin-bottom: 1em;
-	margin-top: 0.5em;
-	border: none;
-	min-height: 4vh;
-}
-
-[contenteditable]:focus {
-    outline: 0px solid transparent;
-}
-
-.toolbar {
-	display: flex;
-	flex-direction: row;
-	margin-bottom: 0.5em;
-	border: solid lightgray 0.01em;
-	padding: 0.5em;
-	width: 50%;
-}
-
-.toolbar > * {
-	cursor: pointer;
-	margin-left: 0.5em;
-}
-
-i {
-	margin-right: 1.2em;
-}
-
-@media only screen and (min-width: 800px) {
-	.options {
-		margin-left: 49vw;
-	}
-
-
-	.editor,
-	#content {
-		display: inline-block;
-		flex-grow: 1;
-		width: calc(100% * (1/2) - 10px - 1px);
-		vertical-align: top;
-	}
-
-	CodeMirror {
-		height: 100vh;
-	}
-
-	.tabs {
-		margin-bottom: 0.5em;
-	}
-
-}
-
-
-#sidebar el-menu-item-group {
-	background-color: green;
-}
-
-#fixed {
-	max-height: 85vh;
-	overflow-y: auto;
-}
-
-#dashboard {
-	max-height: 100vh;
-}
-
-
-
-.scroll-thin-width {
-  scrollbar-width: thin;
-}
-
-#content {
-	max-height: 75vh;
-	overflow-y: auto;
-}
-
-.el-submenu__title, #submenu_heading {
-	color: green;
-}
-
-// Collapse Sidebar
-@media only screen and (max-width: 35em) {
-	.outer_aside {
-		display: none;
-	}
-}
-
-@media only screen and (min-width: 40em) {
-	.el-main {
-		margin-top: 22vh;
-	}
-}
-
-@media only screen and (min-width: 50em) {
-	.el-main {
-		margin-top: 0vh;
-	}
-}
-
-@media only screen and (min-width: 40em) {
-	.creds {
-		margin-top: auto;
-		position: absolute;
-	}
-}
-
-@media only screen and (min-width: 45em) {
-	.title_input {
-		width: 30%;
-	}
-}
-
-  .el-carousel__item h3 {
-    color: #475669;
-    font-size: 14px;
-    opacity: 0.75;
-    line-height: 200px;
-    margin: 0;
-  }
-
-  .el-carousel__item:nth-child(2n) {
-    background-color: #99a9bf;
-  }
-
-  .el-carousel__item:nth-child(2n+1) {
-    background-color: #d3dce6;
-  }
-
-  .el-menu-item a {
-	  text-decoration: none;
-  }
-
-</style>
+<style src="@/assets/sass/dashboard_styles.scss" lang="scss" scoped></style>
