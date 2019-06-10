@@ -5,15 +5,15 @@
 // If you would like to use this template in your own work, please visit the above link
 // and make sure to follow the licenses.
 <template>
-<body class="is-boxed has-animations">
-    <div class="body-wrap boxed-container">
+<body class="has-animations">
+    <div class="">
         <header class="site-header">
             <div class="container">
                 <div class="site-header-inner">
                     <div class="brand header-brand">
                         <h1 class="m-0">
                             <a href="#">
-                                <span class="logo">xn</span>
+                                <span class="logo">xenon</span>
                             </a>
                         </h1>
                     </div>
@@ -23,15 +23,15 @@
 
         <main>
             <section class="hero">
-				<div class="hero-left-decoration is-revealing"></div>
-				<div class="hero-right-decoration is-revealing"></div>
+				<div class="hero-left-decoration"></div>
+				<div class="hero-right-decoration"></div>
                 <div class="container">
                     <div class="hero-inner">
 						<div class="hero-copy">
-	                        <h1 class="hero-title mt-0 is-revealing">xenon</h1>
-	                        <p class="hero-paragraph is-revealing">Xenon is a powerful markdown editor for the decentralized web.</p>
+	                        <h1 class="hero-title mt-0">Create and edit notes with confidence.</h1>
+	                        <p class="hero-paragraph">Xenon is a note editor for the decentralized web, allowing you to create and save notes. Also includes Markdown support.</p>
 
-	                        <p class="hero-cta mb-0 is-revealing">
+	                        <p class="hero-cta mb-0">
 								<a class="button button-primary button-shadow" href="#" @click.prevent="signIn" >Get started</a>
 							</p>
 						</div>
@@ -41,47 +41,49 @@
                 </div>
             </section>
 
-			<!-- <section class="features section text-center">
+			<section class="features section text-center">
                 <div class="container">
                     <div class="features-inner section-inner has-top-divider">
 						<div class="features-header text-center">
 							<div class="container-sm">
 								<h2 class="section-title mt-0">Meet Xenon</h2>
-								<p class="section-paragraph mb-0">Xenon is a powerful markdown editor for the decentralized web.</p>
+								<p class="section-paragraph mb-0">Xenon helps you take notes, and save them on the decentralized web. New features are 
+                                    always on the way.
+                                </p>
 							</div>
 						</div>
                         <div class="features-wrap">
-                            <div class="feature is-revealing">
+                            <div class="feature">
                                 <div class="feature-inner">
                                     <div class="feature-icon">
-                                        <img src="dist/images/feature-icon-01.svg" alt="Feature 01">
+                                        <img src="../assets/images/feature-icon-01.svg" alt="Feature 01">
                                     </div>
                                     <h4 class="feature-title">Privacy</h4>
                                     <p class="text-sm">Only you can view your notes.</p>
                                 </div>
                             </div>
-                            <div class="feature is-revealing">
+                            <div class="feature">
                                 <div class="feature-inner">
                                     <div class="feature-icon">
-                                        <img src="dist/images/feature-icon-02.svg" alt="Feature 02">
+                                        <img src="../assets/images/feature-icon-02.svg" alt="Feature 02">
                                     </div>
                                     <h4 class="feature-title">Stored on the blockchain</h4>
                                     <p class="text-sm">All notes are stored with Gaia storage, giving you total piece of mind.</p>
                                 </div>
                             </div>
-                            <div class="feature is-revealing">
+                            <div class="feature">
                                 <div class="feature-inner">
                                     <div class="feature-icon">
-                                        <img src="dist/images/feature-icon-03.svg" alt="Feature 03">
+                                        <img src="../assets/images/feature-icon-03.svg" alt="Feature 03">
                                     </div>
                                     <h4 class="feature-title">No server outages</h4>
                                     <p class="text-sm">Centralized solutions lead to downtime if servers go down. Not with Xenon.</p>
                                 </div>
                             </div>
-                            <div class="feature is-revealing">
+                            <div class="feature">
                                 <div class="feature-inner">
                                     <div class="feature-icon">
-                                        <img src="dist/images/feature-icon-04.svg" alt="Feature 04">
+                                        <img src="../assets/images/feature-icon-04.svg" alt="Feature 04">
                                     </div>
                                     <h4 class="feature-title">Customizable</h4>
                                     <p class="text-sm">With over 30 editor themes to choose from, you can make Xenon look and behave as you wish. </p>
@@ -97,27 +99,27 @@
                     <div class="features-tabs-inner section-inner has-top-divider">
 						<div class="tabs-container">
 							<ul class="tabs-links">
-								<li class="is-revealing">
-									<a href="#tab-1" class="tab-link is-active">
-										<img src="dist/images/tabs-icon-01.svg" alt="Tabs icon 01">
+								<li class="">
+									<a  class="tab-link" @click="setActiveTab(0)">
+										<img src="../assets/images/tabs-icon-01.svg" alt="Tabs icon 01">
 										<span class="h4 m-0">Organise your notes</span>
 									</a>
 								</li>
-								<li class="is-revealing">
-									<a href="#tab-2" class="tab-link">
-										<img src="dist/images/tabs-icon-02.svg" alt="Tabs icon 02">
+								<li>
+									<a class="tab-link"  @click="setActiveTab(1)">
+										<img src="../assets/images/tabs-icon-02.svg" alt="Tabs icon 02">
 										<span class="h4 m-0">Total customisation</span>
 									</a>
 								</li>
-								<li class="is-revealing">
-									<a href="#tab-3" class="tab-link">
-										<img src="dist/images/tabs-icon-03.svg" alt="Tabs icon 03">
+								<li>
+									<a class="tab-link"  @click="setActiveTab(2)">
+										<img src="../assets/images/tabs-icon-03.svg" alt="Tabs icon 03">
 										<span class="h4 m-0">Ease of use</span>
 									</a>
 								</li>
 							</ul>
 							<div class="tabs-content">
-								<div id="tab-1" class="tab-panel is-active">
+								<div id="tab-1" class="tab-panel is-active" >
 									<h2>Discover</h2>
 									<p>Discover the multitude of ways you can access your notes, from your smartphone to your desktop browser. Access your notes anytime, anywhere.</p>
 									<p class="mb-0">Whether you're editing your notes at home or on the go, there's an option for you.</p>
@@ -136,11 +138,11 @@
 						</div>
                     </div>
                 </div>
-            </section> -->
+            </section>
 
 			<section class="cta section">
 				<div class="container">
-					<div class="cta-inner section-inner is-revealing">
+					<div class="cta-inner section-inner">
 						<h3 class="section-title mt-0">Get started with Xenon for free</h3>
 						<div class="cta-cta">
 							<a class="button button-primary button-shadow" href="#" @click.prevent="signIn">Sign-up</a>
@@ -198,7 +200,7 @@
                             </a>
                         </li>
                     </ul>
-                    <div class="footer-copyright">&copy; 2019 Xenon, open-sourced with <3 and forever free.</div>
+                    <div class="footer-copyright">&copy; 2019 Xenon. All rights reserved.</div>
                 </div>
             </div>
         </footer>
@@ -215,7 +217,8 @@ export default {
       blockstack: window.blockstack,
       show: true,
       showSlogan: true,
-      displayStatus: "none"
+      displayStatus: "none",
+      heroDesktopBg: ""
     }
   },
   mounted () {
@@ -223,10 +226,6 @@ export default {
     // window.setTimeout(() => {
     //   app.displayMarkdownAnimation();
     // }, 1000);
-    let recaptchaScript = document.createElement('script')
-    recaptchaScript.setAttribute('src', 'js/main.min.js');
-    recaptchaScript.setAttribute("type", "text/javascript");
-    document.head.appendChild(recaptchaScript)
 
   },
   methods: {
@@ -245,98 +244,40 @@ export default {
     },
     getRandomNumber(min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
+    },
+    setActiveTab(tab_num) {
+        console.log("setactive")
+        let tabs = document.querySelectorAll(".tab-panel");
+        for (let k=0; k < tabs.length; k++) {
+            let tab = tabs[k];
+            tab.classList.remove("is-active");
+        }
+        tabs[tab_num].className += " is-active";
     }
+
+
     }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro|Roboto:100,300,400,500|Montserrat|Fira+Sans:400,400i,500,700');
-h1, small, p, footer {
-font-family: "Roboto", sans-serif;
-}
-
-p {
-  width: 80%;
-  font-family: "Fira Sans";
-  font-size: 1em;
-}
-
+// @import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro|Roboto:100,300,400,500|Montserrat|Fira+Sans:400,400i,500,700');
 @import '../assets/assets/scss/style.scss';
 
 a {
   padding-left: 2px;
 }
 
-.fade-enter-active, .fade-leave-active {
-  transition: opacity 2s;
-}
-.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
-  opacity: 0;
-}
-
-.fadeslogan-enter-active, .fadeslogan-leave-active {
-  transition: opacity 2s;
-  transition-delay: 1s;
-}
-.fadeslogan-enter, .fadeslogan-leave-to /* .fade-leave-active below version 2.1.8 */ {
-  opacity: 0;
-}
-
-.fadebutton-enter-active, .fadeslogan-leave-active {
-  transition: opacity 2s;
-  transition-delay: 2s;
-}
-.fadebutton-enter, .fadeslogan-leave-to /* .fade-leave-active below version 2.1.8 */ {
-  opacity: 0;
-}
-
-.fadefooter-enter-active, .fadefooter-leave-active {
-  transition: opacity 2s;
-  transition-delay: 3s;
-}
-
-.fadefooter-enter, .fadefooter-leave-to {
-  opacity: 0;
-}
-
-.fadepointone-enter-active, .fadepointone-leave-active {
-  transition: opacity 2s;
-  transition-delay: 4s;
-}
-
-.fadepointone-enter, .fadepointone-leave-to {
-  opacity: 0;
-}
-
-
-.slide-in-enter-active, .slide-in-leave-active {
-  transition: opacity 2s;
-  transition-delay: 4s;
-}
-
-.slide-in-enter, .slide-in-leave-to {
-  opacity: 0;
-
-}
-
-.bold-enter-active, .bold-leave-active {
-  transition: opacity 2s;
-  transition-delay: 1s;
-}
-
-.bold-enter, .bold-leave-to {
-  opacity: 0;
-}
-
-.button {
-  height: 20px;
+.tab-panel {
+cursor: pointer;
 }
 
 .logo {
-    font-size: 0.7em;
+font-size: 0.6em;
 }
 
-
+.site-header {
+    padding: 0px;
+}
 </style>
