@@ -47,7 +47,7 @@
                                 </el-menu-item>
                             </el-menu-item-group>
                         </el-submenu>
-                        <el-submenu index="2" v-if="isOnePane == false" class="submenu">
+                        <el-submenu index="2" v-if="isOnePane == false" class="submenu" v-show="isMarkdownMode">
                             <template slot="title" class="title" id="submenu_heading"><i class="el-icon-menu"></i>Themes</template>
                             <el-menu-item-group class="themes_drawer">
                                 <template slot="title">All Themes Available</template>
@@ -92,7 +92,7 @@
 
                     </el-col>
 					    
-					<el-col :span="8"> 
+					<el-col :span="8" v-show="isMarkdownMode"> 
 					 <el-button type="primary" plain v-bind:icon="modeIcon" v-on:click="enableMode('readOnly')">	
 							Enable Read-Only Mode
 						</el-button>							 
@@ -129,14 +129,23 @@
 											<button  v-on:click="formatText('strikethrough')">
 												<font-awesome-icon icon="strikethrough"/>
 											</button>
+											<button v-on:click="formatText('underline')">
+												<font-awesome-icon icon="underline" />
+											</button>
+											<button v-on:click="addHeading('h2')">
+												<font-awesome-icon icon="heading" />
+											</button>
 											<button v-on:click="copyToClipboard()">
 												<font-awesome-icon icon="copy"/>
 											</button>
 											<button v-on:click="formatText('cut')">
 												<font-awesome-icon icon="cut" />
 											</button>
-											<button v-on:click="formatText('underline')">
-												<font-awesome-icon icon="underline" />
+											<button v-on:click="formatText('subscript')">
+												<font-awesome-icon icon="subscript" />
+											</button>
+											<button v-on:click="formatText('superscript')">
+												<font-awesome-icon icon="superscript" />
 											</button>
 										</div>
 
@@ -386,8 +395,10 @@ export default {
 			this.saveNewNote();
 			
 		},
+		addHeading(heading_type) {
+			document.execCommand("heading", false, heading_type);
+		},
 		saveNote() {
-			console.log("save note called")
 			if (this.filename == "") {
 				this.noFilenameAlert = true;
 				this.displayFileMessage('No title entered!', "warning");
@@ -570,6 +581,10 @@ export default {
 					}
 
 					this.file = this.markdown_notes[0];
+					if (this.file.format == "wysiwyg") {
+						this.isMarkdownMode = false;
+						this.tmp = this.markdown_notes[0].content;
+					}
 					this.content = this.markdown_notes[0].content;
 					this.filename = this.markdown_notes[0].filename;
 				})
