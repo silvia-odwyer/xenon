@@ -272,52 +272,43 @@ export default {
 			// Renders markdown in HTML using regex.
 			// Some may a bit buggy; submit an issue if you see any bugs. 
 
-			// Look for the beginning of a line that contains a greater-than symbol, 
-			// and enclose the token in blockquote tags. 
-			let markdown = this.content.replace(/^\>(.+)/gm, "<blockquote>$1</blockquote>");
+			// Look for beginning of a line that contains 6 hashtags, and enclose the token in h6 tags. 
+			let markdown = this.content.replace(/[\#]{6}(.+)/g, '<h6>$1</h6>');
+			markdown = markdown.replace(/[\#]{5}(.+)/g, '<h5>$1</h5>');
+			markdown = markdown.replace(/[\#]{4}(.+)/g, '<h4>$1</h4>');
+			markdown = markdown.replace(/[\#]{3}(.+)/g, '<h3>$1</h3>');
+			markdown = markdown.replace(/[\#]{2}(.+)/g, '<h2>$1</h2>');
+			markdown = markdown.replace(/[\#]{1}(.+)/g, '<h1>$1</h1>');
 
-			// h5
-			markdown = markdown.replace(/[\#]{5}(.+)/gm, "<h5>$1</h5>");
-
-			// h4
-			markdown = markdown.replace(/[\#]{4}(.+)/gm, "<h4>$1</h4>");
-
-			// h3
-			markdown = markdown.replace(/[\#]{3}(.+)/gm, "<h3>$1</h3>");
-
-			// h2
-			markdown = markdown.replace(/[\#]{2}(.+)/gm, "<h2>$1</h2>")
-
-			// h1
-			markdown = markdown.replace(/[\#]{1}(.+)/gm, "<h1>$1</h1>")
-
-			// h1 and h2s that consist of equals/plus signs underneath 
-			markdown = markdown.replace(/^(.+)\n\+=/gm, '<h1>$1</h1>');
-			markdown = markdown.replace(/^(.+)\n\-+/gm, '<h2>$1</h2>');
-
-			// bold text
+			// uls are started with the hypen (-) symbol
+			markdown = markdown.replace(/^\s*\n\-/gm, '<ul>\n-');
+			
+			markdown = markdown.replace(/^(\-.+)\s*\n([^\-])/gm, '$1\n</ul>\n\n$2');
+			markdown = markdown.replace(/^\-(.+)/gm, '<li>$1</li>');
+			
+			// ol, ie: ordered list
+			markdown = markdown.replace(/^\s*\n\d\./gm, '<ol>\n1.');
+			markdown = markdown.replace(/^(\d\..+)\s*\n([^\d\.])/gm, '$1\n</ol>\n\n$2');
+			markdown = markdown.replace(/^\d\.(.+)/gm, '<li>$1</li>');
+			
+			//blockquote
+			markdown = markdown.replace(/^\>(.+)/gm, '<blockquote>$1</blockquote>');
+			
+			// bold text 
 			markdown = markdown.replace(/[\*\_]{2}([^\*\_]+)[\*\_]{2}/g, '<b>$1</b>');
 
-			//ul
-			markdown = markdown.replace(/^\*(.+)/gm, '<li>$1</li>');
-			markdown = markdown.replace(/^\-(.+)/gm, '<li>$1</li>')
-
-			// code 
-			markdown = markdown.replace(/[\`]{1}([^\`]+)[\`]{1}/g, '<code>$1</code>');
-
-			// em should technically be for placing emphasis on certain words,
-			// so [TODO] add a check for single-words only.
+			// italics 
 			markdown = markdown.replace(/[\*\_]{1}([^\*\_]+)[\*\_]{1}/g, '<i>$1</i>');
-
-			// Strikethrough
-			markdown = markdown.replace(/\~~([^\~]+)\~~/g, '<del>$1</del>');
-
-			// blank lines
-			markdown = markdown.replace(/^\s*\n/gm, "<br>");
-			markdown = markdown.replace(/^\s*(\n)?(.+)/gm, function(item){
-    			return  /\<(\/)?(h\d|ul|ol|li|blockquote|pre|img)/.test(item) ? item : '<p>'+item+'</p>'; });
-
-			return (markdown);
+			
+			// strikethrough
+			markdown = markdown.replace(/[\~]{2}([^\~]+)[\~]{2}/g, '<del>$1</del>');
+			
+			// p
+			markdown = markdown.replace(/^\s*(\n)?(.+)/gm, function(m){
+				return  /\<(\/)?(h\d|ul|ol|li|blockquote|pre|img)/.test(m) ? m : '<p>'+m+'</p>';
+			});
+			  
+			return(markdown); 
 		},
 	},
 	watch: {
