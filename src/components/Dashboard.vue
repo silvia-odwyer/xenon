@@ -295,7 +295,7 @@ export default {
 			markdown = markdown.replace(/^\>(.+)/gm, '<blockquote>$1</blockquote>');
 			
 			// bold text 
-			markdown = markdown.replace(/[\*\_]{2}([^\*\_]+)[\*\_]{2}/g, '<b>$1</b>');
+			markdown = markdown.replace(/[\*\_]{2}([^\*\_]+)[\*\_]{2}/g, '<b><b>$1</b></b>');
 
 			// italics 
 			markdown = markdown.replace(/[\*\_]{1}([^\*\_]+)[\*\_]{1}/g, '<i>$1</i>');
@@ -305,7 +305,7 @@ export default {
 			
 			// p
 			markdown = markdown.replace(/^\s*(\n)?(.+)/gm, function(m){
-				return  /\<(\/)?(h\d|ul|ol|li|blockquote|pre|img)/.test(m) ? m : '<p>'+m+'</p>';
+				return  /\<(\/)?(h\d|ul|blockquote|pre|ol|li|img)/.test(m) ? m : '<p>'+m+'</p>';
 			});
 			  
 			return(markdown); 

@@ -1,19 +1,4 @@
-* {
-	font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
 
-}
-
-.el-header,
-.el-footer {
-	color: #333;
-	font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
-}
-
-.el-aside {
-	color: #333;
-	font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
-	margin-top: 1em;
-}
 
 .outer_aside {
 	display: flex;
@@ -156,7 +141,8 @@ label {
 
 /deep/ h1,
 /deep/ h2,
-/deep/ h2 {
+/deep/ h2, 
+/deep/ p, /deep/ b {
 	font-family: "Helvetica Neue", Helvetica, sans-serif;
 }
 
@@ -182,6 +168,7 @@ label {
 /deep/ li {
 	margin-left: 0.5em;
 }
+
 
 .themes_drawer {
 	max-height: 300px;
@@ -256,8 +243,9 @@ i {
 }
 
 #fixed {
-	max-height: 85vh;
+	max-height: 90vh;
 	overflow-y: auto;
+	margin-top: 5vh;
 }
 
 #dashboard {
@@ -330,3 +318,19 @@ i {
   .el-menu-item a {
 	  text-decoration: none;
   }
+
+.toolbar button {
+	padding: 0.3em;
+}
+
+.toolbar button:hover {
+	background-color: gainsboro;
+}
+
+.toolbar button:active {
+	background-color: gray;
+}
+
+/deep/ b {
+	font-weight: 500;
+}

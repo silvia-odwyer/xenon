@@ -455,35 +455,32 @@ var themes = ["3024-day", "3024-night", "abcdef", "ambiance", "ambiance-mobile",
 
 	computed: {
 		markdownToHTML: function markdownToHTML() {
-			var markdown = this.content.replace(/^\>(.+)/gm, "<blockquote>$1</blockquote>");
+			var markdown = this.content.replace(/[\#]{6}(.+)/g, '<h6>$1</h6>');
+			markdown = markdown.replace(/[\#]{5}(.+)/g, '<h5>$1</h5>');
+			markdown = markdown.replace(/[\#]{4}(.+)/g, '<h4>$1</h4>');
+			markdown = markdown.replace(/[\#]{3}(.+)/g, '<h3>$1</h3>');
+			markdown = markdown.replace(/[\#]{2}(.+)/g, '<h2>$1</h2>');
+			markdown = markdown.replace(/[\#]{1}(.+)/g, '<h1>$1</h1>');
 
-			markdown = markdown.replace(/[\#]{5}(.+)/gm, "<h5>$1</h5>");
+			markdown = markdown.replace(/^\s*\n\-/gm, '<ul>\n-');
 
-			markdown = markdown.replace(/[\#]{4}(.+)/gm, "<h4>$1</h4>");
-
-			markdown = markdown.replace(/[\#]{3}(.+)/gm, "<h3>$1</h3>");
-
-			markdown = markdown.replace(/[\#]{2}(.+)/gm, "<h2>$1</h2>");
-
-			markdown = markdown.replace(/[\#]{1}(.+)/gm, "<h1>$1</h1>");
-
-			markdown = markdown.replace(/^(.+)\n\+=/gm, '<h1>$1</h1>');
-			markdown = markdown.replace(/^(.+)\n\-+/gm, '<h2>$1</h2>');
-
-			markdown = markdown.replace(/[\*\_]{2}([^\*\_]+)[\*\_]{2}/g, '<b>$1</b>');
-
-			markdown = markdown.replace(/^\*(.+)/gm, '<li>$1</li>');
+			markdown = markdown.replace(/^(\-.+)\s*\n([^\-])/gm, '$1\n</ul>\n\n$2');
 			markdown = markdown.replace(/^\-(.+)/gm, '<li>$1</li>');
 
-			markdown = markdown.replace(/[\`]{1}([^\`]+)[\`]{1}/g, '<code>$1</code>');
+			markdown = markdown.replace(/^\s*\n\d\./gm, '<ol>\n1.');
+			markdown = markdown.replace(/^(\d\..+)\s*\n([^\d\.])/gm, '$1\n</ol>\n\n$2');
+			markdown = markdown.replace(/^\d\.(.+)/gm, '<li>$1</li>');
+
+			markdown = markdown.replace(/^\>(.+)/gm, '<blockquote>$1</blockquote>');
+
+			markdown = markdown.replace(/[\*\_]{2}([^\*\_]+)[\*\_]{2}/g, '<b><b>$1</b></b>');
 
 			markdown = markdown.replace(/[\*\_]{1}([^\*\_]+)[\*\_]{1}/g, '<i>$1</i>');
 
-			markdown = markdown.replace(/\~~([^\~]+)\~~/g, '<del>$1</del>');
+			markdown = markdown.replace(/[\~]{2}([^\~]+)[\~]{2}/g, '<del>$1</del>');
 
-			markdown = markdown.replace(/^\s*\n/gm, "<br>");
-			markdown = markdown.replace(/^\s*(\n)?(.+)/gm, function (item) {
-				return (/\<(\/)?(h\d|ul|ol|li|blockquote|pre|img)/.test(item) ? item : '<p>' + item + '</p>'
+			markdown = markdown.replace(/^\s*(\n)?(.+)/gm, function (m) {
+				return (/\<(\/)?(h\d|ul|blockquote|pre|ol|li|img)/.test(m) ? m : '<p>' + m + '</p>'
 				);
 			});
 
@@ -2530,4 +2527,4 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 /***/ })
 
 },[336]);
-//# sourceMappingURL=app.8dd269540ec6ef4af9a4.js.map
+//# sourceMappingURL=app.e1c6c93cd2993b8c1d34.js.map
