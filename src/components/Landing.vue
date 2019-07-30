@@ -23,8 +23,13 @@
 
         <main>
             <section class="hero">
-				<div class="hero-left-decoration"></div>
-				<div class="hero-right-decoration"></div>
+				<div class="hero-left-decoration">
+          <img src="../assets/images/header-bg-left.svg" />
+
+        </div>
+				<div class="hero-right-decoration">              
+          <img src="../assets/images/header-bg-right.svg" />
+        </div>
                 <div class="container">
                     <div class="hero-inner">
 						<div class="hero-copy">
@@ -35,7 +40,9 @@
 								<a class="button button-primary button-shadow" href="#" @click.prevent="signIn" >Get started</a>
 							</p>
 						</div>
+            
 						<div class="hero-illustration">
+              
 						</div>
                     </div>
                 </div>
@@ -210,6 +217,7 @@
 
 <script>
 /*eslint-disable*/
+import { userSession } from '../userSession'
 export default {
   name: 'landing',
   data () {
@@ -234,7 +242,7 @@ export default {
       let button = document.getElementById("signInButton");
       this.displayStatus = "flex";
 
-      blockstack.redirectToSignIn();
+      userSession.redirectToSignIn();
     },
     displayMarkdownAnimation() {
       let markdown_elem = document.getElementById("markdown");
@@ -263,7 +271,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 // @import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro|Roboto:100,300,400,500|Montserrat|Fira+Sans:400,400i,500,700');
-@import '../assets/assets/scss/style.scss';
+@import '@/assets/assets/scss/style.scss';
 
 a {
   padding-left: 2px;

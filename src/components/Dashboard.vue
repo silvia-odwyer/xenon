@@ -1,7 +1,7 @@
 <template>
     <el-container id="dashboard">
-        <el-header style="text-align: right; font-size: 12px; background-color: #303030">
-            <el-menu :default-active="String(activeIndex)" class="el-menu" mode="horizontal" id="el_menu"  background-color="#303030">
+        <el-header style="text-align: right; font-size: 12px;">
+            <el-menu :default-active="String(activeIndex)" class="el-menu" mode="horizontal" id="el_menu">
                 <el-menu-item index="1-a" class="logo">xenon</el-menu-item>
 				<el-submenu index="2" class="options">
                     <template slot="title">Notes</template>
@@ -187,7 +187,7 @@
 </template>
 <script>
 /*eslint-disable*/
-
+import { userSession } from '../userSession'
 import { codemirror } from 'vue-codemirror'
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/theme/base16-dark.css'
@@ -322,10 +322,8 @@ export default {
 					this.markdown_notes = this.sample_notes;
 				}
 
-				console.log(markdown_notes)
-
 				// encryption is now enabled by default
-				return blockstack.putFile(STORAGE_FILE, JSON.stringify(markdown_notes))
+				return userSession.putFile(STORAGE_FILE, JSON.stringify(markdown_notes))
 			},
 			deep: true
 		}
@@ -370,7 +368,6 @@ export default {
 				generic_note.completed = "false";
 			 	this.sample_notes.push(generic_note);
 			}
-			console.log("sample notes after creation", this.sample_notes);
 		},
 		confirmNoteCreation() {
 			this.isNewFile = true;
@@ -399,7 +396,6 @@ export default {
 			else {
           			// Retrieve the file of interest
 					let current_file = this.markdown_notes.filter(file => file.hash_id == this.file.hash_id)[0];
-					console.log("the current file is", current_file);
 
 					// Save 
 					if (this.isMarkdownMode) {
@@ -457,7 +453,6 @@ export default {
 			}
 		},
 		onTextSelected() {
-			console.log("text selected")
 		},
 		displayNote(file) {
 			// Save the current note, before moving to the next note.
@@ -506,7 +501,6 @@ export default {
 			return time;
 		},
 		displayFormDialog() {
-			console.log("CRTNEWNOTE files", this.markdown_notes);
 
 			// Clear the filename
 			this.filename_input = "";
@@ -522,7 +516,6 @@ export default {
 		},
 		saveNewNote() {
 			let datestamp = this.getDateStamp();
-			console.log("uid", this.uidCount);
 			this.file = {
 				id: this.uidCount++,
 				hash_id: String(this.getDateNow()),
@@ -536,7 +529,6 @@ export default {
 			// Create a new file.
 			this.markdown_notes.unshift(this.file);
 
-			console.log(this.markdown_notes);
 			if (this.noteFormat == "markdown") {
 				this.isMarkdownMode = true;
 			}
@@ -557,7 +549,7 @@ export default {
 		},
 		fetchData() {
 			const blockstack = this.blockstack
-			blockstack.getFile(STORAGE_FILE) // decryption is enabled by default
+			userSession.getFile(STORAGE_FILE) // decryption is enabled by default
 				.then((todosText) => {
 					var markdown_notes = JSON.parse(todosText || '[]')
 					markdown_notes.forEach(function (note, index) {
@@ -607,8 +599,6 @@ export default {
 			// toggle the boolean value
 			this.isMarkdownMode = !this.isMarkdownMode;
 
-			console.log("this.markdownToHTML is", this.markdownToHTML)
-
 			if (this.isMarkdownMode == true) {
 				this.tmp = this.markdownToHTML;
 			}
@@ -627,7 +617,6 @@ export default {
 			this.activeIndex = 0;
 		},	
 		changeTheme(theme) {
-			console.log("Theme changed to", theme);
 			this.getTheme(theme);
 			this.cmOptions.theme = theme;
 		},
@@ -641,7 +630,6 @@ export default {
 
 		changeActiveFileListing(event) {
 			event.className += " active";
-			console.log(event)
 		},
 		toggleDarkMode() {
 			var dashboard_bg_colour, dashboard_text_colour, cm_theme;
