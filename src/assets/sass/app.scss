@@ -1,0 +1,50 @@
+// Bootstrap
+@import "variables";
+
+html, body, #app {
+  height: 100vh;
+}
+
+body {
+  margin: 0;
+  font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
+}
+
+.avatar {
+  width: 30px;
+  float: right;
+  border-radius: 2px;
+}
+
+.btn {
+  &.btn-default {
+    color: $purple-110
+  }
+}
+
+.creds {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  text-align: right;
+}
+
+.list-group-item {
+  color: $purple-100;
+}
+
+.page-header {
+  margin-bottom: 0px;
+}
+
+.sign-out {
+  float: right;
+  padding-top:8px;
+  padding-right:10px;
+  font-size: 12px;
+}
+
+.user-info {
+  margin-top: 5px;
+  margin-bottom: 30px
+}
